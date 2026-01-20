@@ -1,0 +1,540 @@
+﻿@model ayuteng.Controllers.HomeController.DashboardViewModel
+@{
+    ViewData["Title"] = "Dashboard";
+    Layout = "_AdminLayout";
+}
+
+<div class="container-fluid">
+    <!-- Page Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1 class="h3 mb-0" style="color: var(--primary-blue);">
+                <i class="bi bi-speedometer2 me-2"></i>Dashboard Overview
+            </h1>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item active" aria-current="page">Dashboard</li>
+                </ol>
+            </nav>
+        </div>
+        <div>
+            <span class="text-muted me-3">Last updated: @DateTime.Now.ToString("MMM dd, yyyy HH:mm")</span>
+            <button class="btn btn-outline-primary" onclick="refreshDashboard()">
+                <i class="bi bi-arrow-clockwise me-2"></i>Refresh
+            </button>
+        </div>
+    </div>
+
+    <!-- Summary Cards -->
+    <div class="row mb-4">
+        <div class="col-xl-3 col-lg-6 mb-4">
+            <div class="card stats-card h-100">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div>
+                            <div class="stats-icon users">
+                                <i class="bi bi-people"></i>
+                            </div>
+                            <div class="stats-value mt-3">@Model.TotalApplications</div>
+                            <div class="stats-label">Total Applications</div>
+                        </div>
+                        <span class="badge bg-success">+@Model.TodayApplications today</span>
+                    </div>
+                    <div class="mt-3">
+                        <small class="text-muted">
+                            <i class="bi bi-arrow-up-right text-success me-1"></i>
+                            @Model.WeeklyGrowth% from last week
+                        </small>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-lg-6 mb-4">
+            <div class="card stats-card h-100">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div>
+                            <div class="stats-icon success">
+                                <i class="bi bi-check-circle"></i>
+                            </div>
+                            <div class="stats-value mt-3">@Model.ApprovedApplications</div>
+                            <div class="stats-label">Approved</div>
+                        </div>
+                        <div class="text-end">
+                            <span class="badge bg-success">@Model.ApprovalRate% rate</span>
+                        </div>
+                    </div>
+                    <div class="mt-3">
+                        <small class="text-muted">
+                            <i class="bi bi-people me-1"></i>
+                            @Model.AwaitingReview pending review
+                        </small>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-lg-6 mb-4">
+            <div class="card stats-card h-100">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div>
+                            <div class="stats-icon warning">
+                                <i class="bi bi-clock"></i>
+                            </div>
+                            <div class="stats-value mt-3">@Model.PendingApplications</div>
+                            <div class="stats-label">Pending</div>
+                        </div>
+                        <span class="badge bg-warning">Action needed</span>
+                    </div>
+                    <div class="mt-3">
+                        <small class="text-muted">
+                            <i class="bi bi-hourglass-split me-1"></i>
+                            Average: @Model.AverageProcessingDays days to process
+                        </small>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-lg-6 mb-4">
+            <div class="card stats-card h-100">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div>
+                            <div class="stats-icon danger">
+                                <i class="bi bi-x-circle"></i>
+                            </div>
+                            <div class="stats-value mt-3">@Model.RejectedApplications</div>
+                            <div class="stats-label">Rejected</div>
+                        </div>
+                        <div class="text-end">
+                            <span class="badge bg-secondary">@Model.RejectionRate% rate</span>
+                        </div>
+                    </div>
+                    <div class="mt-3">
+                        <small class="text-muted">
+                            <i class="bi bi-flag me-1"></i>
+                            Main reason: Incomplete documentation
+                        </small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Gender Distribution & Status Charts -->
+    <div class="row mb-4">
+        <div class="col-xl-6 mb-4">
+            <div class="card h-100">
+                <div class="card-header" style="background-color: var(--light-blue);">
+                    <h5 class="mb-0" style="color: var(--primary-blue);">
+                        <i class="bi bi-gender-ambiguous me-2"></i>Applications by Gender
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <canvas id="genderChart" height="250"></canvas>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mt-4">
+                                <div class="d-flex align-items-center mb-3">
+                                    <div class="gender-indicator male me-3"></div>
+                                    <div class="flex-grow-1">
+                                        <div class="d-flex justify-content-between">
+                                            <span>Male Applicants</span>
+                                            <strong>@Model.MaleApplications (@Model.MalePercentage%)</strong>
+                                        </div>
+                                        <div class="progress mt-1" style="height: 8px;">
+                                            <div class="progress-bar" role="progressbar"
+                                                style="width: @Model.MalePercentage%; background-color: #0d6efd;"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="d-flex align-items-center mb-3">
+                                    <div class="gender-indicator female me-3"></div>
+                                    <div class="flex-grow-1">
+                                        <div class="d-flex justify-content-between">
+                                            <span>Female Applicants</span>
+                                            <strong>@Model.FemaleApplications (@Model.FemalePercentage%)</strong>
+                                        </div>
+                                        <div class="progress mt-1" style="height: 8px;">
+                                            <div class="progress-bar" role="progressbar"
+                                                style="width: @Model.FemalePercentage%; background-color: #dc3545;">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="d-flex align-items-center">
+                                    <div class="gender-indicator other me-3"></div>
+                                    <div class="flex-grow-1">
+                                        <div class="d-flex justify-content-between">
+                                            <span>Other/Not Specified</span>
+                                            <strong>@Model.OtherApplications (@Model.OtherPercentage%)</strong>
+                                        </div>
+                                        <div class="progress mt-1" style="height: 8px;">
+                                            <div class="progress-bar" role="progressbar"
+                                                style="width: @Model.OtherPercentage%; background-color: #6c757d;">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-6 mb-4">
+            <div class="card h-100">
+                <div class="card-header" style="background-color: var(--light-blue);">
+                    <h5 class="mb-0" style="color: var(--primary-blue);">
+                        <i class="bi bi-pie-chart me-2"></i>Applications by Status
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <canvas id="statusChart" height="250"></canvas>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mt-4">
+                                @{
+                                    var statuses = new[]
+                                    {
+                                                                new { Name = "Submitted", Value = Model.SubmittedApplications, Percentage =
+                                                                Model.SubmittedPercentage, Color = "#0dcaf0", Icon = "bi-send-check" },
+                                                                new { Name = "Under Review", Value = Model.ReviewingApplications, Percentage =
+                                                                Model.ReviewingPercentage, Color = "#ffc107", Icon = "bi-search" },
+                                                                new { Name = "Approved", Value = Model.ApprovedApplications, Percentage =
+                                                                Model.ApprovedPercentage, Color = "#198754", Icon = "bi-check-circle" },
+                                                                new { Name = "Rejected", Value = Model.RejectedApplications, Percentage =
+                                                                Model.RejectedPercentage, Color = "#dc3545", Icon = "bi-x-circle" },
+                                                                new { Name = "Draft", Value = Model.DraftApplications, Percentage =
+                                                                Model.DraftPercentage, Color = "#6c757d", Icon = "bi-file-earmark" }
+                                                                };
+                                }
+
+                                @foreach (var status in statuses)
+                                {
+                                    <div class="d-flex align-items-center mb-3">
+                                        <div class="status-indicator me-3" style="background-color: @status.Color"></div>
+                                        <div class="flex-grow-1">
+                                            <div class="d-flex justify-content-between">
+                                                <span>@status.Name</span>
+                                                <strong>@status.Value (@status.Percentage%)</strong>
+                                            </div>
+                                            <div class="progress mt-1" style="height: 6px;">
+                                                <div class="progress-bar" role="progressbar"
+                                                    style="width: @status.Percentage%; background-color: @status.Color;">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+</div>
+
+@section Styles {
+    <style>
+        .stats-card {
+            border: 1px solid var(--light-green);
+            border-radius: 12px;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .stats-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .stats-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+        }
+
+        .stats-icon.users {
+            background-color: rgba(57, 179, 74, 0.1);
+            color: var(--primary-green);
+        }
+
+        .stats-icon.success {
+            background-color: rgba(25, 135, 84, 0.1);
+            color: #198754;
+        }
+
+        .stats-icon.warning {
+            background-color: rgba(255, 193, 7, 0.1);
+            color: #ffc107;
+        }
+
+        .stats-icon.danger {
+            background-color: rgba(220, 53, 69, 0.1);
+            color: #dc3545;
+        }
+
+        .stats-value {
+            font-size: 32px;
+            font-weight: 700;
+            color: var(--primary-blue);
+            margin-top: 10px;
+        }
+
+        .stats-label {
+            color: var(--gray);
+            font-size: 14px;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .gender-indicator {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+        }
+
+        .gender-indicator.male {
+            background-color: #0d6efd;
+        }
+
+        .gender-indicator.female {
+            background-color: #dc3545;
+        }
+
+        .gender-indicator.other {
+            background-color: #6c757d;
+        }
+
+        .status-indicator {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+        }
+
+        .progress {
+            background-color: var(--light-gray);
+            border-radius: 4px;
+        }
+
+        .progress-bar {
+            border-radius: 4px;
+        }
+
+        .card-header {
+            border-bottom: 1px solid var(--light-green);
+            padding: 15px 20px;
+        }
+
+        .btn-lg {
+            padding: 12px 20px;
+            font-size: 16px;
+            border-radius: 8px;
+        }
+
+        .list-group-item {
+            background-color: transparent;
+            border-color: var(--light-gray);
+        }
+    </style>
+}
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <script>
+        // Chart instances
+        let genderChart = null;
+        let statusChart = null;
+        let weeklyActivityChart = null;
+
+        document.addEventListener('DOMContentLoaded', function () {
+            initializeCharts();
+            setupEventListeners();
+        });
+
+        function initializeCharts() {
+            // Gender Distribution Chart
+            const genderCtx = document.getElementById('genderChart').getContext('2d');
+            genderChart = new Chart(genderCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Male', 'Female', 'Other'],
+                    datasets: [{
+                        data: [@Model.MaleApplications, @Model.FemaleApplications, @Model.OtherApplications],
+                        backgroundColor: ['#0d6efd', '#dc3545', '#6c757d'],
+                        borderWidth: 1,
+                        borderColor: '#fff'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function (context) {
+                                    const label = context.label || '';
+                                    const value = context.raw || 0;
+                                    const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                    const percentage = Math.round((value / total) * 100);
+                                    return `${label}: ${value} (${percentage}%)`;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+
+            // Status Distribution Chart
+            const statusCtx = document.getElementById('statusChart').getContext('2d');
+            statusChart = new Chart(statusCtx, {
+                type: 'pie',
+                data: {
+                    labels: ['Submitted', 'Under Review', 'Approved', 'Rejected', 'Draft'],
+                    datasets: [{
+                        data: [
+                                    @Model.SubmittedApplications,
+                                    @Model.ReviewingApplications,
+                                    @Model.ApprovedApplications,
+                                    @Model.RejectedApplications,
+                            @Model.DraftApplications
+                        ],
+                        backgroundColor: ['#0dcaf0', '#ffc107', '#198754', '#dc3545', '#6c757d'],
+                        borderWidth: 1,
+                        borderColor: '#fff'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    }
+                }
+            });
+
+            // Weekly Activity Chart
+            const activityCtx = document.getElementById('weeklyActivityChart').getContext('2d');
+            weeklyActivityChart = new Chart(activityCtx, {
+                type: 'line',
+                data: {
+                    labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+                    datasets: [{
+                        label: 'Applications',
+                        data: [12, 19, 15, 25, 22, 18, 14],
+                        borderColor: 'var(--primary-green)',
+                        backgroundColor: 'rgba(57, 179, 74, 0.1)',
+                        borderWidth: 2,
+                        fill: true,
+                        tension: 0.4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            grid: {
+                                color: 'rgba(0, 0, 0, 0.05)'
+                            },
+                            ticks: {
+                                stepSize: 5
+                            }
+                        },
+                        x: {
+                            grid: {
+                                display: false
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        function setupEventListeners() {
+            // Time range selector
+            document.getElementById('timeRange').addEventListener('change', function () {
+                // You can implement API call to fetch data for selected time range
+                console.log('Time range changed to:', this.value + ' days');
+            });
+        }
+
+        function refreshDashboard() {
+            const btn = event.target.closest('button');
+            const originalHtml = btn.innerHTML;
+
+            btn.innerHTML = '<i class="bi bi-arrow-clockwise me-2"></i>Refreshing...';
+            btn.disabled = true;
+
+            // Simulate API call
+            setTimeout(() => {
+                btn.innerHTML = originalHtml;
+                btn.disabled = false;
+
+                // In real implementation, this would fetch fresh data and update charts
+                // For now, just show a toast
+                showToast('Dashboard refreshed successfully', 'success');
+            }, 1000);
+        }
+
+        function exportApplications() {
+            // This would open export modal in real implementation
+            showToast('Export functionality will be available in Applications page', 'info');
+        }
+
+        function viewPendingReviews() {
+            window.location.href = '/Applications?status=reviewing';
+        }
+
+        function showToast(message, type) {
+            // Simple toast notification
+            const toast = document.createElement('div');
+            toast.className = `toast align-items-center text-white bg-${type} border-0 position-fixed bottom-0 end-0 m-3`;
+            toast.style.zIndex = '1060';
+            toast.innerHTML = `
+                        <div class="d-flex">
+                            <div class="toast-body">
+                                ${message}
+                            </div>
+                            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+                        </div>
+                    `;
+
+            document.body.appendChild(toast);
+            const bsToast = new bootstrap.Toast(toast);
+            bsToast.show();
+
+            setTimeout(() => {
+                toast.remove();
+            }, 3000);
+        }
+    </script>
+}

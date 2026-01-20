@@ -1,0 +1,1006 @@
+﻿@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AYuTe Africa Challenge Nigeria</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Montserrat:wght@700;800&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --primary-green: #39B34A;
+            --primary-yellow: #DEE33B;
+            --primary-blue: #073150;
+            --light-green: #E9F7EC;
+            --light-yellow: #FDFDE8;
+            --light-blue: #F0F7FB;
+            --white: #FFFFFF;
+            --gray: #5D6D7E;
+            --light-gray: #F5F5F5;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            line-height: 1.6;
+            color: var(--gray);
+            background-color: var(--light-gray);
+            overflow-x: hidden;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Header Styles */
+        header {
+            background: linear-gradient(135deg, var(--primary-blue) 0%, #0A4A75 100%);
+            color: var(--white);
+            padding: 1.5rem 0;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 4px 12px rgba(7, 49, 80, 0.1);
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 800;
+            font-size: 1.5rem;
+        }
+
+        .logo-icon {
+            color: var(--primary-yellow);
+            font-size: 1.8rem;
+        }
+
+        .logo span {
+            color: var(--primary-yellow);
+        }
+
+        nav ul {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+        }
+
+        nav a {
+            color: var(--white);
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            padding: 5px 0;
+            position: relative;
+        }
+
+        nav a:hover {
+            color: var(--primary-yellow);
+        }
+
+        nav a::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background-color: var(--primary-yellow);
+            transition: width 0.3s ease;
+        }
+
+        nav a:hover::after {
+            width: 100%;
+        }
+
+        .mobile-menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            color: var(--white);
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+
+        /* Hero Section */
+        .hero {
+            background: linear-gradient(rgba(7, 49, 80, 0.85), rgba(7, 49, 80, 0.9)), url('https://images.unsplash.com/photo-1550989460-0adf9ea622e2?ixlib=rb-4.0.3&auto=format&fit=crop&w=1600&q=80');
+            background-size: cover;
+            background-position: center;
+            color: var(--white);
+            padding: 6rem 0;
+            text-align: center;
+        }
+
+        .hero h1 {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 3rem;
+            margin-bottom: 1.5rem;
+            line-height: 1.2;
+        }
+
+        .hero h1 span {
+            color: var(--primary-yellow);
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            max-width: 800px;
+            margin: 0 auto 2.5rem;
+            opacity: 0.9;
+        }
+
+        .hero-btns {
+            display: flex;
+            justify-content: center;
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        /* Button Styles */
+        .btn {
+            display: inline-block;
+            padding: 1rem 2.5rem;
+            border-radius: 50px;
+            font-weight: 600;
+            text-decoration: none;
+            text-align: center;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            border: none;
+            font-size: 1rem;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .btn-primary {
+            background-color: var(--primary-green);
+            color: var(--white);
+        }
+
+        .btn-primary:hover {
+            background-color: #2E9A3D;
+            transform: translateY(-3px);
+            box-shadow: 0 6px 15px rgba(57, 179, 74, 0.3);
+        }
+
+        .btn-secondary {
+            background-color: var(--primary-yellow);
+            color: var(--primary-blue);
+        }
+
+        .btn-secondary:hover {
+            background-color: #D0D832;
+            transform: translateY(-3px);
+            box-shadow: 0 6px 15px rgba(222, 227, 59, 0.3);
+        }
+
+        .btn-large {
+            padding: 1.2rem 3rem;
+            font-size: 1.1rem;
+        }
+
+        /* Section Styles */
+        section {
+            padding: 5rem 0;
+        }
+
+        .section-title {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .section-title h2 {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 2.5rem;
+            color: var(--primary-blue);
+            position: relative;
+            display: inline-block;
+            padding-bottom: 15px;
+        }
+
+        .section-title h2::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 4px;
+            background-color: var(--primary-green);
+            border-radius: 2px;
+        }
+
+        /* About Section */
+        .about-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 3rem;
+            align-items: center;
+        }
+
+        .about-text {
+            font-size: 1.1rem;
+        }
+
+        .about-image {
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .about-image img {
+            width: 100%;
+            height: auto;
+            display: block;
+            transition: transform 0.5s ease;
+        }
+
+        .about-image:hover img {
+            transform: scale(1.03);
+        }
+
+        /* Eligibility Section */
+        .eligibility {
+            background-color: var(--light-blue);
+        }
+
+        .eligibility-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+
+        .eligibility-card {
+            background-color: var(--white);
+            border-radius: 10px;
+            padding: 2rem;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border-top: 4px solid var(--primary-green);
+        }
+
+        .eligibility-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .eligibility-card:nth-child(2) {
+            border-top-color: var(--primary-yellow);
+        }
+
+        .eligibility-card:nth-child(3) {
+            border-top-color: var(--primary-blue);
+        }
+
+        .eligibility-card h3 {
+            color: var(--primary-blue);
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .eligibility-card h3 i {
+            color: var(--primary-green);
+        }
+
+        .eligibility-card ul {
+            list-style-position: inside;
+        }
+
+        .eligibility-card li {
+            margin-bottom: 0.8rem;
+            padding-left: 5px;
+        }
+
+        /* Requirements Section */
+        .requirements-content {
+            max-width: 900px;
+            margin: 0 auto;
+            background-color: var(--white);
+            border-radius: 10px;
+            padding: 3rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+        }
+
+        .requirements-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .requirement-item {
+            display: flex;
+            gap: 1rem;
+            align-items: flex-start;
+        }
+
+        .requirement-icon {
+            background-color: var(--light-green);
+            color: var(--primary-green);
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            font-size: 1.2rem;
+        }
+
+        /* How to Apply Section */
+        .how-to-apply {
+            background-color: var(--light-yellow);
+        }
+
+        .apply-steps {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 2rem;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .apply-step {
+            background-color: var(--white);
+            border-radius: 10px;
+            padding: 2rem;
+            width: 280px;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            transition: transform 0.3s ease;
+            position: relative;
+        }
+
+        .apply-step:hover {
+            transform: translateY(-10px);
+        }
+
+        .step-number {
+            position: absolute;
+            top: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: var(--primary-blue);
+            color: var(--white);
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 1.2rem;
+        }
+
+        .apply-step h3 {
+            color: var(--primary-blue);
+            margin: 1.5rem 0 1rem;
+        }
+
+        /* CTA Section */
+        .cta {
+            text-align: center;
+            background: linear-gradient(135deg, var(--primary-blue) 0%, #0A4A75 100%);
+            color: var(--white);
+            padding: 4rem 0;
+        }
+
+        .cta h2 {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 2.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .cta h2 span {
+            color: var(--primary-yellow);
+        }
+
+        .cta p {
+            max-width: 700px;
+            margin: 0 auto 2.5rem;
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        /* Footer */
+        footer {
+            background-color: #052338;
+            color: var(--white);
+            padding: 3rem 0 2rem;
+        }
+
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .footer-column h3 {
+            color: var(--primary-yellow);
+            margin-bottom: 1.5rem;
+            font-size: 1.3rem;
+        }
+
+        .footer-column p {
+            opacity: 0.8;
+            margin-bottom: 1rem;
+        }
+
+        .social-links {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .social-links a {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            color: var(--white);
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .social-links a:hover {
+            background-color: var(--primary-green);
+            transform: translateY(-3px);
+        }
+
+        .copyright {
+            text-align: center;
+            padding-top: 2rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            opacity: 0.7;
+            font-size: 0.9rem;
+        }
+
+        /* Scroll Indicator */
+        .scroll-indicator {
+            position: fixed;
+            top: 50%;
+            right: 20px;
+            transform: translateY(-50%);
+            z-index: 100;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .scroll-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background-color: rgba(7, 49, 80, 0.3);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .scroll-dot.active {
+            background-color: var(--primary-green);
+            transform: scale(1.3);
+        }
+
+        /* Responsive Design */
+        @@media (max-width: 992px) {
+            .about-content {
+                grid-template-columns: 1fr;
+            }
+
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+
+            .section-title h2 {
+                font-size: 2.2rem;
+            }
+        }
+
+        @@media (max-width: 768px) {
+            nav ul {
+                display: none;
+                position: absolute;
+                top: 100%;
+                left: 0;
+                width: 100%;
+                background-color: var(--primary-blue);
+                flex-direction: column;
+                padding: 1.5rem;
+                text-align: center;
+                box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+            }
+
+            nav ul.show {
+                display: flex;
+            }
+
+            .mobile-menu-btn {
+                display: block;
+            }
+
+            .hero-btns {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .btn {
+                width: 100%;
+                max-width: 300px;
+            }
+
+            .apply-step {
+                width: 100%;
+                max-width: 350px;
+            }
+
+            .scroll-indicator {
+                display: none;
+            }
+        }
+
+        @@media (max-width: 576px) {
+            .hero {
+                padding: 4rem 0;
+            }
+
+            .hero h1 {
+                font-size: 2rem;
+            }
+
+            section {
+                padding: 3rem 0;
+            }
+
+            .section-title h2 {
+                font-size: 1.8rem;
+            }
+
+            .requirements-content {
+                padding: 2rem 1.5rem;
+            }
+        }
+
+        /* Animation Classes */
+        .fade-in {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.8s ease, transform 0.8s ease;
+        }
+
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Header -->
+    <header>
+        <div class="container header-content">
+            <div class="logo">
+                <img src="https://res.cloudinary.com/dmknqdhyj/image/upload/v1768052051/Ayute_Logo-02_20260108_125419_0000_sh6w1a.png"
+                    alt="AYuTe Africa Challenge Nigeria" width="120" style="
+                display: block;
+                margin: 0 auto;
+                padding-top: 5px;
+                max-width: 150px;
+                height: auto;
+                border: 0;
+                outline: none;
+                text-decoration: none;
+              " />
+            </div>
+            <button class="mobile-menu-btn" id="mobileMenuBtn">
+                <i class="fas fa-bars"></i>
+            </button>
+            <nav>
+                <ul id="navMenu">
+                    <li><a href="#home">Home</a></li>
+                    <li><a href="#about">About</a></li>
+                    <li><a href="#eligibility">Eligibility</a></li>
+                    <li><a href="#requirements">Requirements</a></li>
+                    <li><a href="#apply">How to Apply</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero" id="home">
+        <div class="container">
+            <h1>AYuTe Africa Challenge <span>Nigeria</span></h1>
+            <p>An enterprise development program to identify, nurture, and support innovative, relevant and
+                technology-driven agric-centric enterprises to grow, scale and thrive.</p>
+            <div class="hero-btns">
+                <a href="/login" class="btn btn-primary btn-large">Start Application</a>
+                <a href="#about" class="btn btn-secondary btn-large">Learn More</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section id="about" class="fade-in">
+        <div class="container">
+            <div class="section-title">
+                <h2>About the Challenge</h2>
+            </div>
+            <div class="about-content">
+                <div class="about-text">
+                    <p>The AYuTe Africa Challenge Nigeria is an enterprise development program initiated by Heifer
+                        International and implemented by Wennovation Hub to identify, nurture, and support innovative,
+                        relevant and technology-driven agric-centric enterprises to grow, scale and thrive.</p>
+                    <p>We are looking for young innovators with groundbreaking ideas that can transform Nigeria's
+                        agricultural sector and create sustainable impact for smallholder farmers.</p>
+                    <p>The program provides funding, mentorship, and business support to help your agricultural
+                        technology venture reach its full potential.</p>
+                    <div style="margin-top: 2rem;">
+                        <a href="#eligibility" class="btn btn-primary">Check Eligibility</a>
+                    </div>
+                </div>
+                <div class="about-image">
+                    <img src=https://www.thehabarinetwork.com/wp-content/uploads/2025/07/3Zr7ONANDxau0C9-1000x600.jpg"
+                        alt="African farmers using technology">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Eligibility Section -->
+    <section id="eligibility" class="eligibility fade-in">
+        <div class="container">
+            <div class="section-title">
+                <h2>Eligibility Criteria</h2>
+            </div>
+            <div class="eligibility-cards">
+                <div class="eligibility-card">
+                    <h3><i class="fas fa-user-check"></i> Applicant Requirements</h3>
+                    <ul>
+                        <li>Be aged 18-35 by the closing day of submission</li>
+                        <li>Be a youth with innovative ideas focusing on agriculture</li>
+                        <li>Have ideas that are proven to solve social problems</li>
+                        <li>Hold Nigerian nationality with official ID</li>
+                        <li>Produce financial statements for the venture</li>
+                        <li>Be the founder or co-founder of the enterprise</li>
+                        <li>Have no criminal record related to corruption</li>
+                        <li>Have potential for partnership and collaboration</li>
+                    </ul>
+                </div>
+                <div class="eligibility-card">
+                    <h3><i class="fas fa-building"></i> Company Requirements</h3>
+                    <ul>
+                        <li>Registered/incorporated with relevant government agencies in Nigeria</li>
+                        <li>Ability to scale and impact a large number of smallholder farmers</li>
+                        <li>Recorded evidence of demonstrated impact on smallholder farmers</li>
+                        <li>Potential for job creation and poverty reduction</li>
+                        <li>Alignment with relevant national policies and international treaties (e.g., SDGs)</li>
+                    </ul>
+                </div>
+                <div class="eligibility-card">
+                    <h3><i class="fas fa-lightbulb"></i> Innovation Requirements</h3>
+                    <ul>
+                        <li>Identifiable technological innovation addressing key problems</li>
+                        <li>Focus on smallholder farmer productivity</li>
+                        <li>Focus on smallholder farmer income</li>
+                        <li>Address labour intensiveness of operations</li>
+                        <li>Enhance resilience in agricultural practices</li>
+                        <li>Improve access to information for farmers</li>
+                        <li>Strong competitive advantage</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Requirements Section -->
+    <section id="requirements" class="fade-in">
+        <div class="container">
+            <div class="section-title">
+                <h2>Company Requirements</h2>
+            </div>
+            <div class="requirements-content">
+                <p style="text-align: center; margin-bottom: 1.5rem; font-size: 1.1rem;">Your company must meet the
+                    following requirements to be eligible for the AYuTe Africa Challenge Nigeria:</p>
+                <div class="requirements-list">
+                    <div class="requirement-item">
+                        <div class="requirement-icon">
+                            <i class="fas fa-file-contract"></i>
+                        </div>
+                        <div>
+                            <h4>Legal Registration</h4>
+                            <p>Registered/incorporated with the relevant government agencies in Nigeria.</p>
+                        </div>
+                    </div>
+                    <div class="requirement-item">
+                        <div class="requirement-icon">
+                            <i class="fas fa-chart-line"></i>
+                        </div>
+                        <div>
+                            <h4>Scalability</h4>
+                            <p>Ability to scale and impact a large number of smallholder farmers.</p>
+                        </div>
+                    </div>
+                    <div class="requirement-item">
+                        <div class="requirement-icon">
+                            <i class="fas fa-handshake"></i>
+                        </div>
+                        <div>
+                            <h4>Demonstrated Impact</h4>
+                            <p>Recorded evidence of impact on smallholder farmers' revenue and/or operations.</p>
+                        </div>
+                    </div>
+                    <div class="requirement-item">
+                        <div class="requirement-icon">
+                            <i class="fas fa-briefcase"></i>
+                        </div>
+                        <div>
+                            <h4>Job Creation</h4>
+                            <p>Potential for job creation and poverty reduction in local communities.</p>
+                        </div>
+                    </div>
+                    <div class="requirement-item">
+                        <div class="requirement-icon">
+                            <i class="fas fa-globe-africa"></i>
+                        </div>
+                        <div>
+                            <h4>Policy Alignment</h4>
+                            <p>Alignment with relevant national policies and international treaties (e.g., SDGs).</p>
+                        </div>
+                    </div>
+                    <div class="requirement-item">
+                        <div class="requirement-icon">
+                            <i class="fas fa-cogs"></i>
+                        </div>
+                        <div>
+                            <h4>Technological Innovation</h4>
+                            <p>Identifiable technological innovation addressing key agricultural problems.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- How to Apply Section -->
+    <section id="apply" class="how-to-apply fade-in">
+        <div class="container">
+            <div class="section-title">
+                <h2>How to Apply</h2>
+            </div>
+            <div class="apply-steps">
+                <div class="apply-step">
+                    <div class="step-number">1</div>
+                    <i class="fas fa-calendar-alt fa-3x" style="color: var(--primary-blue);"></i>
+                    <h3>Check Dates</h3>
+                    <p>The application period will be open from <strong>22nd January</strong>. Make sure to submit
+                        before the deadline.</p>
+                </div>
+                <div class="apply-step">
+                    <div class="step-number">2</div>
+                    <i class="fas fa-users fa-3x" style="color: var(--primary-green);"></i>
+                    <h3>Follow Social Media</h3>
+                    <p>Follow us on social media @@heifernigeria and @@AyuteAfrica for updates and important
+                        announcements.</p>
+                </div>
+                <div class="apply-step">
+                    <div class="step-number">3</div>
+                    <i class="fas fa-laptop fa-3x" style="color: var(--primary-yellow);"></i>
+                    <h3>Access Application</h3>
+                    <p>This application form can be accessed on the Web at <strong>https://ayute.africa/nigeria</strong>
+                    </p>
+                </div>
+                <div class="apply-step">
+                    <div class="step-number">4</div>
+                    <i class="fas fa-paper-plane fa-3x" style="color: var(--primary-blue);"></i>
+                    <h3>Submit & Confirm</h3>
+                    <p>Submit your application and wait for confirmation message via email after submission.</p>
+                </div>
+            </div>
+            <div style="text-align: center; margin-top: 3rem;">
+                <p style="margin-bottom: 1.5rem; font-style: italic;">Any queries? Please contact
+                    <strong>info@wennovationhub.org</strong>
+                </p>
+                <a href="/login" target="_blank" class="btn btn-primary btn-large">Start or
+                    Continue Application</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta fade-in">
+        <div class="container">
+            <h2>Ready to Transform <span>Agriculture</span> in Nigeria?</h2>
+            <p>Join the AYuTe Africa Challenge and turn your innovative idea into a thriving agricultural enterprise
+                that creates sustainable impact for smallholder farmers across Nigeria.</p>
+            <div class="hero-btns">
+                <a href="application/step-one" target="_blank" class="btn btn-primary btn-large">Apply Now</a>
+                <a href="#eligibility" class="btn btn-secondary btn-large">Check Eligibility</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-column">
+                    <img src="https://res.cloudinary.com/dmknqdhyj/image/upload/v1768052051/Ayute_Logo-02_20260108_125419_0000_sh6w1a.png"
+                        alt="AYuTe Africa Challenge Nigeria" width="220" style="
+                        display: block;
+                        margin: 0 auto;
+                        padding-top: 5px;
+                        max-width: 250px;
+                        height: auto;
+                        border: 0;
+                        outline: none;
+                        text-decoration: none;
+                    " />
+                    <p>An enterprise development program initiated by Heifer International and implemented by
+                        Wennovation Hub.</p>
+                    <div class="social-links">
+                        <a href="#" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
+                        <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                        <a href="#" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+                    </div>
+                </div>
+                <div class="footer-column">
+                    <h3>Quick Links</h3>
+                    <p><a href="#home" style="color: white; text-decoration: none;">Home</a></p>
+                    <p><a href="#about" style="color: white; text-decoration: none;">About the Challenge</a></p>
+                    - <p><a href="#eligibility" style="color: white; text-decoration: none;">Eligibility Criteria</a>
+                    </p>
+                    <p><a href="#apply" style="color: white; text-decoration: none;">How to Apply</a></p>
+                </div>
+                <div class="footer-column">
+                    <h3>Contact Info</h3>
+                    <p><i class="fas fa-envelope" style="margin-right: 10px;"></i> info@wennovationhub.org</p>
+                    <p><i class="fas fa-globe" style="margin-right: 10px;"></i> https://ayute.africa/nigeria</p>
+                    <p style="margin-top: 1.5rem;">Follow: @@heifernigeria & @@AyuteAfrica</p>
+                </div>
+            </div>
+            <div class="copyright">
+                <p>&copy; 2023 AYuTe Africa Challenge Nigeria. All rights reserved. | Initiative by Heifer International
+                    | Powered by Wennovation Hub</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scroll Indicator -->
+    <div class="scroll-indicator" id="scrollIndicator">
+        <div class="scroll-dot active" data-section="home"></div>
+        <div class="scroll-dot" data-section="about"></div>
+        <div class="scroll-dot" data-section="eligibility"></div>
+        <div class="scroll-dot" data-section="requirements"></div>
+        <div class="scroll-dot" data-section="apply"></div>
+    </div>
+
+    <script>
+        // Mobile Menu Toggle
+        document.getElementById('mobileMenuBtn').addEventListener('click', function () {
+            document.getElementById('navMenu').classList.toggle('show');
+        });
+
+        // Close mobile menu when clicking on a link
+        document.querySelectorAll('#navMenu a').forEach(link => {
+            link.addEventListener('click', () => {
+                document.getElementById('navMenu').classList.remove('show');
+            });
+        });
+
+        // Scroll to section when clicking on scroll dots
+        document.querySelectorAll('.scroll-dot').forEach(dot => {
+            dot.addEventListener('click', function () {
+                const sectionId = this.getAttribute('data-section');
+                document.getElementById(sectionId).scrollIntoView({ behavior: 'smooth' });
+            });
+        });
+
+        // Update active scroll dot based on scroll position
+        window.addEventListener('scroll', function () {
+            const sections = document.querySelectorAll('section');
+            const scrollDots = document.querySelectorAll('.scroll-dot');
+            let currentSection = '';
+
+            sections.forEach(section => {
+                const sectionTop = section.offsetTop - 100;
+                const sectionHeight = section.clientHeight;
+                if (scrollY >= sectionTop && scrollY < sectionTop + sectionHeight) {
+                    currentSection = section.getAttribute('id');
+                }
+            });
+
+            scrollDots.forEach(dot => {
+                dot.classList.remove('active');
+                if (dot.getAttribute('data-section') === currentSection) {
+                    dot.classList.add('active');
+                }
+            });
+        });
+
+        // Fade-in animation on scroll
+        const fadeElements = document.querySelectorAll('.fade-in');
+
+        const fadeInOnScroll = function () {
+            fadeElements.forEach(element => {
+                const elementTop = element.getBoundingClientRect().top;
+                const elementVisible = 150;
+
+                if (elementTop < window.innerHeight - elementVisible) {
+                    element.classList.add('visible');
+                }
+            });
+        };
+
+        // Initial check
+        fadeInOnScroll();
+
+        // Check on scroll
+        window.addEventListener('scroll', fadeInOnScroll);
+
+        // Smooth scrolling for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+
+                const targetId = this.getAttribute('href');
+                if (targetId === '#') return;
+
+                const targetElement = document.querySelector(targetId);
+                if (targetElement) {
+                    window.scrollTo({
+                        top: targetElement.offsetTop - 80,
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+
+        // Application button alert (for demo purposes)
+        document.querySelectorAll('a[href="https://ayute.africa/nigeria"]').forEach(button => {
+            button.addEventListener('click', function (e) {
+                // In a real implementation, this would just follow the link
+                // For demo purposes, we'll show an alert
+                if (!this.getAttribute('target')) {
+                    e.preventDefault();
+                    alert("In the live version, this would take you to the application form at https://ayute.africa/nigeria");
+                }
+            });
+        });
+    </script>
+</body>
+
+</html>

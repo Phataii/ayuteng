@@ -1,0 +1,847 @@
+@model ayuteng.Models.Application
+
+@{
+    ViewData["Title"] = "Documents & Agreements";
+    ViewData["CurrentStep"] = 9;
+    ViewData["StepTitle"] = "Documents & Agreements";
+    ViewData["CompletedSteps"] = new List<int> { 1, 2, 3, 4, 5, 6, 7, 8 };
+}
+
+<div class="step-form">
+    <div class="section-header">
+        <h2>Documents & Agreements</h2>
+        <p class="form-subtitle">Upload required documents and agree to terms.</p>
+    </div>
+
+    <form id="step9Form" method="post">
+        @Html.AntiForgeryToken()
+
+        <div class="section-card">
+            <h3 class="section-title">
+                <span class="section-icon">📄</span>
+                Required Documents
+            </h3>
+            <p class="section-description">
+                Please upload the following documents. All documents must be in PDF format (max 10MB).
+            </p>
+
+            <div class="document-grid">
+                <!-- Pitch Deck -->
+                <div class="document-item">
+                    <div class="document-header">
+                        <span class="document-icon">📊</span>
+                        <div>
+                            <h4>Pitch Deck <span class="required-star">*</span></h4>
+                            <p class="document-description">Company presentation (max 20 slides)</p>
+                        </div>
+                    </div>
+                    <div class="document-upload">
+                        <div class="upload-area" id="pitchDeckUpload" data-field="PitchDeckUrl">
+                            <input name="PitchDeckUrl" type="hidden" id="PitchDeckUrl" value="@Model?.PitchDeckUrl">
+                            <input type="file" accept=".pdf" class="file-input" id="pitchDeckFile">
+                            <div class="upload-content">
+                                <span class="upload-icon">📤</span>
+                                <p class="upload-text">Drag & drop or <span class="upload-link">browse</span></p>
+                                <p class="upload-subtext">PDF up to 10MB</p>
+                            </div>
+                        </div>
+                        <div class="upload-status" id="pitchDeckStatus">
+                            <span class="status-icon">⏳</span>
+                            <span class="status-text">No file selected</span>
+                        </div>
+                    </div>
+                    <span class="validation-error" id="PitchDeckUrlError"></span>
+                </div>
+
+                <!-- CAC Certificate -->
+                <div class="document-item">
+                    <div class="document-header">
+                        <span class="document-icon">🏢</span>
+                        <div>
+                            <h4>CAC Certificate <span class="required-star">*</span></h4>
+                            <p class="document-description">Certificate of incorporation</p>
+                        </div>
+                    </div>
+                    <div class="document-upload">
+                        <div class="upload-area" id="cacUpload" data-field="CacUrl">
+                            <input name="CacUrl" type="hidden" id="CacUrl" value="@Model?.CacUrl">
+                            <input type="file" accept=".pdf" class="file-input" id="cacFile">
+                            <div class="upload-content">
+                                <span class="upload-icon">📤</span>
+                                <p class="upload-text">Drag & drop or <span class="upload-link">browse</span></p>
+                                <p class="upload-subtext">PDF up to 10MB</p>
+                            </div>
+                        </div>
+                        <div class="upload-status" id="cacStatus">
+                            <span class="status-icon">⏳</span>
+                            <span class="status-text">No file selected</span>
+                        </div>
+                    </div>
+                    <span class="validation-error" id="CacUrlError"></span>
+                </div>
+
+                <!-- TIN Certificate -->
+                <div class="document-item">
+                    <div class="document-header">
+                        <span class="document-icon">💳</span>
+                        <div>
+                            <h4>TIN Certificate<span class="required-star">*</span></h4>
+                            <p class="document-description">Tax identification certificate</p>
+                        </div>
+                    </div>
+                    <div class="document-upload">
+                        <div class="upload-area" id="tinUpload" data-field="TinUrl">
+                            <input name="TinUrl" type="hidden" id="TinUrl" value="@Model?.TinUrl">
+                            <input type="file" accept=".pdf" class="file-input" id="tinFile">
+                            <div class="upload-content">
+                                <span class="upload-icon">📤</span>
+                                <p class="upload-text">Drag & drop or <span class="upload-link">browse</span></p>
+                                <p class="upload-subtext">PDF up to 10MB</p>
+                            </div>
+                        </div>
+                        <div class="upload-status" id="tinStatus">
+                            <span class="status-icon">⏳</span>
+                            <span class="status-text">No file selected</span>
+                        </div>
+                    </div>
+                    <span class="validation-error" id="TinUrlError"></span>
+                </div>
+
+                <!-- Other Documents -->
+                <div class="document-item">
+                    <div class="document-header">
+                        <span class="document-icon">📎</span>
+                        <div>
+                            <h4>Other Documents</h4>
+                            <p class="document-description">Audited Financials if available</p>
+                        </div>
+                    </div>
+                    <div class="document-upload">
+                        <div class="upload-area" id="othersUpload" data-field="OthersUrl">
+                            <input name="OthersUrl" type="hidden" id="OthersUrl" value="@Model?.OthersUrl">
+                            <input type="file" accept=".pdf" class="file-input" id="othersFile">
+                            <div class="upload-content">
+                                <span class="upload-icon">📤</span>
+                                <p class="upload-text">Drag & drop or <span class="upload-link">browse</span></p>
+                                <p class="upload-subtext">PDF up to 10MB</p>
+                            </div>
+                        </div>
+                        <div class="upload-status" id="othersStatus">
+                            <span class="status-icon">⏳</span>
+                            <span class="status-text">No file selected</span>
+                        </div>
+                    </div>
+                    <span class="validation-error" id="OthersUrlError"></span>
+                </div>
+            </div>
+        </div>
+
+        <div class="section-card">
+            <h3 class="section-title">
+                <span class="section-icon">📝</span>
+                Terms & Agreements
+            </h3>
+
+            <div class="terms-container">
+                <!-- Ayute Terms -->
+                <div class="terms-item">
+                    <div class="terms-header">
+                        <h4>Ayute Terms of Service</h4>
+                        <a href="~/tos_policy.pdf" target="_blank" class="terms-link">View full terms</a>
+                    </div>
+                    <div class="terms-content">
+                        <p>By checking this box, I acknowledge that I have read and agree to Ayute's Terms of Service,
+                            Privacy Policy, and all program requirements.</p>
+                    </div>
+                    <div class="terms-agreement">
+                        <label class="checkbox-label required">
+                            <input name="AgreeToToS_Ayute" id="AgreeToToS_Ayute" type="checkbox"
+                                @(Model?.AgreeToToS_Ayute == true ? "checked" : "")>
+                            <span class="checkmark"></span>
+                            I agree to Ayute's Terms of Service
+                        </label>
+                    </div>
+                    <span class="validation-error" id="AgreeToToS_AyuteError"></span>
+                </div>
+
+                <!-- Heifer Terms -->
+                <div class="terms-item">
+                    <div class="terms-header">
+                        <h4>Heifer International Terms</h4>
+                        <a href="~/tos_policy.pdf" target="_blank" class="terms-link">View full terms</a>
+                    </div>
+                    <div class="terms-content">
+                        <p>By checking this box, I acknowledge that I have read and agree to Heifer International's
+                            program terms, eligibility criteria, and reporting requirements.</p>
+                    </div>
+                    <div class="terms-agreement">
+                        <label class="checkbox-label required">
+                            <input name="AgreeToToS_Heifer" id="AgreeToToS_Heifer" type="checkbox"
+                                @(Model?.AgreeToToS_Heifer == true ? "checked" : "")>
+                            <span class="checkmark"></span>
+                            I agree to Heifer International's Terms
+                        </label>
+                    </div>
+                    <span class="validation-error" id="AgreeToToS_HeiferError"></span>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-actions">
+            <div class="final-submit">
+                <button type="submit" class="btn btn-primary btn-submit btn-final" id="submitBtn">
+                    🚀 Submit Application
+                </button>
+                <p class="submit-note">
+                    Once submitted, your application cannot be edited. You will receive a confirmation email.
+                </p>
+            </div>
+        </div>
+    </form>
+</div>
+
+<style>
+    /* Step 9 Specific Styles */
+    .section-description {
+        color: var(--gray);
+        margin-bottom: 25px;
+        font-size: 15px;
+        line-height: 1.5;
+    }
+
+    .document-grid {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+
+    @@media (min-width: 768px) {
+        .document-grid {
+            grid-template-columns: 1fr 1fr;
+        }
+    }
+
+    .document-item {
+        background: var(--light-gray);
+        border-radius: 10px;
+        padding: 20px;
+        border: 1px solid var(--input-border);
+    }
+
+    .document-header {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        margin-bottom: 20px;
+    }
+
+    .document-icon {
+        font-size: 24px;
+        width: 40px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: var(--white);
+        border-radius: 8px;
+    }
+
+    .document-header h4 {
+        margin: 0;
+        font-size: 16px;
+        color: var(--primary-blue);
+    }
+
+    .document-description {
+        margin: 5px 0 0 0;
+        font-size: 13px;
+        color: var(--gray);
+    }
+
+    .required-star {
+        color: var(--error-color);
+    }
+
+    /* Upload Area */
+    .upload-area {
+        border: 2px dashed var(--input-border);
+        border-radius: 8px;
+        padding: 25px;
+        text-align: center;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        background: var(--white);
+    }
+
+    .upload-area:hover {
+        border-color: var(--primary-green);
+        background: var(--light-green);
+    }
+
+    .upload-area.dragover {
+        border-color: var(--primary-green);
+        background: var(--light-green);
+        transform: scale(1.02);
+    }
+
+    .file-input {
+        display: none;
+    }
+
+    .upload-content {
+        pointer-events: none;
+    }
+
+    .upload-icon {
+        font-size: 32px;
+        margin-bottom: 10px;
+        display: block;
+    }
+
+    .upload-text {
+        margin: 0;
+        color: var(--gray);
+    }
+
+    .upload-link {
+        color: var(--primary-green);
+        font-weight: 600;
+    }
+
+    .upload-subtext {
+        margin: 5px 0 0 0;
+        font-size: 12px;
+        color: var(--gray);
+    }
+
+    /* Upload Status */
+    .upload-status {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-top: 15px;
+        font-size: 14px;
+    }
+
+    .status-icon {
+        font-size: 16px;
+    }
+
+    .status-text {
+        color: var(--gray);
+    }
+
+    .status-text.success {
+        color: var(--success-color);
+    }
+
+    .status-text.error {
+        color: var(--error-color);
+    }
+
+    /* Progress Bar */
+    .progress-bar {
+        width: 100%;
+        height: 6px;
+        background: var(--input-border);
+        border-radius: 3px;
+        margin-top: 10px;
+        overflow: hidden;
+    }
+
+    .progress-fill {
+        height: 100%;
+        background: var(--primary-green);
+        border-radius: 3px;
+        width: 0%;
+        transition: width 0.3s ease;
+    }
+
+    /* Terms Container */
+    .terms-container {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 25px;
+    }
+
+    @@media (min-width: 768px) {
+        .terms-container {
+            grid-template-columns: 1fr 1fr;
+        }
+    }
+
+    .terms-item {
+        background: var(--light-gray);
+        border-radius: 10px;
+        padding: 20px;
+        border: 1px solid var(--input-border);
+    }
+
+    .terms-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 15px;
+    }
+
+    .terms-header h4 {
+        margin: 0;
+        font-size: 16px;
+        color: var(--primary-blue);
+    }
+
+    .terms-link {
+        font-size: 14px;
+        color: var(--primary-green);
+        text-decoration: none;
+        font-weight: 500;
+    }
+
+    .terms-link:hover {
+        text-decoration: underline;
+    }
+
+    .terms-content {
+        margin-bottom: 20px;
+    }
+
+    .terms-content p {
+        margin: 0;
+        font-size: 14px;
+        line-height: 1.5;
+        color: var(--gray);
+    }
+
+    .terms-agreement {
+        margin-top: 15px;
+    }
+
+    /* Final Submit */
+    .final-submit {
+        margin-top: 10px;
+        text-align: center;
+    }
+
+    .btn-final {
+        padding: 16px 40px;
+        font-size: 18px;
+        font-weight: 600;
+    }
+
+    .submit-note {
+        margin-top: 15px;
+        color: var(--gray);
+        font-size: 14px;
+        line-height: 1.5;
+    }
+
+    /* Responsive */
+    @@media (max-width: 767px) {
+        .document-header {
+            flex-direction: column;
+            text-align: center;
+            gap: 10px;
+        }
+
+        .upload-area {
+            padding: 20px;
+        }
+
+        .btn-final {
+            width: 100%;
+        }
+    }
+</style>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const form = document.getElementById('step9Form');
+        const submitBtn = document.getElementById('submitBtn');
+
+        // Extract application ID from current URL
+        const currentUrl = window.location.pathname;
+        const urlSegments = currentUrl.split('/');
+        const applicationId = urlSegments[urlSegments.length - 1];
+
+        // Validate it's a GUID
+        const guidPattern = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
+        if (!guidPattern.test(applicationId)) {
+            console.error('Invalid application ID in URL:', applicationId);
+            showAlert('Invalid application. Please start from step 1.');
+            return;
+        }
+
+        // API endpoints
+        const STEP9_API_ENDPOINT = `/api/application/step-nine/${applicationId}`;
+        const UPLOAD_API_ENDPOINT = '/api/application/upload-document';
+
+        // File upload handling
+        const uploadAreas = document.querySelectorAll('.upload-area');
+
+        uploadAreas.forEach(area => {
+            const fileInput = area.querySelector('.file-input');
+            const uploadStatus = area.nextElementSibling;
+            const hiddenInput = area.querySelector('input[type="hidden"]');
+            const fieldName = area.dataset.field;
+
+            // Add progress bar
+            const progressBar = document.createElement('div');
+            progressBar.className = 'progress-bar';
+            progressBar.innerHTML = '<div class="progress-fill"></div>';
+            uploadStatus.parentNode.insertBefore(progressBar, uploadStatus.nextSibling);
+
+            // Click to upload
+            area.addEventListener('click', () => fileInput.click());
+
+            // Browse link
+            const browseLink = area.querySelector('.upload-link');
+            if (browseLink) {
+                browseLink.parentElement.style.pointerEvents = 'auto';
+                browseLink.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    fileInput.click();
+                });
+            }
+
+            // File input change
+            fileInput.addEventListener('change', function () {
+                if (this.files.length > 0) {
+                    const file = this.files[0];
+
+                    // Validate file
+                    if (!validateFile(file)) {
+                        updateStatus(uploadStatus, 'Please upload a PDF file under 10MB', 'error');
+                        return;
+                    }
+
+                    // Upload to backend
+                    uploadToBackend(file, fieldName, applicationId, uploadStatus, hiddenInput, progressBar);
+                }
+            });
+
+            // Drag and drop
+            ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+                area.addEventListener(eventName, preventDefaults, false);
+            });
+
+            function preventDefaults(e) {
+                e.preventDefault();
+                e.stopPropagation();
+            }
+
+            ['dragenter', 'dragover'].forEach(eventName => {
+                area.addEventListener(eventName, () => area.classList.add('dragover'), false);
+            });
+
+            ['dragleave', 'drop'].forEach(eventName => {
+                area.addEventListener(eventName, () => area.classList.remove('dragover'), false);
+            });
+
+            area.addEventListener('drop', (e) => {
+                const dt = e.dataTransfer;
+                const files = dt.files;
+
+                if (files.length > 0) {
+                    fileInput.files = files;
+                    fileInput.dispatchEvent(new Event('change'));
+                }
+            });
+        });
+
+        function validateFile(file) {
+            // Check file type
+            if (!file.type.includes('pdf') && !file.name.toLowerCase().endsWith('.pdf')) {
+                return false;
+            }
+
+            // Check file size (10MB)
+            if (file.size > 10 * 1024 * 1024) {
+                return false;
+            }
+
+            return true;
+        }
+
+        async function uploadToBackend(file, fieldName, applicationId, statusElement, hiddenInput, progressBar) {
+            // Show uploading status
+            updateStatus(statusElement, 'Uploading...', 'uploading');
+
+            // Reset progress bar
+            const progressFill = progressBar.querySelector('.progress-fill');
+            progressFill.style.width = '0%';
+
+            // Create form data
+            const formData = new FormData();
+            formData.append('file', file);
+            formData.append('fieldName', fieldName);
+            formData.append('applicationId', applicationId);
+
+            try {
+                // Get anti-forgery token
+                const token = document.querySelector('input[name="__RequestVerificationToken"]').value;
+
+                // Upload file
+                const response = await fetch(UPLOAD_API_ENDPOINT, {
+                    method: 'POST',
+                    headers: {
+                        'RequestVerificationToken': token
+                    },
+                    body: formData
+                });
+
+                // Handle progress
+                const reader = response.body.getReader();
+                const contentLength = +response.headers.get('Content-Length');
+                let receivedLength = 0;
+                let chunks = [];
+
+                while (true) {
+                    const { done, value } = await reader.read();
+
+                    if (done) {
+                        break;
+                    }
+
+                    chunks.push(value);
+                    receivedLength += value.length;
+
+                    // Update progress
+                    if (contentLength) {
+                        const percent = Math.round((receivedLength / contentLength) * 100);
+                        progressFill.style.width = percent + '%';
+                    }
+                }
+
+                // Combine chunks
+                const chunksAll = new Uint8Array(receivedLength);
+                let position = 0;
+                for (let chunk of chunks) {
+                    chunksAll.set(chunk, position);
+                    position += chunk.length;
+                }
+
+                // Parse response
+                const result = JSON.parse(new TextDecoder("utf-8").decode(chunksAll));
+
+                if (result.success) {
+                    // Update hidden input with Cloudinary URL
+                    if (hiddenInput) {
+                        hiddenInput.value = result.url;
+                    }
+
+                    // Show success status
+                    updateStatus(statusElement, `Uploaded: ${file.name}`, 'success');
+
+                    // Store in localStorage for draft
+                    const key = `draft_${fieldName}`;
+                    localStorage.setItem(key, result.url);
+                } else {
+                    updateStatus(statusElement, result.message || 'Upload failed', 'error');
+                }
+            } catch (error) {
+                console.error('Upload error:', error);
+                updateStatus(statusElement, 'Upload failed. Please try again.', 'error');
+            }
+        }
+
+        function updateStatus(element, text, status) {
+            const icon = element.querySelector('.status-icon');
+            const textSpan = element.querySelector('.status-text');
+
+            if (!textSpan) return;
+
+            textSpan.textContent = text;
+            textSpan.className = 'status-text';
+
+            switch (status) {
+                case 'uploading':
+                    icon.textContent = '⏳';
+                    break;
+                case 'success':
+                    icon.textContent = '✅';
+                    textSpan.classList.add('success');
+                    break;
+                case 'error':
+                    icon.textContent = '❌';
+                    textSpan.classList.add('error');
+                    break;
+                default:
+                    icon.textContent = '⏳';
+            }
+        }
+
+        // Load existing uploaded files
+        function loadExistingFiles() {
+            const hiddenInputs = document.querySelectorAll('input[type="hidden"]');
+            hiddenInputs.forEach(input => {
+                if (input.value) {
+                    const fieldName = input.id;
+                    const uploadArea = input.closest('.upload-area');
+                    const statusElement = uploadArea ? uploadArea.nextElementSibling : null;
+
+                    if (statusElement) {
+                        const fileName = input.value.split('/').pop();
+                        updateStatus(statusElement, `Uploaded: ${fileName}`, 'success');
+                    }
+                }
+            });
+        }
+
+        loadExistingFiles();
+
+        // Form submission via API
+        form.addEventListener('submit', async function (e) {
+            e.preventDefault();
+
+            // Clear previous errors
+            clearErrors();
+
+            // Check required agreements
+            const ayuteCheck = document.getElementById('AgreeToToS_Ayute');
+            const heiferCheck = document.getElementById('AgreeToToS_Heifer');
+
+            let isValid = true;
+
+            if (!ayuteCheck.checked) {
+                showFieldError('AgreeToToS_Ayute', 'Please agree to Ayute Terms of Service');
+                isValid = false;
+            }
+
+            if (!heiferCheck.checked) {
+                showFieldError('AgreeToToS_Heifer', 'Please agree to Heifer International Terms');
+                isValid = false;
+            }
+
+            // Validate required documents
+            const pitchDeckUrl = document.getElementById('PitchDeckUrl').value;
+            const cacUrl = document.getElementById('CacUrl').value;
+
+            if (!pitchDeckUrl) {
+                showFieldError('PitchDeckUrl', 'Pitch Deck is required');
+                isValid = false;
+            }
+
+            if (!cacUrl) {
+                showFieldError('CacUrl', 'CAC Certificate is required');
+                isValid = false;
+            }
+
+            if (!isValid) {
+                return;
+            }
+
+            // Show confirmation dialog
+            if (!confirm('Are you sure you want to submit your application? You will not be able to edit it after submission.')) {
+                return;
+            }
+
+            // Show loading
+            submitBtn.classList.add('loading');
+            submitBtn.disabled = true;
+
+            try {
+                // Prepare form data
+                const data = {
+                    PitchDeckUrl: document.getElementById('PitchDeckUrl').value,
+                    CacUrl: document.getElementById('CacUrl').value,
+                    TinUrl: document.getElementById('TinUrl').value,
+                    OthersUrl: document.getElementById('OthersUrl').value,
+                    AgreeToToS_Ayute: document.getElementById('AgreeToToS_Ayute').checked,
+                    AgreeToToS_Heifer: document.getElementById('AgreeToToS_Heifer').checked
+                };
+
+                // Get anti-forgery token
+                const token = document.querySelector('input[name="__RequestVerificationToken"]').value;
+
+                // Submit to API with application ID in route
+                const response = await fetch(STEP9_API_ENDPOINT, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'RequestVerificationToken': token
+                    },
+                    credentials: 'include',
+                    body: JSON.stringify(data)
+                });
+
+                const result = await response.json();
+
+                if (response.ok && result.success) {
+                    // Success - redirect to confirmation page
+                    if (result.redirectUrl) {
+                        window.location.href = result.redirectUrl;
+                    } else {
+                        // Default redirect to confirmation page
+                        window.location.href = `/application/success/${applicationId}`;
+                    }
+                } else {
+                    // Handle validation errors from server
+                    if (result.errors) {
+                        displayServerErrors(result.errors);
+                    } else {
+                        throw new Error(result.message || 'Submission failed');
+                    }
+                }
+
+            } catch (error) {
+                console.error('Submission error:', error);
+                showAlert(error.message || 'An error occurred. Please try again.');
+            } finally {
+                submitBtn.classList.remove('loading');
+                submitBtn.disabled = false;
+            }
+        });
+
+        function showFieldError(fieldId, message) {
+            const field = document.getElementById(fieldId);
+            const errorElement = document.getElementById(fieldId + 'Error');
+
+            if (field) {
+                field.classList.add('input-validation-error');
+            }
+
+            if (errorElement) {
+                errorElement.textContent = message;
+            }
+        }
+
+        function clearErrors() {
+            document.querySelectorAll('.validation-error').forEach(el => {
+                el.textContent = '';
+            });
+
+            document.querySelectorAll('input, textarea').forEach(el => {
+                el.classList.remove('input-validation-error');
+            });
+        }
+
+        function displayServerErrors(errors) {
+            clearErrors();
+
+            Object.keys(errors).forEach(fieldName => {
+                const field = document.getElementById(fieldName);
+                const errorElement = document.getElementById(fieldName + 'Error');
+
+                if (field && errorElement) {
+                    field.classList.add('input-validation-error');
+                    errorElement.textContent = errors[fieldName].join(', ');
+
+                    if (Object.keys(errors)[0] === fieldName) {
+                        field.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    }
+                }
+            });
+        }
+
+        function showAlert(message) {
+            alert(message);
+        }
+    });
+</script>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

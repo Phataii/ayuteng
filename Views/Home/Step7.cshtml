@@ -1,0 +1,610 @@
+@model ayuteng.Models.Application
+
+@{
+    ViewData["Title"] = "Team";
+    ViewData["CurrentStep"] = 7;
+    ViewData["StepTitle"] = "Team & Expertise";
+    ViewData["CompletedSteps"] = new List<int> { 1, 2, 3, 4, 5, 6 };
+}
+
+<div class="step-form">
+    <div class="section-header">
+        <h2>Team & Expertise</h2>
+        <p class="form-subtitle">Tell us about your founding team and their capabilities.</p>
+    </div>
+
+    <form id="step7Form" method="post">
+        @Html.AntiForgeryToken()
+        
+        <div class="section-card">
+            <h3 class="section-title">
+                <span class="section-icon">👥</span>
+                Team Composition
+            </h3>
+            
+            <div class="form-grid">
+                <div class="form-group">
+                    <label for="NoOfFounders" class="form-label required">
+                        Number of Founders
+                        <span class="field-info">Total number of founding team members</span>
+                    </label>
+                    <input name="NoOfFounders"
+                           id="NoOfFounders"
+                           type="number" 
+                           class="form-control" 
+                           min="1"
+                           max="10"
+                           placeholder="e.g., 3"
+                           value="@Model?.NoOfFounders"
+                           required>
+                    <span class="validation-error" id="NoOfFoundersError"></span>
+                </div>
+
+                <div class="form-group">
+                    <label for="NoOfEmployees" class="form-label required">
+                        Total Employees
+                        <span class="field-info">Including founders and full-time staff</span>
+                    </label>
+                    <input name="NoOfEmployees"
+                           id="NoOfEmployees"
+                           type="number" 
+                           class="form-control" 
+                           min="1"
+                           max="1000"
+                           placeholder="e.g., 15"
+                           value="@Model?.NoOfEmployees"
+                           required>
+                    <span class="validation-error" id="NoOfEmployeesError"></span>
+                </div>
+            </div>
+        </div>
+
+        <div class="section-card">
+            <h3 class="section-title">
+                <span class="section-icon">🏆</span>
+                Founders & Background
+            </h3>
+            <div class="form-group">
+                <label for="FoundersDetails" class="form-label required">
+                    Founders' Background & Experience
+                    <span class="field-info">Brief bios, relevant experience, and roles</span>
+                </label>
+                <textarea name="FoundersDetails"
+                          id="FoundersDetails"
+                          class="form-control textarea" 
+                          rows="6"
+                          placeholder="Provide brief backgrounds for each founder, their roles, and relevant experience..."
+                          maxlength="2000"
+                          required>@Model?.FoundersDetails</textarea>
+                <div class="textarea-counter">
+                    <span id="FoundersDetailsCounter">@(Model?.FoundersDetails?.Length ?? 0)</span>/2000 characters
+                </div>
+                <span class="validation-error" id="FoundersDetailsError"></span>
+            </div>
+        </div>
+
+        <div class="section-card">
+            <h3 class="section-title">
+                <span class="section-icon">🎯</span>
+                Team Skills
+            </h3>
+            <div class="form-group">
+                <label for="TeamSkill" class="form-label required">
+                    Key Team Skills & Capabilities
+                    <span class="field-info">What specific skills does your team bring to this venture?</span>
+                </label>
+                <textarea name="TeamSkill"
+                          id="TeamSkill"
+                          class="form-control textarea" 
+                          rows="4"
+                          placeholder="Describe the key skills, expertise, and capabilities of your team..."
+                          maxlength="1500"
+                          required>@Model?.TeamSkill</textarea>
+                <div class="textarea-counter">
+                    <span id="TeamSkillCounter">@(Model?.TeamSkill?.Length ?? 0)</span>/1500 characters
+                </div>
+                <span class="validation-error" id="TeamSkillError"></span>
+            </div>
+        </div>
+
+        <div class="form-actions">
+            <button type="submit" class="btn btn-primary btn-submit" id="submitBtn">
+                Save & Continue →
+            </button>
+        </div>
+    </form>
+</div>
+
+<style>
+    /* Step 7 Specific Styles */
+    .step-form {
+        max-width: 800px;
+        margin: 0 auto;
+    }
+
+    h2 {
+        color: var(--primary-blue);
+        margin-bottom: 8px;
+        font-size: 28px;
+        font-weight: 700;
+    }
+
+    .form-subtitle {
+        color: var(--gray);
+        margin-bottom: 30px;
+        font-size: 16px;
+        line-height: 1.5;
+    }
+
+    .form-grid {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 20px;
+        margin-bottom: 30px;
+    }
+
+    @@media (min-width: 768px) {
+        .form-grid {
+            grid-template-columns: 1fr 1fr;
+        }
+        
+        .full-width {
+            grid-column: 1 / -1;
+        }
+    }
+
+    .form-group {
+        margin-bottom: 25px;
+    }
+
+    .form-label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: 600;
+        color: var(--primary-blue);
+        font-size: 14px;
+    }
+
+    .form-label.required::after {
+        content: ' *';
+        color: var(--error-color);
+    }
+
+    .field-info {
+        display: block;
+        font-weight: normal;
+        font-size: 12px;
+        color: var(--gray);
+        margin-top: 2px;
+    }
+
+    .form-control {
+        width: 100%;
+        padding: 12px 16px;
+        border: 2px solid var(--input-border);
+        border-radius: 8px;
+        font-size: 16px;
+        transition: all 0.3s ease;
+        background: var(--white);
+        color: var(--primary-blue);
+    }
+
+    .form-control:focus {
+        outline: none;
+        border-color: var(--primary-green);
+        box-shadow: 0 0 0 3px rgba(57, 179, 74, 0.1);
+    }
+
+    .form-control::placeholder {
+        color: #a0a0a0;
+    }
+
+    /* Step 7 Specific Styles */
+    .section-header {
+        margin-bottom: 30px;
+    }
+
+    .section-card {
+        background: var(--white);
+        border-radius: 12px;
+        padding: 25px;
+        margin-bottom: 25px;
+        border: 1px solid var(--input-border);
+        box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    }
+
+    .section-title {
+        color: var(--primary-blue);
+        margin-bottom: 20px;
+        font-size: 20px;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .section-icon {
+        font-size: 24px;
+    }
+
+    .textarea {
+        resize: vertical;
+        min-height: 100px;
+        font-family: inherit;
+        line-height: 1.5;
+    }
+
+    .textarea-counter {
+        text-align: right;
+        font-size: 12px;
+        color: var(--gray);
+        margin-top: 4px;
+    }
+
+    .textarea-counter.warning {
+        color: #F59E0B;
+    }
+
+    .textarea-counter.danger {
+        color: var(--error-color);
+    }
+
+    /* Validation Styles */
+    .validation-error {
+        display: block;
+        color: var(--error-color);
+        font-size: 12px;
+        margin-top: 6px;
+        min-height: 18px;
+    }
+
+    .form-control.input-validation-error {
+        border-color: var(--error-color);
+    }
+
+    .form-control.input-validation-error:focus {
+        box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
+    }
+
+    /* Form Actions */
+    .form-actions {
+        margin-top: 40px;
+        padding-top: 20px;
+        border-top: 1px solid var(--input-border);
+    }
+
+    .btn-submit {
+        width: 100%;
+        padding: 16px;
+        font-size: 16px;
+        font-weight: 600;
+    }
+
+    /* Mobile Optimizations */
+    @@media (max-width: 767px) {
+        h2 {
+            font-size: 24px;
+        }
+        
+        .form-subtitle {
+            font-size: 15px;
+        }
+        
+        .form-control {
+            padding: 14px 16px;
+            font-size: 16px;
+        }
+        
+        .section-card {
+            padding: 20px;
+        }
+    }
+
+    /* Loading State */
+    .btn-submit.loading {
+        position: relative;
+        color: transparent;
+    }
+
+    .btn-submit.loading::after {
+        content: '';
+        position: absolute;
+        width: 20px;
+        height: 20px;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        border: 2px solid rgba(255, 255, 255, 0.3);
+        border-radius: 50%;
+        border-top-color: white;
+        animation: spin 1s ease infinite;
+    }
+
+    @@keyframes spin {
+        to { transform: translate(-50%, -50%) rotate(360deg); }
+    }
+</style>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const form = document.getElementById('step7Form');
+        const submitBtn = document.getElementById('submitBtn');
+        
+        // Extract application ID from current URL
+        const currentUrl = window.location.pathname;
+        const urlSegments = currentUrl.split('/');
+        const applicationId = urlSegments[urlSegments.length - 1];
+        
+        // Validate it's a GUID
+        const guidPattern = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+        
+        if (!guidPattern.test(applicationId)) {
+            console.error('Invalid application ID in URL:', applicationId);
+            showAlert('Invalid application. Please start from step 1.');
+            return;
+        }
+        
+        // API endpoint with application ID
+        const API_ENDPOINT = `/api/application/step-seven/${applicationId}`;
+        
+        // Character counters
+        const textareas = document.querySelectorAll('.textarea');
+        textareas.forEach(textarea => {
+            const counterId = textarea.id + 'Counter';
+            const counter = document.getElementById(counterId);
+            
+            if (counter) {
+                // Initialize counter
+                counter.textContent = textarea.value.length;
+                updateCounterStyle(counter, textarea.value.length, textarea.maxLength);
+                
+                // Update on input
+                textarea.addEventListener('input', function() {
+                    counter.textContent = this.value.length;
+                    updateCounterStyle(counter, this.value.length, this.maxLength);
+                });
+            }
+        });
+        
+        function updateCounterStyle(counter, length, maxLength) {
+            const max = parseInt(maxLength) || 0;
+            counter.classList.remove('warning', 'danger');
+            
+            if (length > max * 0.9) {
+                counter.classList.add('danger');
+            } else if (length > max * 0.75) {
+                counter.classList.add('warning');
+            }
+        }
+        
+        // Form submission via API
+        form.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            // Clear previous errors
+            clearErrors();
+            
+            // Client-side validation
+            let isValid = true;
+            
+            // Validate number fields
+            const numberFields = [
+                { 
+                    id: 'NoOfFounders', 
+                    name: 'Number of founders', 
+                    min: 1,
+                    max: 10 
+                },
+                { 
+                    id: 'NoOfEmployees', 
+                    name: 'Number of employees', 
+                    min: 1,
+                    max: 1000 
+                }
+            ];
+            
+            numberFields.forEach(field => {
+                const input = document.getElementById(field.id);
+                if (input && input.value) {
+                    const value = parseInt(input.value);
+                    
+                    if (isNaN(value)) {
+                        showFieldError(field.id, `Please enter a valid number for ${field.name}`);
+                        isValid = false;
+                    } else if (value < field.min) {
+                        showFieldError(field.id, `${field.name} must be at least ${field.min}`);
+                        isValid = false;
+                    } else if (value > field.max) {
+                        showFieldError(field.id, `${field.name} cannot exceed ${field.max}`);
+                        isValid = false;
+                    }
+                } else if (!input || !input.value.trim()) {
+                    showFieldError(field.id, `${field.name} is required`);
+                    isValid = false;
+                }
+            });
+            
+            // Validate that employees >= founders
+            const foundersField = document.getElementById('NoOfFounders');
+            const employeesField = document.getElementById('NoOfEmployees');
+            
+            if (foundersField.value && employeesField.value) {
+                const founders = parseInt(foundersField.value);
+                const employees = parseInt(employeesField.value);
+                
+                if (!isNaN(founders) && !isNaN(employees) && founders > employees) {
+                    showFieldError('NoOfFounders', 
+                        'Number of founders cannot be greater than total employees');
+                    isValid = false;
+                }
+            }
+            
+            // Validate text length limits
+            const textareaIds = [
+                { id: 'FoundersDetails', max: 2000 },
+                { id: 'TeamSkill', max: 1500 }
+            ];
+            
+            textareaIds.forEach(field => {
+                const textarea = document.getElementById(field.id);
+                if (textarea && textarea.value.length > field.max) {
+                    showFieldError(field.id, `Cannot exceed ${field.max} characters`);
+                    isValid = false;
+                }
+            });
+            
+            if (!isValid) {
+                return;
+            }
+            
+            // Show loading state
+            submitBtn.classList.add('loading');
+            submitBtn.disabled = true;
+            
+            try {
+                // Prepare form data
+                const data = {
+                    NoOfFounders: document.getElementById('NoOfFounders').value,
+                    NoOfEmployees: document.getElementById('NoOfEmployees').value,
+                    FoundersDetails: document.getElementById('FoundersDetails').value,
+                    TeamSkill: document.getElementById('TeamSkill').value
+                };
+                
+                // Get anti-forgery token
+                const token = document.querySelector('input[name="__RequestVerificationToken"]').value;
+                
+                // Submit to API with application ID in route
+                const response = await fetch(API_ENDPOINT, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'RequestVerificationToken': token
+                    },
+                    credentials: 'include',
+                    body: JSON.stringify(data)
+                });
+                
+                const result = await response.json();
+                
+                if (response.ok && result.success) {
+                    // Success - redirect to next step or final step
+                    if (result.redirectUrl) {
+                        window.location.href = result.redirectUrl;
+                    } else {
+                        // Default redirect to step 8 or completion
+                        window.location.href = `/application/step-eight/${applicationId}`;
+                    }
+                } else {
+                    // Handle validation errors from server
+                    if (result.errors) {
+                        displayServerErrors(result.errors);
+                    } else {
+                        throw new Error(result.message || 'Submission failed');
+                    }
+                }
+                
+            } catch (error) {
+                console.error('Submission error:', error);
+                showAlert(error.message || 'An error occurred. Please try again.');
+            } finally {
+                submitBtn.classList.remove('loading');
+                submitBtn.disabled = false;
+            }
+        });
+        
+        function showFieldError(fieldId, message) {
+            const field = document.getElementById(fieldId);
+            const errorElement = document.getElementById(fieldId + 'Error');
+            
+            if (field) {
+                field.classList.add('input-validation-error');
+            }
+            
+            if (errorElement) {
+                errorElement.textContent = message;
+            }
+        }
+        
+        function clearErrors() {
+            document.querySelectorAll('.validation-error').forEach(el => {
+                el.textContent = '';
+            });
+            
+            document.querySelectorAll('.form-control').forEach(el => {
+                el.classList.remove('input-validation-error');
+            });
+        }
+        
+        function displayServerErrors(errors) {
+            clearErrors();
+            
+            Object.keys(errors).forEach(fieldName => {
+                const field = document.getElementById(fieldName);
+                const errorElement = document.getElementById(fieldName + 'Error');
+                
+                if (field && errorElement) {
+                    field.classList.add('input-validation-error');
+                    errorElement.textContent = errors[fieldName].join(', ');
+                    
+                    if (Object.keys(errors)[0] === fieldName) {
+                        field.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    }
+                }
+            });
+        }
+        
+        function showAlert(message) {
+            alert(message);
+        }
+        
+        // Real-time validation
+        const inputs = form.querySelectorAll('.form-control');
+        inputs.forEach(input => {
+            input.addEventListener('input', function() {
+                this.classList.remove('input-validation-error');
+                const errorElement = document.getElementById(this.id + 'Error');
+                if (errorElement) errorElement.textContent = '';
+            });
+        });
+        
+        // Additional validation for founder-employee comparison
+        if (foundersField && employeesField) {
+            const validateTeamSize = () => {
+                const founders = parseInt(foundersField.value);
+                const employees = parseInt(employeesField.value);
+                
+                if (!isNaN(founders) && !isNaN(employees) && founders > employees) {
+                    showFieldError('NoOfFounders', 
+                        'Number of founders cannot be greater than total employees');
+                } else {
+                    foundersField.classList.remove('input-validation-error');
+                    const errorElement = document.getElementById('NoOfFoundersError');
+                    if (errorElement) errorElement.textContent = '';
+                }
+            };
+            
+            foundersField.addEventListener('blur', validateTeamSize);
+            employeesField.addEventListener('blur', validateTeamSize);
+        }
+        
+        // Load existing data if this page was loaded with data
+        loadExistingData();
+        
+        async function loadExistingData() {
+            try {
+                // This would be called if you have a GET endpoint to load data
+                // const response = await fetch(`/api/application/step-seven/${applicationId}`);
+                // const result = await response.json();
+                // if (result.success && result.data) {
+                //     // Populate form fields
+                // }
+            } catch (error) {
+                console.error('Error loading existing data:', error);
+            }
+        }
+    });
+</script>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

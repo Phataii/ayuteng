@@ -1,0 +1,1076 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Admin Panel</title>
+
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        :root {
+            --primary-green: #39B34A;
+            --primary-yellow: #DEE33B;
+            --primary-blue: #073150;
+            --light-green: #E9F7EC;
+            --light-yellow: #FDFDE8;
+            --light-blue: #F0F7FB;
+            --white: #FFFFFF;
+            --gray: #5D6D7E;
+            --light-gray: #F5F5F5;
+            --dark-gray: #2C3E50;
+            --sidebar-width: 250px;
+            --sidebar-collapsed-width: 70px;
+            --header-height: 70px;
+            --transition-speed: 0.3s;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--light-gray);
+            color: var(--dark-gray);
+            overflow-x: hidden;
+        }
+
+        /* Layout Container */
+        .admin-container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar Styles */
+        .sidebar {
+            width: var(--sidebar-width);
+            background: linear-gradient(180deg, var(--primary-blue) 0%, #0c4168 100%);
+            color: var(--white);
+            position: fixed;
+            height: 100vh;
+            z-index: 1000;
+            transition: all var(--transition-speed) ease;
+            overflow-y: auto;
+            box-shadow: 3px 0 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .sidebar.collapsed {
+            width: var(--sidebar-collapsed-width);
+        }
+
+        .sidebar-header {
+            padding: 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            height: var(--header-height);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+            color: var(--white);
+        }
+
+        .logo-icon {
+            font-size: 24px;
+            color: var(--primary-green);
+        }
+
+        .logo-text {
+            font-size: 20px;
+            font-weight: 700;
+            white-space: nowrap;
+            overflow: hidden;
+        }
+
+        .sidebar.collapsed .logo-text {
+            display: none;
+        }
+
+        .toggle-sidebar {
+            background: transparent;
+            border: none;
+            color: var(--white);
+            font-size: 18px;
+            cursor: pointer;
+            padding: 5px;
+            border-radius: 4px;
+            transition: background-color 0.2s;
+        }
+
+        .toggle-sidebar:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        /* Navigation */
+        .sidebar-nav {
+            padding: 20px 0;
+        }
+
+        .nav-item {
+            list-style: none;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 20px;
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            transition: all 0.2s;
+            border-left: 3px solid transparent;
+            white-space: nowrap;
+        }
+
+        .nav-link:hover {
+            background-color: rgba(255, 255, 255, 0.05);
+            color: var(--white);
+            border-left-color: var(--primary-green);
+        }
+
+        .nav-link.active {
+            background-color: rgba(57, 179, 74, 0.1);
+            color: var(--white);
+            border-left-color: var(--primary-green);
+        }
+
+        .nav-icon {
+            font-size: 18px;
+            width: 24px;
+            text-align: center;
+            color: var(--primary-green);
+        }
+
+        .nav-text {
+            font-size: 15px;
+            font-weight: 500;
+        }
+
+        .sidebar.collapsed .nav-text {
+            display: none;
+        }
+
+        /* Submenu */
+        .has-submenu {
+            position: relative;
+        }
+
+        .submenu-toggle {
+            margin-left: auto;
+            transition: transform var(--transition-speed);
+        }
+
+        .submenu {
+            padding-left: 45px;
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height var(--transition-speed);
+            background-color: rgba(0, 0, 0, 0.1);
+        }
+
+        .submenu.show {
+            max-height: 500px;
+        }
+
+        .sidebar.collapsed .submenu {
+            display: none;
+        }
+
+        /* Main Content Area */
+        .main-content {
+            flex: 1;
+            margin-left: var(--sidebar-width);
+            transition: margin-left var(--transition-speed);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .sidebar.collapsed~.main-content {
+            margin-left: var(--sidebar-collapsed-width);
+        }
+
+        /* Header */
+        .admin-header {
+            height: var(--header-height);
+            background: var(--white);
+            border-bottom: 1px solid var(--light-green);
+            padding: 0 30px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 999;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        }
+
+        .header-left h1 {
+            font-size: 24px;
+            font-weight: 600;
+            color: var(--primary-blue);
+            margin: 0;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        /* Search Box */
+        .search-box {
+            position: relative;
+        }
+
+        .search-input {
+            padding: 8px 15px 8px 40px;
+            border: 1px solid var(--light-green);
+            border-radius: 6px;
+            font-size: 14px;
+            width: 300px;
+            background-color: var(--light-gray);
+            transition: all 0.3s;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: var(--primary-green);
+            background-color: var(--white);
+            box-shadow: 0 0 0 3px rgba(57, 179, 74, 0.1);
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--gray);
+        }
+
+        /* Notifications */
+        .notification-dropdown {
+            position: relative;
+        }
+
+        .notification-btn {
+            background: transparent;
+            border: none;
+            color: var(--gray);
+            font-size: 20px;
+            cursor: pointer;
+            position: relative;
+            padding: 5px;
+            border-radius: 4px;
+            transition: color 0.2s;
+        }
+
+        .notification-btn:hover {
+            color: var(--primary-green);
+        }
+
+        .notification-badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background-color: #dc3545;
+            color: white;
+            font-size: 11px;
+            padding: 2px 6px;
+            border-radius: 10px;
+            min-width: 18px;
+            text-align: center;
+        }
+
+        .notification-dropdown-menu {
+            position: absolute;
+            right: 0;
+            top: 100%;
+            width: 350px;
+            background: var(--white);
+            border: 1px solid var(--light-green);
+            border-radius: 8px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            padding: 0;
+            margin-top: 10px;
+            display: none;
+            z-index: 1001;
+        }
+
+        .notification-dropdown.show .notification-dropdown-menu {
+            display: block;
+        }
+
+        .notification-header {
+            padding: 15px;
+            border-bottom: 1px solid var(--light-green);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .notification-header h6 {
+            margin: 0;
+            color: var(--primary-blue);
+            font-weight: 600;
+        }
+
+        .notification-items {
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .notification-item {
+            padding: 12px 15px;
+            border-bottom: 1px solid var(--light-gray);
+            display: flex;
+            gap: 10px;
+            transition: background-color 0.2s;
+        }
+
+        .notification-item:hover {
+            background-color: var(--light-green);
+        }
+
+        .notification-item.unread {
+            background-color: var(--light-blue);
+        }
+
+        .notification-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            flex-shrink: 0;
+        }
+
+        .notification-icon.info {
+            background-color: var(--primary-green);
+        }
+
+        .notification-icon.warning {
+            background-color: var(--primary-yellow);
+        }
+
+        .notification-icon.alert {
+            background-color: #dc3545;
+        }
+
+        .notification-content {
+            flex: 1;
+        }
+
+        .notification-content p {
+            margin: 0;
+            font-size: 14px;
+            color: var(--dark-gray);
+        }
+
+        .notification-time {
+            font-size: 12px;
+            color: var(--gray);
+            margin-top: 3px;
+        }
+
+        .notification-footer {
+            padding: 10px 15px;
+            text-align: center;
+            border-top: 1px solid var(--light-green);
+        }
+
+        .notification-footer a {
+            color: var(--primary-green);
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .notification-footer a:hover {
+            text-decoration: underline;
+        }
+
+        /* User Profile */
+        .user-profile {
+            position: relative;
+        }
+
+        .user-btn {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            padding: 5px 10px;
+            border-radius: 6px;
+            transition: background-color 0.2s;
+        }
+
+        .user-btn:hover {
+            background-color: var(--light-green);
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary-green), var(--primary-blue));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 16px;
+        }
+
+        .user-info {
+            text-align: left;
+        }
+
+        .user-name {
+            font-weight: 600;
+            color: var(--primary-blue);
+            font-size: 14px;
+        }
+
+        .user-role {
+            font-size: 12px;
+            color: var(--gray);
+        }
+
+        .user-dropdown-menu {
+            position: absolute;
+            right: 0;
+            top: 100%;
+            width: 200px;
+            background: var(--white);
+            border: 1px solid var(--light-green);
+            border-radius: 8px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            padding: 10px 0;
+            margin-top: 10px;
+            display: none;
+            z-index: 1001;
+        }
+
+        .user-profile.show .user-dropdown-menu {
+            display: block;
+        }
+
+        .user-dropdown-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 15px;
+            color: var(--dark-gray);
+            text-decoration: none;
+            transition: background-color 0.2s;
+            font-size: 14px;
+        }
+
+        .user-dropdown-item:hover {
+            background-color: var(--light-green);
+            color: var(--primary-blue);
+        }
+
+        .user-dropdown-divider {
+            height: 1px;
+            background-color: var(--light-green);
+            margin: 5px 0;
+        }
+
+        /* Main Content Body */
+        .content-body {
+            flex: 1;
+            padding: 30px;
+        }
+
+        /* Footer */
+        .admin-footer {
+            background: var(--white);
+            border-top: 1px solid var(--light-green);
+            padding: 20px 30px;
+            margin-top: auto;
+        }
+
+        .footer-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: var(--gray);
+            font-size: 14px;
+        }
+
+        .footer-links {
+            display: flex;
+            gap: 20px;
+        }
+
+        .footer-links a {
+            color: var(--gray);
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+
+        .footer-links a:hover {
+            color: var(--primary-green);
+        }
+
+        /* Breadcrumb */
+        .breadcrumb {
+            background-color: transparent;
+            padding: 0;
+            margin-bottom: 20px;
+        }
+
+        .breadcrumb-item a {
+            color: var(--primary-green);
+            text-decoration: none;
+        }
+
+        .breadcrumb-item.active {
+            color: var(--gray);
+        }
+
+        /* Cards */
+        .card {
+            border: 1px solid var(--light-green);
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            margin-bottom: 20px;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .card-header {
+            background-color: var(--light-green);
+            border-bottom: 1px solid var(--light-green);
+            padding: 15px 20px;
+            border-radius: 10px 10px 0 0;
+        }
+
+        .card-header h5 {
+            color: var(--primary-blue);
+            margin: 0;
+            font-weight: 600;
+        }
+
+        .card-body {
+            padding: 20px;
+        }
+
+        /* Buttons */
+        .btn-primary {
+            background-color: var(--primary-green);
+            border-color: var(--primary-green);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: #2e8b3e;
+            border-color: #2e8b3e;
+        }
+
+        .btn-outline-primary {
+            color: var(--primary-green);
+            border-color: var(--primary-green);
+        }
+
+        .btn-outline-primary:hover {
+            background-color: var(--primary-green);
+            border-color: var(--primary-green);
+            color: white;
+        }
+
+        /* Stats Cards */
+        .stats-card {
+            text-align: center;
+            padding: 20px;
+        }
+
+        .stats-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 15px;
+            font-size: 24px;
+        }
+
+        .stats-icon.users {
+            background-color: rgba(57, 179, 74, 0.1);
+            color: var(--primary-green);
+        }
+
+        .stats-icon.orders {
+            background-color: rgba(222, 227, 59, 0.1);
+            color: var(--primary-yellow);
+        }
+
+        .stats-icon.revenue {
+            background-color: rgba(7, 49, 80, 0.1);
+            color: var(--primary-blue);
+        }
+
+        .stats-value {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--primary-blue);
+            margin-bottom: 5px;
+        }
+
+        .stats-label {
+            color: var(--gray);
+            font-size: 14px;
+        }
+
+        /* Responsive */
+        @@media (max-width: 992px) {
+            .sidebar {
+                transform: translateX(-100%);
+                width: var(--sidebar-width);
+            }
+
+            .sidebar.show {
+                transform: translateX(0);
+            }
+
+            .main-content {
+                margin-left: 0;
+            }
+
+            .search-input {
+                width: 200px;
+            }
+        }
+
+        @@media (max-width: 768px) {
+            .admin-header {
+                padding: 0 15px;
+            }
+
+            .content-body {
+                padding: 20px 15px;
+            }
+
+            .search-input {
+                width: 150px;
+            }
+
+            .notification-dropdown-menu {
+                width: 280px;
+                right: -50px;
+            }
+        }
+
+        @@media (max-width: 576px) {
+            .header-right {
+                gap: 10px;
+            }
+
+            .search-box {
+                display: none;
+            }
+
+            .user-info {
+                display: none;
+            }
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--light-gray);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--primary-green);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #2e8b3e;
+        }
+    </style>
+
+    @if (IsSectionDefined("Styles"))
+    {
+        @RenderSection("Styles", required: false)
+    }
+</head>
+
+<body>
+    <div class="admin-container">
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <a href="/dashboard" class="logo">
+                    <div class="logo-icon">
+                        <i class="bi bi-shield-check"></i>
+                    </div>
+                    <div class="logo-text">Admin Panel</div>
+                </a>
+                <button class="toggle-sidebar" id="toggleSidebar">
+                    <i class="bi bi-chevron-left"></i>
+                </button>
+            </div>
+
+            <nav class="sidebar-nav">
+                <ul class="nav-list">
+                    <li class="nav-item">
+                        <a href="/dashboard"
+                            class="nav-link @(ViewContext.RouteData.Values["Action"]?.ToString() == "Dashboard" ? "active" : "")">
+                            <i class="nav-icon bi bi-speedometer2"></i>
+                            <span class="nav-text">Dashboard</span>
+                        </a>
+                    </li>
+
+                    <li class="nav-item has-submenu">
+                        <a href="#"
+                            class="submenu-toggle  nav-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Users" ? "active" : "")">
+                            <i class="nav-icon bi bi-people"></i>
+                            <span class="nav-text">Users</span>
+                            <i class="bi bi-chevron-down"></i>
+                        </a>
+                        <ul class="submenu">
+                            @* <li class="nav-item">
+                                <a href="/Admin/Users" class="nav-link">All Users</a>
+                            </li> *@
+                            <li class="nav-item">
+                                <a href="/ayute/admin/create" class="nav-link">Create User</a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="/ayute/admin/list" class="nav-link">Admins</a>
+                            </li>
+                        </ul>
+                    </li>
+
+                    @*<li class="nav-item">
+                        <a href="/Admin/Products"
+                            class="nav-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Products" ? "active" : "")">
+                            <i class="nav-icon bi bi-box"></i>
+                            <span class="nav-text">Products</span>
+                        </a>
+                    </li>
+
+                     <li class="nav-item">
+                        <a href="/Admin/Orders"
+                            class="nav-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Orders" ? "active" : "")">
+                            <i class="nav-icon bi bi-cart-check"></i>
+                            <span class="nav-text">Orders</span>
+                            <span class="badge bg-danger ms-auto">3</span>
+                        </a>
+                    </li> *@
+
+                    <li class="nav-item">
+                        <a href="/applications"
+                            class="nav-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Reports" ? "active" : "")">
+                            <i class="nav-icon bi bi-graph-up"></i>
+                            <span class="nav-text">Reports</span>
+                        </a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a href="/Admin/Settings"
+                            class="nav-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Settings" ? "active" : "")">
+                            <i class="nav-icon bi bi-gear"></i>
+                            <span class="nav-text">Settings</span>
+                        </a>
+                    </li>
+
+                    <li class="nav-item mt-4">
+                        <a href="/" class="nav-link" target="_blank">
+                            <i class="nav-icon bi bi-house-door"></i>
+                            <span class="nav-text">View Site</span>
+                        </a>
+                    </li>
+
+                    <li class="nav-item">
+
+                        <a href="/api/admin/logout" class="nav-link text-danger">
+                            <i class="nav-icon bi bi-box-arrow-right"></i>
+                            <span class="nav-text">Logout</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Header -->
+            <header class="admin-header">
+                <div class="header-left">
+                    <button class="btn btn-outline-secondary d-lg-none me-3" id="mobileToggle">
+                        <i class="bi bi-list"></i>
+                    </button>
+                    <h1>AYuTe Africa Challenge Nigeria</h1>
+                </div>
+
+                <div class="header-right">
+                    <!-- Search Box -->
+                    <div class="search-box">
+                        <i class="search-icon bi bi-search"></i>
+                        <input type="text" class="search-input" placeholder="Search...">
+                    </div>
+
+                    <!-- Notifications -->
+                    <div class="notification-dropdown" id="notificationDropdown">
+                        <button class="notification-btn">
+                            <i class="bi bi-bell"></i>
+                            <span class="notification-badge">5</span>
+                        </button>
+                        <div class="notification-dropdown-menu">
+                            <div class="notification-header">
+                                <h6>Notifications</h6>
+                                <a href="#" class="text-primary small">Mark all as read</a>
+                            </div>
+                            <div class="notification-items">
+                                <div class="notification-item unread">
+                                    <div class="notification-icon info">
+                                        <i class="bi bi-check-circle"></i>
+                                    </div>
+                                    <div class="notification-content">
+                                        <p>New user registered: John Doe</p>
+                                        <div class="notification-time">2 minutes ago</div>
+                                    </div>
+                                </div>
+                                <div class="notification-item">
+                                    <div class="notification-icon warning">
+                                        <i class="bi bi-exclamation-triangle"></i>
+                                    </div>
+                                    <div class="notification-content">
+                                        <p>System maintenance scheduled</p>
+                                        <div class="notification-time">1 hour ago</div>
+                                    </div>
+                                </div>
+                                <div class="notification-item">
+                                    <div class="notification-icon alert">
+                                        <i class="bi bi-cart-check"></i>
+                                    </div>
+                                    <div class="notification-content">
+                                        <p>New order #12345 received</p>
+                                        <div class="notification-time">3 hours ago</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="notification-footer">
+                                <a href="/Admin/Notifications">View All Notifications</a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- User Profile -->
+                    <div class="user-profile" id="userProfile">
+                        <button class="user-btn">
+                            <div class="user-avatar">
+                                @if (User.Identity?.IsAuthenticated == true)
+                                {
+                                    @User.Identity?.Name?.Substring(0, 1).ToUpper()
+                                }
+                                else
+                                {
+                                    <text>A</text>
+                                }
+                            </div>
+                            <div class="user-info">
+                                <div class="user-name">
+                                    @(User.Identity?.IsAuthenticated == true ? User.Identity?.Name : "Admin")
+                                </div>
+                                <div class="user-role">Administrator</div>
+                            </div>
+                            <i class="bi bi-chevron-down"></i>
+                        </button>
+                        <div class="user-dropdown-menu">
+                            <a href="/Admin/Profile" class="user-dropdown-item">
+                                <i class="bi bi-person"></i> My Profile
+                            </a>
+                            <a href="/Admin/Settings" class="user-dropdown-item">
+                                <i class="bi bi-gear"></i> Settings
+                            </a>
+                            <div class="user-dropdown-divider"></div>
+                            <a href="/api/admin/logout" class="user-dropdown-item text-danger">
+                                <i class="bi bi-box-arrow-right"></i> Logout
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Content Body -->
+            <div class="content-body">
+                @RenderBody()
+            </div>
+
+            <!-- Footer -->
+            <footer class="admin-footer">
+                <div class="footer-content">
+                    <div>
+                        &copy; @DateTime.Now.Year Ayute. All rights reserved | Powered by Wennovation Hub.
+                    </div>
+                    <div class="footer-links">
+                        <a href="#">Privacy Policy</a>
+                        <a href="#">Terms of Service</a>
+                        <a href="#">Support</a>
+                    </div>
+                </div>
+            </footer>
+        </main>
+    </div>
+
+    <!-- Bootstrap 5 JS Bundle -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const sidebar = document.getElementById('sidebar');
+            const toggleSidebar = document.getElementById('toggleSidebar');
+            const mobileToggle = document.getElementById('mobileToggle');
+            const notificationDropdown = document.getElementById('notificationDropdown');
+            const userProfile = document.getElementById('userProfile');
+            const submenuToggles = document.querySelectorAll('.submenu-toggle');
+
+            // Toggle sidebar on desktop
+            toggleSidebar.addEventListener('click', function () {
+                sidebar.classList.toggle('collapsed');
+                const icon = this.querySelector('i');
+                icon.classList.toggle('bi-chevron-left');
+                icon.classList.toggle('bi-chevron-right');
+            });
+
+            // Toggle sidebar on mobile
+            mobileToggle.addEventListener('click', function () {
+                sidebar.classList.toggle('show');
+            });
+
+            // Close sidebar when clicking outside on mobile
+            document.addEventListener('click', function (event) {
+                if (window.innerWidth < 992) {
+                    if (!sidebar.contains(event.target) && !mobileToggle.contains(event.target)) {
+                        sidebar.classList.remove('show');
+                    }
+                }
+            });
+
+            // Toggle submenus
+            submenuToggles.forEach(toggle => {
+                toggle.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+
+                    const parent = this.closest('.has-submenu');
+                    const submenu = parent.querySelector('.submenu');
+                    const icon = this;
+
+                    submenu.classList.toggle('show');
+                    icon.classList.toggle('bi-chevron-down');
+                    icon.classList.toggle('bi-chevron-up');
+                });
+            });
+
+            // Notification dropdown
+            notificationDropdown.addEventListener('click', function (e) {
+                e.stopPropagation();
+                this.classList.toggle('show');
+
+                // Close user dropdown if open
+                userProfile.classList.remove('show');
+            });
+
+            // User profile dropdown
+            userProfile.addEventListener('click', function (e) {
+                e.stopPropagation();
+                this.classList.toggle('show');
+
+                // Close notification dropdown if open
+                notificationDropdown.classList.remove('show');
+            });
+
+            // Close dropdowns when clicking outside
+            document.addEventListener('click', function () {
+                notificationDropdown.classList.remove('show');
+                userProfile.classList.remove('show');
+            });
+
+            // Prevent dropdown close when clicking inside
+            document.querySelectorAll('.notification-dropdown-menu, .user-dropdown-menu').forEach(menu => {
+                menu.addEventListener('click', function (e) {
+                    e.stopPropagation();
+                });
+            });
+
+            // Handle window resize
+            function handleResize() {
+                if (window.innerWidth >= 992) {
+                    sidebar.classList.remove('show');
+                }
+            }
+
+            window.addEventListener('resize', handleResize);
+
+            // Mark notification as read
+            document.querySelectorAll('.notification-item').forEach(item => {
+                item.addEventListener('click', function () {
+                    this.classList.remove('unread');
+
+                    // Update badge count
+                    const badge = document.querySelector('.notification-badge');
+                    let count = parseInt(badge.textContent);
+                    if (count > 0) {
+                        badge.textContent = count - 1;
+                        if (count - 1 === 0) {
+                            badge.style.display = 'none';
+                        }
+                    }
+                });
+            });
+
+            // Search functionality
+            const searchInput = document.querySelector('.search-input');
+            searchInput.addEventListener('keyup', function (e) {
+                if (e.key === 'Enter') {
+                    const query = this.value.trim();
+                    if (query) {
+                        alert(`Searching for: ${query}`);
+                        // Implement actual search logic here
+                    }
+                }
+            });
+        });
+    </script>
+
+    @* Only render the Scripts section if it's defined *@
+    @if (IsSectionDefined("Scripts"))
+    {
+        @RenderSection("Scripts", required: false)
+    }
+</body>
+
+</html>

@@ -1,0 +1,775 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>@ViewData["Title"] - Application Portal</title>
+    <link rel="stylesheet" href="~/css/site.css" />
+    <style>
+        :root {
+            --primary-green: #39B34A;
+            --primary-yellow: #DEE33B;
+            --primary-blue: #073150;
+            --light-green: #E9F7EC;
+            --light-yellow: #FDFDE8;
+            --light-blue: #F0F7FB;
+            --white: #FFFFFF;
+            --gray: #5D6D7E;
+            --light-gray: #F5F5F5;
+            --input-border: #D1D5DB;
+            --error-color: #EF4444;
+            --success-color: #10B981;
+            --mobile-breakpoint: 768px;
+            --tablet-breakpoint: 1024px;
+        }
+
+        /* Base Mobile Styles */
+        * {
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: var(--white);
+            color: var(--primary-blue);
+            font-size: 16px;
+            line-height: 1.5;
+        }
+
+        /* Header - Mobile First */
+        .header {
+            background: var(--primary-blue);
+            padding: 16px 20px;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 15px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .logo {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--white);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .logo::before {
+            content: '📋';
+            font-size: 18px;
+        }
+
+        .mobile-menu-toggle {
+            display: none;
+            background: transparent;
+            border: none;
+            color: var(--white);
+            font-size: 24px;
+            cursor: pointer;
+            padding: 5px;
+            margin-left: auto;
+        }
+
+        .user-info {
+            font-size: 14px;
+            color: var(--light-yellow);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .user-info::before {
+            content: '👤';
+            font-size: 14px;
+        }
+
+        .progress-container {
+            order: 3;
+            width: 100%;
+            margin-top: 10px;
+        }
+
+        .progress-bar {
+            height: 6px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 3px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: var(--primary-yellow);
+            border-radius: 3px;
+            transition: width 0.5s ease;
+        }
+
+        .progress-text {
+            font-size: 12px;
+            color: var(--light-yellow);
+            margin-top: 6px;
+            text-align: center;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        /* Main Container - Mobile First */
+        .app-container {
+            display: flex;
+            flex-direction: column;
+            min-height: calc(100vh - 140px);
+        }
+
+        /* Mobile Steps Navigation (Top Bar) */
+        .mobile-steps-nav {
+            display: flex;
+            overflow-x: auto;
+            background: var(--light-blue);
+            padding: 12px 16px;
+            gap: 8px;
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+            position: sticky;
+            top: 78px;
+            z-index: 90;
+            border-bottom: 2px solid var(--input-border);
+        }
+
+        .mobile-steps-nav::-webkit-scrollbar {
+            display: none;
+        }
+
+        .mobile-step {
+            flex: 0 0 auto;
+            padding: 8px 16px;
+            background: var(--white);
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--gray);
+            border: 2px solid var(--input-border);
+            white-space: nowrap;
+            transition: all 0.3s ease;
+        }
+
+        .mobile-step.active {
+            background: var(--primary-green);
+            color: var(--white);
+            border-color: var(--primary-green);
+            transform: scale(1.05);
+        }
+
+        .mobile-step.completed {
+            background: var(--light-green);
+            border-color: var(--success-color);
+            color: var(--success-color);
+        }
+
+        /* Sidebar - Hidden on Mobile */
+        .steps-sidebar {
+            display: none;
+            background: var(--light-blue);
+            padding: 20px;
+            border-right: 2px solid var(--input-border);
+            overflow-y: auto;
+            max-height: calc(100vh - 140px);
+            position: sticky;
+            top: 78px;
+        }
+
+        .sidebar-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--primary-blue);
+            margin-bottom: 20px;
+            padding-bottom: 12px;
+            border-bottom: 2px solid var(--input-border);
+        }
+
+        .step-item {
+            padding: 14px 16px;
+            margin: 8px 0;
+            border-left: 4px solid var(--input-border);
+            cursor: pointer;
+            border-radius: 0 8px 8px 0;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            background: var(--white);
+        }
+
+        .step-item:hover {
+            background: var(--light-yellow);
+            transform: translateX(5px);
+        }
+
+        .step-item.active {
+            background: var(--light-green);
+            border-left-color: var(--primary-green);
+            font-weight: 600;
+            box-shadow: 0 2px 8px rgba(57, 179, 74, 0.1);
+        }
+
+        .step-item.completed {
+            border-left-color: var(--success-color);
+            background: var(--light-green);
+        }
+
+        .step-number {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 28px;
+            height: 28px;
+            background: var(--gray);
+            color: var(--white);
+            border-radius: 50%;
+            margin-right: 12px;
+            font-weight: 500;
+            font-size: 14px;
+            flex-shrink: 0;
+        }
+
+        .step-item.active .step-number {
+            background: var(--primary-green);
+            box-shadow: 0 0 0 3px rgba(57, 179, 74, 0.2);
+        }
+
+        .step-item.completed .step-number {
+            background: var(--success-color);
+        }
+
+        .step-item.completed .step-number::after {
+            content: '✓';
+            font-size: 12px;
+        }
+
+        .step-text {
+            font-size: 14px;
+        }
+
+        /* Main Content - Mobile First */
+        .main-content {
+            padding: 20px 16px;
+            background: var(--white);
+            flex: 1;
+        }
+
+        .step-indicator {
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 20px;
+            color: var(--primary-green);
+            font-weight: 500;
+            font-size: 14px;
+        }
+
+        .current-step-number {
+            background: var(--light-green);
+            color: var(--primary-green);
+            font-weight: 700;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 16px;
+        }
+
+        .content-card {
+            background: var(--white);
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            border: 1px solid var(--input-border);
+            margin-bottom: 20px;
+        }
+
+        /* Navigation Buttons - Mobile First */
+        .nav-buttons {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px;
+            background: var(--light-gray);
+            border-top: 2px solid var(--input-border);
+            position: sticky;
+            bottom: 0;
+            z-index: 80;
+            gap: 10px;
+        }
+
+        .btn {
+            padding: 14px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            flex: 1;
+            min-height: 48px;
+            touch-action: manipulation;
+        }
+
+        .btn-primary {
+            background: var(--primary-green);
+            color: var(--white);
+        }
+
+        .btn-primary:hover,
+        .btn-primary:active {
+            background: #2f9a3d;
+        }
+
+        .btn-secondary {
+            background: var(--primary-blue);
+            color: var(--white);
+        }
+
+        .btn-secondary:hover,
+        .btn-secondary:active {
+            background: #05243a;
+        }
+
+        .btn-outline {
+            background: transparent;
+            color: var(--gray);
+            border: 1px solid var(--input-border);
+            order: 2;
+            flex: 0 0 auto;
+            width: auto;
+            min-width: 120px;
+        }
+
+        .save-draft {
+            display: none;
+        }
+
+        /* Tablet Styles (768px and up) */
+        @@media (min-width: 768px) {
+            .header {
+                padding: 18px 30px;
+                flex-wrap: nowrap;
+            }
+
+            .logo {
+                flex: 0 0 auto;
+                min-width: auto;
+            }
+
+            .mobile-menu-toggle {
+                display: none;
+            }
+
+            .progress-container {
+                order: 0;
+                width: auto;
+                flex: 1;
+                max-width: 400px;
+                margin: 0 30px;
+            }
+
+            .progress-text {
+                justify-content: center;
+                gap: 10px;
+            }
+
+            .mobile-steps-nav {
+                display: none;
+            }
+
+            .app-container {
+                flex-direction: row;
+                min-height: calc(100vh - 110px);
+            }
+
+            .steps-sidebar {
+                display: block;
+                width: 280px;
+                flex-shrink: 0;
+            }
+
+            .main-content {
+                padding: 30px;
+                overflow-y: auto;
+                max-height: calc(100vh - 110px);
+            }
+
+            .content-card {
+                padding: 30px;
+            }
+
+            .nav-buttons {
+                padding: 20px 30px;
+                gap: 20px;
+            }
+
+            .btn {
+                flex: 0 1 auto;
+                padding: 12px 24px;
+                min-height: 44px;
+            }
+
+            .btn-outline {
+                order: 0;
+            }
+
+            .save-draft {
+                display: inline-flex;
+            }
+        }
+
+        /* Desktop Styles (1024px and up) */
+        @@media (min-width: 1024px) {
+            .header {
+                padding: 18px 40px;
+            }
+
+            .main-content {
+                padding: 40px;
+            }
+
+            .content-card {
+                padding: 40px;
+                max-width: 900px;
+                margin: 0 auto;
+            }
+
+            .nav-buttons {
+                padding: 20px 40px;
+            }
+
+            .btn {
+                padding: 12px 28px;
+            }
+
+            .step-item:hover {
+                transform: translateX(5px);
+            }
+
+            .btn:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            }
+        }
+
+        /* Large Desktop Styles */
+        @@media (min-width: 1200px) {
+            .content-card {
+                max-width: 1000px;
+            }
+
+            .steps-sidebar {
+                width: 320px;
+            }
+        }
+
+        /* Small Mobile Optimization */
+        @@media (max-width: 360px) {
+            .logo {
+                font-size: 18px;
+            }
+
+            .user-info {
+                font-size: 12px;
+            }
+
+            .mobile-step {
+                padding: 6px 12px;
+                font-size: 12px;
+            }
+
+            .content-card {
+                padding: 16px;
+            }
+
+            .btn {
+                padding: 12px 16px;
+                font-size: 15px;
+            }
+
+            .nav-buttons {
+                padding: 12px 16px;
+            }
+        }
+
+        /* High Contrast Mode Support */
+        @@media (prefers-contrast: high) {
+            .step-item.active {
+                border-left-width: 6px;
+            }
+
+            .btn {
+                border: 2px solid currentColor;
+            }
+        }
+
+        /* Reduced Motion Support */
+        @@media (prefers-reduced-motion: reduce) {
+            * {
+                transition-duration: 0.01ms !important;
+                animation-duration: 0.01ms !important;
+            }
+
+            .step-item:hover,
+            .btn:hover {
+                transform: none;
+            }
+        }
+
+        /* Print Styles */
+        @@media print {
+
+            .header,
+            .steps-sidebar,
+            .mobile-steps-nav,
+            .nav-buttons {
+                display: none;
+            }
+
+            .app-container {
+                display: block;
+            }
+
+            .main-content {
+                padding: 0;
+            }
+
+            .content-card {
+                box-shadow: none;
+                border: none;
+                padding: 0;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="header">
+
+        <div class="logo">Application Portal</div>
+
+        <div class="progress-container">
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+            <div class="progress-text">
+                <span>Step @(ViewData["CurrentStep"] ?? "0") of 9</span>
+                <span>@(ViewData["CurrentStep"] != null ? (Convert.ToInt32(ViewData["CurrentStep"]) * 100 / 9) :
+                                        0)%</span>
+            </div>
+        </div>
+
+        @* <div class="user-info">
+            @if (User.Identity.IsAuthenticated)
+            {
+                <span>@User.Identity.Name</span>
+            }
+            else
+            {
+                <span>Guest User</span>
+            }
+        </div> *@
+        <div>
+            @if (ViewData["CurrentStep"] != null)
+            {
+                var currentStep = Convert.ToInt32(ViewData["CurrentStep"]);
+                if (currentStep > 1)
+                {
+                    <form method="post" action="/home/Logout">
+                        <button class="btn" type="submit">Logout</button>
+                    </form>
+                }
+                else
+                {
+                    <button class="btn btn-secondary" onclick="window.location.href='/login'">
+                        Login
+                    </button>
+                }
+            }
+        </div>
+
+    </div>
+
+    <div class="app-container">
+        <!-- Desktop Sidebar -->
+        <div class="steps-sidebar" id="desktopSidebar">
+            <div class="sidebar-title">Application Progress</div>
+            <div
+                class="step-item @(ViewData["CurrentStep"]?.ToString() == "1" ? "active" : "") @(ViewData["CompletedSteps"] != null && ((List<int>)ViewData["CompletedSteps"]).Contains(1) ? "completed" : "")">
+                <span class="step-number">1</span>
+                <span class="step-text">Signup</span>
+            </div>
+            <div
+                class="step-item @(ViewData["CurrentStep"]?.ToString() == "2" ? "active" : "") @(ViewData["CompletedSteps"] != null && ((List<int>)ViewData["CompletedSteps"]).Contains(2) ? "completed" : "")">
+                <span class="step-number">2</span>
+                <span class="step-text">Startup Info</span>
+            </div>
+            <div
+                class="step-item @(ViewData["CurrentStep"]?.ToString() == "3" ? "active" : "") @(ViewData["CompletedSteps"] != null && ((List<int>)ViewData["CompletedSteps"]).Contains(3) ? "completed" : "")">
+                <span class="step-number">3</span>
+                <span class="step-text">Problem & Solution</span>
+            </div>
+            <div
+                class="step-item @(ViewData["CurrentStep"]?.ToString() == "4" ? "active" : "") @(ViewData["CompletedSteps"] != null && ((List<int>)ViewData["CompletedSteps"]).Contains(4) ? "completed" : "")">
+                <span class="step-number">4</span>
+                <span class="step-text">Business Model</span>
+            </div>
+            <div
+                class="step-item @(ViewData["CurrentStep"]?.ToString() == "5" ? "active" : "") @(ViewData["CompletedSteps"] != null && ((List<int>)ViewData["CompletedSteps"]).Contains(5) ? "completed" : "")">
+                <span class="step-number">5</span>
+                <span class="step-text">Impact</span>
+            </div>
+            <div
+                class="step-item @(ViewData["CurrentStep"]?.ToString() == "6" ? "active" : "") @(ViewData["CompletedSteps"] != null && ((List<int>)ViewData["CompletedSteps"]).Contains(6) ? "completed" : "")">
+                <span class="step-number">6</span>
+                <span class="step-text">Inclusion & Sustainability</span>
+            </div>
+            <div
+                class="step-item @(ViewData["CurrentStep"]?.ToString() == "7" ? "active" : "") @(ViewData["CompletedSteps"] != null && ((List<int>)ViewData["CompletedSteps"]).Contains(7) ? "completed" : "")">
+                <span class="step-number">7</span>
+                <span class="step-text">Team</span>
+            </div>
+            <div
+                class="step-item @(ViewData["CurrentStep"]?.ToString() == "8" ? "active" : "") @(ViewData["CompletedSteps"] != null && ((List<int>)ViewData["CompletedSteps"]).Contains(8) ? "completed" : "")">
+                <span class="step-number">8</span>
+                <span class="step-text">Growth & Vision</span>
+            </div>
+            <div
+                class="step-item @(ViewData["CurrentStep"]?.ToString() == "9" ? "active" : "") @(ViewData["CompletedSteps"] != null && ((List<int>)ViewData["CompletedSteps"]).Contains(9) ? "completed" : "")">
+                <span class="step-number">9</span>
+                <span class="step-text">Documents & Agreements</span>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            @if (ViewData["CurrentStep"] != null)
+            {
+                <div class="step-indicator">
+                    <span class="current-step-number">Step @ViewData["CurrentStep"]</span>
+                    <span>@ViewData["StepTitle"]</span>
+                </div>
+            }
+
+            <div class="content-card">
+                @RenderBody()
+            </div>
+        </div>
+    </div>
+
+    <!-- Navigation Buttons -->
+    <div class="nav-buttons">
+        <div>
+            @if (ViewData["CurrentStep"] != null)
+            {
+                var currentStep = Convert.ToInt32(ViewData["CurrentStep"]);
+                if (currentStep > 2 && currentStep != 2)
+                {
+                    <!-- application/step-three/08de52f0-4442-432b-8149-db03c7268fac -->
+                    <button class="btn btn-secondary" onclick="window.location.href='/application/@(ViewData["Previous"])'">
+                        ← Previous
+                    </button>
+                }
+            }
+        </div>
+
+        <!-- <div>
+            <button class="btn btn-outline save-draft" onclick="saveDraft()">
+                💾 Save Draft
+            </button>
+        </div> -->
+
+        <div>
+            @if (ViewData["CurrentStep"] != null)
+            {
+                var currentStep = Convert.ToInt32(ViewData["CurrentStep"]);
+                if (currentStep < 9 && currentStep != 1)
+                {
+                    <button class="btn btn-primary" onclick="window.location.href='/application/@(ViewData["Next"])'">
+                        Continue →
+                    </button>
+                }
+                <!-- else
+                                                                {
+                                                                    <button class="btn btn-primary" onclick="window.location.href='/Application/Submit'">
+                                                                        🚀 Submit
+                                                                    </button>
+                                                                } -->
+            }
+        </div>
+    </div>
+
+    <script>
+        // Update progress bar
+        document.addEventListener('DOMContentLoaded', function () {
+            const currentStep = @(ViewData["CurrentStep"] ?? 0);
+            const progressPercent = Math.min((currentStep / 9) * 100, 100);
+            document.getElementById('progressFill').style.width = progressPercent + '%';
+
+            // Mobile menu toggle
+            const menuToggle = document.getElementById('menuToggle');
+            const desktopSidebar = document.getElementById('desktopSidebar');
+
+            if (menuToggle) {
+                menuToggle.addEventListener('click', function () {
+                    desktopSidebar.style.display = desktopSidebar.style.display === 'block' ? 'none' : 'block';
+                });
+            }
+
+            // Close sidebar when clicking outside on mobile
+            document.addEventListener('click', function (event) {
+                if (window.innerWidth < 768 &&
+                    desktopSidebar.style.display === 'block' &&
+                    !desktopSidebar.contains(event.target) &&
+                    !menuToggle.contains(event.target)) {
+                    desktopSidebar.style.display = 'none';
+                }
+            });
+
+            // Auto-hide mobile steps nav on scroll
+            let lastScrollTop = 0;
+            const mobileNav = document.getElementById('mobileStepsNav');
+
+            if (mobileNav) {
+                window.addEventListener('scroll', function () {
+                    const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+
+                    if (scrollTop > lastScrollTop && scrollTop > 100) {
+                        // Scrolling down
+                        mobileNav.style.transform = 'translateY(-100%)';
+                    } else {
+                        // Scrolling up
+                        mobileNav.style.transform = 'translateY(0)';
+                    }
+
+                    lastScrollTop = scrollTop;
+                }, { passive: true });
+            }
+        });
+
+        function saveDraft() {
+            // Add save draft functionality
+            alert('Draft saved successfully!');
+        }
+    </script>
+
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+
+</html>

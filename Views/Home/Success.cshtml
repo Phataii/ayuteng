@@ -1,0 +1,281 @@
+@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Application Submitted Successfully | Ayuteng</title>
+
+    <!-- Tailwind CSS (using CDN for standalone page) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Optional: Add Inter font for better typography -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+
+<body style="font-family: 'Inter', sans-serif;">
+    <div
+        class="min-h-screen bg-gradient-to-b from-blue-50 to-white flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+        <div class="max-w-lg w-full space-y-8 bg-white rounded-2xl shadow-2xl p-8 border border-gray-100">
+            <!-- Success Icon -->
+            <div class="flex justify-center">
+                <div
+                    class="w-24 h-24 rounded-full bg-gradient-to-r from-blue-600 to-purple-600 flex items-center justify-center shadow-lg">
+                    <svg class="w-12 h-12 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                        xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                    </svg>
+                </div>
+            </div>
+
+            <!-- Success Message -->
+            <div class="text-center space-y-4">
+                <h1 class="text-3xl font-bold text-gray-900">
+                    Application Submitted Successfully!
+                </h1>
+
+                <p class="text-lg text-gray-600">
+                    Thank you for completing your application. Your submission has been received and is now being
+                    reviewed.
+                </p>
+
+                <!-- Application Details -->
+                <div class="bg-blue-50 rounded-xl p-6 border border-blue-100 mt-6">
+                    <h2 class="text-xl font-semibold text-gray-800 mb-4">What happens next?</h2>
+
+                    <ul class="space-y-3 text-left">
+                        <li class="flex items-start">
+                            <div
+                                class="flex-shrink-0 h-6 w-6 rounded-full bg-blue-100 flex items-center justify-center mr-3 mt-0.5">
+                                <span class="text-blue-600 text-sm font-bold">1</span>
+                            </div>
+                            <span class="text-gray-700">Our team will review your application soon</span>
+                        </li>
+                        <li class="flex items-start">
+                            <div
+                                class="flex-shrink-0 h-6 w-6 rounded-full bg-blue-100 flex items-center justify-center mr-3 mt-0.5">
+                                <span class="text-blue-600 text-sm font-bold">2</span>
+                            </div>
+                            <span class="text-gray-700">You'll receive a confirmation email with your application
+                                reference number</span>
+                        </li>
+                        <li class="flex items-start">
+                            <div
+                                class="flex-shrink-0 h-6 w-6 rounded-full bg-blue-100 flex items-center justify-center mr-3 mt-0.5">
+                                <span class="text-blue-600 text-sm font-bold">3</span>
+                            </div>
+                            <span class="text-gray-700">A representative will contact you for any additional information
+                                if needed</span>
+                        </li>
+                        <li class="flex items-start">
+                            <div
+                                class="flex-shrink-0 h-6 w-6 rounded-full bg-blue-100 flex items-center justify-center mr-3 mt-0.5">
+                                <span class="text-blue-600 text-sm font-bold">4</span>
+                            </div>
+                            <span class="text-gray-700">Final decision will be communicated via email.</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Reference Number (if available) -->
+                @if (ViewBag.ReferenceNumber != null)
+                {
+                    <div class="bg-gray-50 rounded-lg p-4 border border-gray-200">
+                        <p class="text-sm text-gray-600 mb-1">Your Reference Number:</p>
+                        <p class="text-2xl font-mono font-bold text-blue-600">@ViewBag.ReferenceNumber</p>
+                        <p class="text-xs text-gray-500 mt-2">Please keep this number for future reference</p>
+                    </div>
+                }
+
+                <!-- Estimated Timeline -->
+                @* <div class="bg-gradient-to-r from-blue-50 to-white rounded-xl p-5 border border-blue-100">
+                    <div class="flex items-center justify-center space-x-2">
+                        <svg class="w-5 h-5 text-purple-600" fill="currentColor" viewBox="0 0 20 20"
+                            xmlns="http://www.w3.org/2000/svg">
+                            <path fill-rule="evenodd"
+                                d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z"
+                                clip-rule="evenodd"></path>
+                        </svg>
+                        <span class="text-gray-700 font-medium">Estimated review completion: 5-7 business days</span>
+                    </div>
+                </div> *@
+
+                <!-- Action Buttons -->
+                <div class="pt-6 space-y-4">
+                    <button onclick="window.location.href='/'"
+                        class="w-full flex justify-center py-3 px-4 border border-transparent rounded-xl shadow-sm text-sm font-medium text-white bg-gradient-to-r from-blue-600 to-purple-600 hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition duration-200">
+                        Return to Dashboard
+                    </button>
+
+                    <div class="grid grid-cols-2 gap-4">
+                        <button onclick="window.print()"
+                            class="py-3 px-4 border border-gray-300 rounded-xl text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition duration-200 text-center">
+                            Print Confirmation
+                        </button>
+
+                        <button onclick="window.location.href='mailto:support@ayuteng.com'"
+                            class="py-3 px-4 border border-transparent rounded-xl text-sm font-medium text-blue-600 bg-blue-50 hover:bg-blue-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition duration-200 text-center">
+                            Contact Support
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Help Section -->
+                <div class="pt-6 border-t border-gray-200">
+                    <p class="text-sm text-gray-500">
+                        Need assistance?
+                        <a href="mailto:support@ayuteng.com" class="font-medium text-blue-600 hover:text-purple-600">
+                            support@ayuteng.com
+                        </a>
+                        or call
+                        <span class="font-medium text-gray-700">+1 (555) 123-4567</span>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Confetti Animation Script -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Simple confetti effect
+            function createConfetti() {
+                const colors = ['#3B82F6', '#10B981', '#8B5CF6', '#F59E0B', '#EF4444'];
+                const container = document.querySelector('body');
+
+                for (let i = 0; i < 100; i++) {
+                    const confetti = document.createElement('div');
+                    confetti.style.position = 'fixed';
+                    confetti.style.width = '10px';
+                    confetti.style.height = '10px';
+                    confetti.style.background = colors[Math.floor(Math.random() * colors.length)];
+                    confetti.style.borderRadius = '50%';
+                    confetti.style.left = Math.random() * 100 + 'vw';
+                    confetti.style.top = '-10px';
+                    confetti.style.opacity = '0.8';
+                    confetti.style.zIndex = '9999';
+                    confetti.style.pointerEvents = 'none';
+
+                    container.appendChild(confetti);
+
+                    // Animation
+                    const animation = confetti.animate([
+                        { transform: 'translateY(0) rotate(0deg)', opacity: 0.8 },
+                        { transform: `translateY(${window.innerHeight}px) rotate(${Math.random() * 360}deg)`, opacity: 0 }
+                    ], {
+                        duration: 2000 + Math.random() * 3000,
+                        easing: 'cubic-bezier(0.215, 0.61, 0.355, 1)'
+                    });
+
+                    animation.onfinish = () => confetti.remove();
+                }
+            }
+
+            // Trigger confetti on page load
+            setTimeout(createConfetti, 300);
+
+            // Optional: Add progress bar animation
+            const progressBar = document.createElement('div');
+            progressBar.style.position = 'fixed';
+            progressBar.style.top = '0';
+            progressBar.style.left = '0';
+            progressBar.style.width = '0%';
+            progressBar.style.height = '3px';
+            progressBar.style.background = 'linear-gradient(to right, #2563eb, #8b5cf6)';
+            progressBar.style.zIndex = '10000';
+            progressBar.style.transition = 'width 2s ease-in-out';
+            document.body.appendChild(progressBar);
+
+            setTimeout(() => {
+                progressBar.style.width = '100%';
+                setTimeout(() => progressBar.remove(), 2000);
+            }, 100);
+        });
+    </script>
+
+    <style>
+        /* Custom animations */
+        @@keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @@keyframes pulse {
+
+            0%,
+            100% {
+                transform: scale(1);
+                box-shadow: 0 8px 25px rgba(37, 99, 235, 0.3);
+            }
+
+            50% {
+                transform: scale(1.05);
+                box-shadow: 0 12px 35px rgba(37, 99, 235, 0.4);
+            }
+        }
+
+        @@keyframes checkmark {
+            0% {
+                transform: scale(0);
+                opacity: 0;
+            }
+
+            50% {
+                transform: scale(1.2);
+            }
+
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        /* Apply fade-in animation to main container */
+        .min-h-screen>div {
+            animation: fadeInUp 0.6s ease-out;
+        }
+
+        /* Success icon animation */
+        .flex.justify-center>div {
+            animation: pulse 2s infinite;
+        }
+
+        .flex.justify-center>div svg {
+            animation: checkmark 0.5s ease-out;
+        }
+
+        /* Print styles */
+        @@media print {
+            body {
+                background: white !important;
+            }
+
+            .min-h-screen {
+                min-height: auto !important;
+                padding: 0 !important;
+            }
+
+            .min-h-screen>div {
+                box-shadow: none !important;
+                border: 1px solid #ddd !important;
+                max-width: 100% !important;
+                margin: 0 !important;
+            }
+
+            button {
+                display: none !important;
+            }
+        }
+    </style>
+</body>
+
+</html>

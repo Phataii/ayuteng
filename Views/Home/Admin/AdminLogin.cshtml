@@ -1,0 +1,370 @@
+@model LoginViewModel
+
+@{
+    ViewData["Title"] = "AYuTe Portal";
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Admin Panel</title>
+    <style>
+        :root {
+            --primary-green: #39B34A;
+            --primary-yellow: #DEE33B;
+            --primary-blue: #073150;
+            --light-green: #E9F7EC;
+            --light-yellow: #FDFDE8;
+            --light-blue: #F0F7FB;
+            --white: #FFFFFF;
+            --gray: #5D6D7E;
+            --light-gray: #F5F5F5;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            background: linear-gradient(135deg, var(--primary-blue) 0%, #1a4b6d 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .login-container {
+            width: 100%;
+            max-width: 400px;
+        }
+
+        .login-card {
+            background: var(--white);
+            border-radius: 12px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(7, 49, 80, 0.3);
+            text-align: center;
+            border: 1px solid var(--light-green);
+        }
+
+        .logo {
+            margin-bottom: 30px;
+        }
+
+        .logo h1 {
+            color: var(--primary-blue);
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+
+        .logo p {
+            color: var(--gray);
+            font-size: 14px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 6px;
+            color: var(--primary-blue);
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid var(--light-green);
+            border-radius: 8px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            background: var(--light-gray);
+            color: var(--primary-blue);
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary-green);
+            background: var(--light-green);
+            box-shadow: 0 0 0 3px rgba(57, 179, 74, 0.1);
+        }
+
+        .form-control::placeholder {
+            color: var(--gray);
+            opacity: 0.7;
+        }
+
+        .password-container {
+            position: relative;
+        }
+
+        .toggle-password {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: transparent;
+            border: none;
+            color: var(--gray);
+            cursor: pointer;
+            padding: 5px;
+            font-size: 18px;
+        }
+
+        .toggle-password:hover {
+            color: var(--primary-green);
+        }
+
+        .remember-me {
+            display: flex;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+
+        .remember-me input {
+            margin-right: 8px;
+            accent-color: var(--primary-green);
+        }
+
+        .remember-me label {
+            font-size: 14px;
+            color: var(--primary-blue);
+        }
+
+        .btn-login {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, var(--primary-green) 0%, #2e8b3e 100%);
+            color: var(--white);
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            letter-spacing: 0.5px;
+        }
+
+        .btn-login:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(57, 179, 74, 0.3);
+            background: linear-gradient(135deg, #2e8b3e 0%, var(--primary-green) 100%);
+        }
+
+        .btn-login:active {
+            transform: translateY(0);
+        }
+
+        .error-message {
+            background: var(--light-yellow);
+            color: #8b8000;
+            padding: 12px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            font-size: 14px;
+            text-align: left;
+            border-left: 4px solid var(--primary-yellow);
+            display: none;
+        }
+
+        .field-error {
+            color: #b22222;
+            font-size: 13px;
+            margin-top: 4px;
+            display: block;
+        }
+
+        .form-control.error {
+            border-color: #b22222;
+            background: #fff8f8;
+        }
+
+        .forgot-password {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .forgot-password a {
+            color: var(--primary-green);
+            text-decoration: none;
+            font-size: 14px;
+            transition: color 0.3s ease;
+        }
+
+        .forgot-password a:hover {
+            text-decoration: underline;
+            color: var(--primary-blue);
+        }
+
+        .powered-by {
+            margin-top: 30px;
+            color: var(--gray);
+            font-size: 12px;
+            opacity: 0.8;
+        }
+
+        .copyright {
+            text-align: center;
+            margin-top: 30px;
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 12px;
+            letter-spacing: 0.5px;
+        }
+
+        @@media (max-width: 480px) {
+            .login-card {
+                padding: 30px 20px;
+            }
+
+            body {
+                padding: 10px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="login-container">
+        <div class="login-card">
+            <div class="logo">
+                <h1>AYuTe Admin</h1>
+                <p>Enter your credentials to continue</p>
+            </div>
+
+            <div class="error-message" id="errorMessage"></div>
+            @if (ViewBag.Error != null)
+            {
+                <div class="error-message" style="display:block; margin-bottom:15px;">
+                    <i class="fas fa-exclamation-circle"></i>
+                    @ViewBag.Error
+                </div>
+            }
+            <form id="loginForm" method="post" action="/api/admin/login">
+                @Html.AntiForgeryToken()
+
+                <div class="form-group">
+                    <label class="form-label" for="email">Email Address</label>
+                    <input type="email" id="email" name="email" class="form-control" placeholder="admin@example.com"
+                        required>
+                    <span class="field-error" id="emailError"></span>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="password">Password</label>
+                    <div class="password-container">
+                        <input type="password" id="password" name="password" class="form-control"
+                            placeholder="Enter your password" required>
+                        <button type="button" class="toggle-password" onclick="togglePassword()"
+                            aria-label="Toggle password visibility">
+                            👁️
+                        </button>
+                    </div>
+                    <span class="field-error" id="passwordError"></span>
+                </div>
+
+                <div class="remember-me">
+                    <input type="checkbox" id="rememberMe" name="rememberMe">
+                    <label for="rememberMe">Remember me</label>
+                </div>
+
+                <button type="submit" class="btn-login">
+                    Sign In
+                </button>
+
+                <div class="forgot-password">
+                    <a href="#" onclick="forgotPassword()">Forgot your password?</a>
+                </div>
+            </form>
+
+            <div class="powered-by">
+                © @DateTime.Now.Year Ayute. All rights reserved.
+            </div>
+        </div>
+
+        <div class="copyright">
+            Secure Admin Access
+        </div>
+    </div>
+
+    <script>
+
+        // Password toggle functionality
+        function togglePassword() {
+            const passwordField = document.getElementById('password');
+            const toggleBtn = event.currentTarget;
+
+            if (passwordField.type === 'password') {
+                passwordField.type = 'text';
+                toggleBtn.textContent = '🙈';
+                toggleBtn.setAttribute('aria-label', 'Hide password');
+            } else {
+                passwordField.type = 'password';
+                toggleBtn.textContent = '👁️';
+                toggleBtn.setAttribute('aria-label', 'Show password');
+            }
+        }
+
+        // Simple forgot password alert
+        function forgotPassword() {
+            const emailField = document.getElementById('email');
+            const email = emailField ? emailField.value.trim() : '';
+
+            if (!email) {
+                alert('Please enter your email address first');
+                if (emailField) emailField.focus();
+                return;
+            }
+
+            alert('Password reset instructions would be sent to: ' + email);
+        }
+
+        // Helper functions
+        function clearErrors() {
+            document.getElementById('errorMessage').style.display = 'none';
+            document.querySelectorAll('.field-error').forEach(el => el.textContent = '');
+            document.querySelectorAll('.form-control').forEach(el => el.classList.remove('error'));
+        }
+
+        function showError(message) {
+            const errorEl = document.getElementById('errorMessage');
+            errorEl.textContent = message;
+            errorEl.style.display = 'block';
+        }
+
+        function displayErrors(errors) {
+            Object.keys(errors).forEach(field => {
+                const fieldEl = document.getElementById(field);
+                const errorEl = document.getElementById(field + 'Error');
+
+                if (fieldEl) {
+                    fieldEl.classList.add('error');
+                }
+
+                if (errorEl) {
+                    errorEl.textContent = errors[field].join(', ');
+                }
+            });
+
+            // Show first error field
+            const firstError = document.querySelector('.form-control.error');
+            if (firstError) {
+                firstError.focus();
+            }
+        }
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,565 @@
+@model ayuteng.Models.Admin
+
+@{
+    ViewData["Title"] = "Create Admin";
+    Layout = "_AdminLayout";
+}
+
+<div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1 class="h3 mb-0" style="color: var(--primary-blue);">Create Admin</h1>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="/Dashboard">Dashboard</a></li>
+                    <li class="breadcrumb-item"><a href="/Admin/Users">Admins</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Create</li>
+                </ol>
+            </nav>
+        </div>
+        <a href="/Admin/Users" class="btn btn-outline-secondary">
+            ← Back to List
+        </a>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-8">
+            <div class="card" style="border: 1px solid var(--light-green);">
+                <div class="card-header"
+                    style="background-color: var(--light-green); border-bottom: 1px solid var(--light-green);">
+                    <h5 class="mb-0" style="color: var(--primary-blue);">
+                        <i class="bi bi-person-plus me-2"></i>Admin Information
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <form id="createAdminForm" method="post" asp-action="Create">
+                        @Html.AntiForgeryToken()
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="Email" class="form-label" style="color: var(--primary-blue);">
+                                    Email Address <span class="text-danger">*</span>
+                                </label>
+                                <input asp-for="Email" type="email"
+                                    class="form-control @(ViewData.ModelState["Email"]?.Errors.Any() == true ? "is-invalid" : "")"
+                                    placeholder="admin@example.com" required>
+                                <span asp-validation-for="Email" class="invalid-feedback"></span>
+                                <div class="form-text">A valid email address is required</div>
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="Password" class="form-label" style="color: var(--primary-blue);">
+                                    Password <span class="text-danger">*</span>
+                                </label>
+                                <div class="input-group">
+                                    <input asp-for="Password" type="password"
+                                        class="form-control @(ViewData.ModelState["Password"]?.Errors.Any() == true ? "is-invalid" : "")"
+                                        placeholder="Enter password" required id="passwordField">
+                                    <button class="btn btn-outline-secondary" type="button" id="togglePassword">
+                                        <i class="bi bi-eye"></i>
+                                    </button>
+                                    <button class="btn btn-outline-secondary" type="button" id="generatePassword">
+                                        <i class="bi bi-key"></i>
+                                    </button>
+                                </div>
+                                <span asp-validation-for="Password" class="invalid-feedback"></span>
+                                <div class="form-text">Minimum 8 characters with uppercase, lowercase, and number</div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label" style="color: var(--primary-blue);">
+                                    Confirm Password <span class="text-danger">*</span>
+                                </label>
+                                <input type="password" class="form-control" placeholder="Confirm password" required
+                                    id="confirmPassword">
+                                <div class="invalid-feedback" id="confirmPasswordError">
+                                    Passwords do not match
+                                </div>
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="Role" class="form-label" style="color: var(--primary-blue);">
+                                    Admin Role <span class="text-danger">*</span>
+                                </label>
+                                <select asp-for="Role"
+                                    class="form-select @(ViewData.ModelState["Role"]?.Errors.Any() == true ? "is-invalid" : "")"
+                                    required>
+                                    <option value="">Select Role</option>
+                                    <option value="1">Super Admin</option>
+                                    <option value="2">Portal Admin</option>
+                                </select>
+                                <span asp-validation-for="Role" class="invalid-feedback"></span>
+                                <div class="form-text">
+                                    Super Admin: Full access | Portal Admin: Limited access
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <div class="form-check">
+                                <input asp-for="IsActive" class="form-check-input" type="checkbox" id="isActiveCheck">
+                                <label class="form-check-label" for="isActiveCheck" style="color: var(--primary-blue);">
+                                    Active Account
+                                </label>
+                            </div>
+                            <div class="form-text">Inactive accounts cannot login</div>
+                        </div>
+
+                        <div class="alert alert-info"
+                            style="background-color: var(--light-blue); border-color: var(--primary-blue); color: var(--primary-blue);">
+                            <i class="bi bi-info-circle me-2"></i>
+                            <strong>Note:</strong> The new admin will receive an email notification with login
+                            credentials.
+                        </div>
+
+                        <div class="d-flex justify-content-end gap-2 mt-4">
+                            <button type="button" class="btn btn-outline-secondary" onclick="window.history.back()">
+                                Cancel
+                            </button>
+                            <button type="submit" class="btn btn-primary" id="submitBtn">
+                                <span id="submitText">Create Admin</span>
+                                <span id="loadingSpinner" class="spinner-border spinner-border-sm d-none"
+                                    role="status"></span>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <div class="card" style="border: 1px solid var(--light-yellow);">
+                <div class="card-header"
+                    style="background-color: var(--light-yellow); border-bottom: 1px solid var(--light-yellow);">
+                    <h5 class="mb-0" style="color: var(--primary-blue);">
+                        <i class="bi bi-lightbulb me-2"></i>Quick Tips
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <ul class="list-unstyled mb-0">
+                        <li class="mb-3">
+                            <i class="bi bi-check-circle text-success me-2"></i>
+                            <strong>Strong Passwords:</strong> Use a mix of letters, numbers, and symbols
+                        </li>
+                        <li class="mb-3">
+                            <i class="bi bi-check-circle text-success me-2"></i>
+                            <strong>Role Selection:</strong> Assign appropriate access levels
+                        </li>
+                        <li class="mb-3">
+                            <i class="bi bi-check-circle text-success me-2"></i>
+                            <strong>Email Verification:</strong> Ensure email is valid and accessible
+                        </li>
+                        <li class="mb-3">
+                            <i class="bi bi-check-circle text-success me-2"></i>
+                            <strong>Active Status:</strong> Keep inactive until credentials are confirmed
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="card mt-4" style="border: 1px solid var(--light-green);">
+                <div class="card-header"
+                    style="background-color: var(--light-green); border-bottom: 1px solid var(--light-green);">
+                    <h5 class="mb-0" style="color: var(--primary-blue);">
+                        <i class="bi bi-shield-check me-2"></i>Security Checklist
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <h6 class="small mb-2">Password Strength</h6>
+                        <div class="progress" style="height: 8px;">
+                            <div class="progress-bar" id="passwordStrengthBar"
+                                style="background-color: var(--primary-green);" role="progressbar" style="width: 0%">
+                            </div>
+                        </div>
+                        <div class="mt-2">
+                            <small class="text-muted" id="passwordStrengthText">Very Weak</small>
+                        </div>
+                    </div>
+
+                    <div class="mb-2">
+                        <h6 class="small mb-2">Requirements</h6>
+                        <div class="form-check mb-2">
+                            <input class="form-check-input" type="checkbox" id="reqLength" disabled>
+                            <label class="form-check-label small" for="reqLength">
+                                At least 8 characters
+                            </label>
+                        </div>
+                        <div class="form-check mb-2">
+                            <input class="form-check-input" type="checkbox" id="reqUpper" disabled>
+                            <label class="form-check-label small" for="reqUpper">
+                                Contains uppercase letter
+                            </label>
+                        </div>
+                        <div class="form-check mb-2">
+                            <input class="form-check-input" type="checkbox" id="reqLower" disabled>
+                            <label class="form-check-label small" for="reqLower">
+                                Contains lowercase letter
+                            </label>
+                        </div>
+                        <div class="form-check mb-2">
+                            <input class="form-check-input" type="checkbox" id="reqNumber" disabled>
+                            <label class="form-check-label small" for="reqNumber">
+                                Contains number
+                            </label>
+                        </div>
+                        <div class="form-check mb-2">
+                            <input class="form-check-input" type="checkbox" id="reqMatch" disabled>
+                            <label class="form-check-label small" for="reqMatch">
+                                Passwords match
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const form = document.getElementById('createAdminForm');
+            const submitBtn = document.getElementById('submitBtn');
+            const submitText = document.getElementById('submitText');
+            const loadingSpinner = document.getElementById('loadingSpinner');
+            const passwordField = document.getElementById('passwordField');
+            const confirmPasswordField = document.getElementById('confirmPassword');
+            const togglePasswordBtn = document.getElementById('togglePassword');
+            const generatePasswordBtn = document.getElementById('generatePassword');
+
+            // Password strength indicators
+            const passwordStrengthBar = document.getElementById('passwordStrengthBar');
+            const passwordStrengthText = document.getElementById('passwordStrengthText');
+            const reqLength = document.getElementById('reqLength');
+            const reqUpper = document.getElementById('reqUpper');
+            const reqLower = document.getElementById('reqLower');
+            const reqNumber = document.getElementById('reqNumber');
+            const reqMatch = document.getElementById('reqMatch');
+
+            // Toggle password visibility
+            togglePasswordBtn.addEventListener('click', function () {
+                const type = passwordField.type === 'password' ? 'text' : 'password';
+                passwordField.type = type;
+                confirmPasswordField.type = type;
+                this.innerHTML = type === 'password' ? '<i class="bi bi-eye"></i>' : '<i class="bi bi-eye-slash"></i>';
+            });
+
+            // Generate random password
+            generatePasswordBtn.addEventListener('click', function () {
+                const charset = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@@#$%^&*';
+                let password = '';
+                for (let i = 0; i < 12; i++) {
+                    password += charset.charAt(Math.floor(Math.random() * charset.length));
+                }
+
+                passwordField.value = password;
+                confirmPasswordField.value = password;
+
+                // Trigger validation
+                passwordField.dispatchEvent(new Event('input'));
+                confirmPasswordField.dispatchEvent(new Event('input'));
+
+                // Show success message
+                alert('A strong password has been generated. Copy it now!');
+                passwordField.select();
+            });
+
+            // Check password strength
+            function checkPasswordStrength(password) {
+                let strength = 0;
+
+                // Length check
+                if (password.length >= 8) {
+                    strength += 25;
+                    reqLength.checked = true;
+                } else {
+                    reqLength.checked = false;
+                }
+
+                // Uppercase check
+                if (/[A-Z]/.test(password)) {
+                    strength += 25;
+                    reqUpper.checked = true;
+                } else {
+                    reqUpper.checked = false;
+                }
+
+                // Lowercase check
+                if (/[a-z]/.test(password)) {
+                    strength += 25;
+                    reqLower.checked = true;
+                } else {
+                    reqLower.checked = false;
+                }
+
+                // Number check
+                if (/[0-9]/.test(password)) {
+                    strength += 25;
+                    reqNumber.checked = true;
+                } else {
+                    reqNumber.checked = false;
+                }
+
+                // Update progress bar
+                passwordStrengthBar.style.width = strength + '%';
+
+                // Update text
+                if (strength >= 75) {
+                    passwordStrengthBar.style.backgroundColor = 'var(--primary-green)';
+                    passwordStrengthText.textContent = 'Strong';
+                    passwordStrengthText.className = 'text-success';
+                } else if (strength >= 50) {
+                    passwordStrengthBar.style.backgroundColor = 'var(--primary-yellow)';
+                    passwordStrengthText.textContent = 'Good';
+                    passwordStrengthText.className = 'text-warning';
+                } else if (strength >= 25) {
+                    passwordStrengthBar.style.backgroundColor = 'orange';
+                    passwordStrengthText.textContent = 'Fair';
+                    passwordStrengthText.className = 'text-warning';
+                } else {
+                    passwordStrengthBar.style.backgroundColor = '#dc3545';
+                    passwordStrengthText.textContent = 'Weak';
+                    passwordStrengthText.className = 'text-danger';
+                }
+            }
+
+            // Check password match
+            function checkPasswordMatch() {
+                const password = passwordField.value;
+                const confirmPassword = confirmPasswordField.value;
+
+                if (confirmPassword === '') {
+                    confirmPasswordField.classList.remove('is-invalid', 'is-valid');
+                    reqMatch.checked = false;
+                    return;
+                }
+
+                if (password === confirmPassword) {
+                    confirmPasswordField.classList.remove('is-invalid');
+                    confirmPasswordField.classList.add('is-valid');
+                    reqMatch.checked = true;
+                } else {
+                    confirmPasswordField.classList.remove('is-valid');
+                    confirmPasswordField.classList.add('is-invalid');
+                    reqMatch.checked = false;
+                }
+            }
+
+            // Event listeners for password validation
+            passwordField.addEventListener('input', function () {
+                checkPasswordStrength(this.value);
+                checkPasswordMatch();
+            });
+
+            confirmPasswordField.addEventListener('input', checkPasswordMatch);
+
+            // Form validation and submission
+            form.addEventListener('submit', async function (e) {
+                e.preventDefault();
+
+                // Basic validation
+                const email = document.getElementById('Email').value.trim();
+                const password = passwordField.value;
+                const confirmPassword = confirmPasswordField.value;
+                const role = document.getElementById('Role').value;
+
+                if (!email || !password || !confirmPassword || !role) {
+                    alert('Please fill in all required fields');
+                    return;
+                }
+
+                if (password !== confirmPassword) {
+                    alert('Passwords do not match');
+                    confirmPasswordField.focus();
+                    return;
+                }
+
+                if (password.length < 8) {
+                    alert('Password must be at least 8 characters long');
+                    passwordField.focus();
+                    return;
+                }
+
+                // Show loading state
+                submitBtn.disabled = true;
+                submitText.classList.add('d-none');
+                loadingSpinner.classList.remove('d-none');
+
+                try {
+                    // Prepare form data
+                    const formData = new FormData(this);
+
+                    // Send to API endpoint
+                    const response = await fetch('/api/admin/create', {
+                        method: 'POST',
+                        headers: {
+                            'Accept': 'application/json',
+                            'X-Requested-With': 'XMLHttpRequest'
+                        },
+                        body: formData
+                    });
+
+                    const data = await response.json();
+
+                    // Reset button state
+                    submitBtn.disabled = false;
+                    submitText.classList.remove('d-none');
+                    loadingSpinner.classList.add('d-none');
+
+                    if (response.ok && data.success) {
+                        // Show success message
+                        alert('Admin created successfully!');
+
+                        // Redirect to admin list or show created details
+                        if (data.redirectUrl) {
+                            window.location.href = data.redirectUrl;
+                        } else {
+                            window.location.href = '/Admin/Users';
+                        }
+                    } else {
+                        // Show error message
+                        alert(data.message || 'Failed to create admin. Please try again.');
+
+                        // Highlight error fields
+                        if (data.errors) {
+                            highlightErrors(data.errors);
+                        }
+                    }
+
+                } catch (error) {
+                    console.error('Error:', error);
+                    submitBtn.disabled = false;
+                    submitText.classList.remove('d-none');
+                    loadingSpinner.classList.add('d-none');
+                    alert('Network error. Please check your connection and try again.');
+                }
+            });
+
+
+
+            // Error highlighting function
+            function highlightErrors(errors) {
+                // Clear all error states first
+                const formControls = form.querySelectorAll('.form-control, .form-select');
+                formControls.forEach(control => {
+                    control.classList.remove('is-invalid');
+                });
+
+                // Apply errors
+                for (const field in errors) {
+                    const input = document.getElementById(field);
+                    if (input) {
+                        input.classList.add('is-invalid');
+                        const errorDiv = input.nextElementSibling;
+                        if (errorDiv && errorDiv.classList.contains('invalid-feedback')) {
+                            errorDiv.textContent = errors[field][0];
+                        }
+                    }
+                }
+            }
+
+            // Initialize password strength check
+            checkPasswordStrength('');
+            checkPasswordMatch();
+        });
+
+        // Handle Enter key in form
+        document.addEventListener('keydown', function (e) {
+            if (e.key === 'Enter' && e.target.tagName !== 'BUTTON' && e.target.type !== 'submit') {
+                e.preventDefault();
+                const form = document.getElementById('createAdminForm');
+                if (form.checkValidity()) {
+                    document.getElementById('submitBtn').click();
+                } else {
+                    form.reportValidity();
+                }
+            }
+        });
+    </script>
+
+    <style>
+        .card {
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+        }
+
+        .card-header {
+            border-radius: 12px 12px 0 0 !important;
+            font-weight: 600;
+        }
+
+        .form-control:focus,
+        .form-select:focus {
+            border-color: var(--primary-green);
+            box-shadow: 0 0 0 0.25rem rgba(57, 179, 74, 0.25);
+        }
+
+        .btn-primary {
+            background-color: var(--primary-green);
+            border-color: var(--primary-green);
+        }
+
+        .btn-primary:hover {
+            background-color: #2e8b3e;
+            border-color: #2e8b3e;
+        }
+
+        .btn-outline-secondary {
+            color: var(--gray);
+            border-color: var(--gray);
+        }
+
+        .btn-outline-secondary:hover {
+            background-color: var(--light-gray);
+            border-color: var(--primary-blue);
+            color: var(--primary-blue);
+        }
+
+        .breadcrumb {
+            background-color: transparent;
+            padding-left: 0;
+        }
+
+        .breadcrumb-item a {
+            color: var(--primary-green);
+            text-decoration: none;
+        }
+
+        .breadcrumb-item.active {
+            color: var(--gray);
+        }
+
+        .alert-info {
+            border-left: 4px solid var(--primary-blue);
+        }
+
+        .progress {
+            background-color: var(--light-gray);
+        }
+
+        .form-text {
+            color: var(--gray);
+            font-size: 0.875rem;
+        }
+
+        .form-check-input:checked {
+            background-color: var(--primary-green);
+            border-color: var(--primary-green);
+        }
+
+        .is-valid {
+            border-color: var(--primary-green) !important;
+        }
+
+        .is-invalid {
+            border-color: #dc3545 !important;
+        }
+
+        .bi {
+            vertical-align: -0.125em;
+        }
+    </style>
+}

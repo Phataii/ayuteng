@@ -1,0 +1,133 @@
+/* wwwroot/css/application.css */
+.application-nav-pane {
+  background: #f8f9fa;
+  border-radius: 10px;
+  padding: 20px;
+  margin-bottom: 30px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.nav-header {
+  text-align: center;
+  margin-bottom: 20px;
+  padding-bottom: 15px;
+  border-bottom: 2px solid #e9ecef;
+}
+
+.nav-steps {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.nav-step {
+  display: flex;
+  align-items: center;
+  padding: 12px 15px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border-left: 4px solid transparent;
+}
+
+.nav-step:hover {
+  background-color: #e9ecef;
+}
+
+.nav-step.active {
+  background-color: #e3f2fd;
+  border-left-color: #2196f3;
+}
+
+.nav-step.complete {
+  background-color: #f0fff4;
+  border-left-color: #4caf50;
+}
+
+.nav-step.pending {
+  opacity: 0.7;
+}
+
+.step-icon {
+  position: relative;
+  width: 40px;
+  height: 40px;
+  background: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 15px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.nav-step.active .step-icon {
+  background: #2196f3;
+  color: white;
+}
+
+.nav-step.complete .step-icon {
+  background: #4caf50;
+  color: white;
+}
+
+.checkmark {
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  background: #4caf50;
+  color: white;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  font-size: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.step-info {
+  flex: 1;
+}
+
+.step-title {
+  font-size: 12px;
+  color: #6c757d;
+  font-weight: 500;
+}
+
+.step-name {
+  font-size: 14px;
+  font-weight: 600;
+  color: #495057;
+}
+
+.step-lock {
+  color: #adb5bd;
+}
+
+.nav-progress {
+  margin-top: 20px;
+  padding-top: 20px;
+  border-top: 1px solid #e9ecef;
+}
+
+.progress {
+  height: 8px;
+  background-color: #e9ecef;
+  border-radius: 4px;
+  overflow: hidden;
+  margin-bottom: 10px;
+}
+
+.progress-bar {
+  height: 100%;
+  background: linear-gradient(90deg, #4caf50, #2196f3);
+  transition: width 0.5s ease;
+}
+
+.progress-text {
+  font-size: 12px;
+  color: #6c757d;
+  text-align: center;
+}

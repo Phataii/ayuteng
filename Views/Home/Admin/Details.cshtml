@@ -1,0 +1,848 @@
+@model ayuteng.Models.Application
+@{
+    ViewData["Title"] = "Application Details";
+    Layout = "_AdminLayout";
+}
+
+<div class="container-fluid">
+    <!-- Page Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1 class="h3 mb-0" style="color: var(--primary-blue);">
+                <i class="bi bi-file-earmark-text me-2"></i>Application Details
+            </h1>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="/Admin/Dashboard">Dashboard</a></li>
+                    <li class="breadcrumb-item"><a href="/Applications">Applications</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">@Model.ReferenceNumber</li>
+                </ol>
+            </nav>
+        </div>
+        <div class="btn-group" role="group">
+            <a href="/applications" class="btn btn-outline-secondary">
+                <i class="bi bi-arrow-left me-2"></i>Back to List
+            </a>
+            <button type="button" class="btn btn-outline-primary" onclick="downloadApplication()">
+                <i class="bi bi-download me-2"></i>Download PDF
+            </button>
+            <button type="button" class="btn btn-success" onclick="updateStatus('approved')">
+                <i class="bi bi-check-circle me-2"></i>Approve
+            </button>
+            <button type="button" class="btn btn-danger" onclick="updateStatus('rejected')">
+                <i class="bi bi-x-circle me-2"></i>Reject
+            </button>
+        </div>
+    </div>
+
+    <!-- Application Header -->
+    <div class="card mb-4">
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-8">
+                    <div class="d-flex align-items-center">
+                        <div class="avatar-lg me-4">
+                            @{
+                                var initial = Model.FirstName?.FirstOrDefault().ToString().ToUpper() ?? "A";
+                            }
+                            <div
+                                style="width: 80px; height: 80px; background: linear-gradient(135deg, var(--primary-green), var(--primary-blue)); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 32px; font-weight: 700;">
+                                @initial
+                            </div>
+                        </div>
+                        <div>
+                            <h2 class="mb-1" style="color: var(--primary-blue);">@Model.FirstName @Model.LastName</h2>
+                            <p class="text-muted mb-2">
+                                <i class="bi bi-envelope me-2"></i>@Model.Email
+                                <span class="mx-3">|</span>
+                                <i class="bi bi-phone me-2"></i>@Model.Phone
+                            </p>
+                            <div>
+                                @{
+                                    var statusBadgeClass = Model.Status switch
+                                    {
+                                        "draft" => "bg-secondary",
+                                        "submitted" => "bg-info",
+                                        "reviewing" => "bg-warning",
+                                        "approved" => "bg-success",
+                                        "rejected" => "bg-danger",
+                                        _ => "bg-secondary"
+                                    };
+                                }
+                                <span class="badge @statusBadgeClass me-2">@Model.Status.ToUpper()</span>
+                                <span class="badge bg-primary me-2">REF: @Model.ReferenceNumber</span>
+                                @if (!string.IsNullOrEmpty(Model.Gender))
+                                {
+                                    <span class="badge bg-secondary">
+                                        @*   @if (Model.Gender == "male")
+                                        {
+                                            <i class="bi bi-gender-male me-1"></i>
+                                            Male;
+                                        }
+                                        else if (Model.Gender == "female")
+                                        {
+                                            <i class="bi bi-gender-female me-1"></i>
+                                            Female;
+                                        } *@
+                                        @* else
+                                        { *@
+                                        <i class="bi bi-gender-ambiguous me-1"></i>
+                                        @Model.Gender
+
+                                        @* } *@
+                                    </span>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="text-md-end">
+                        <p class="text-muted mb-1">Application Date</p>
+                        <h5 class="mb-3">@Model.CreatedAt.ToLocalTime().ToString("MMMM dd, yyyy hh:mm tt")</h5>
+
+                        <p class="text-muted mb-1">Application Step</p>
+                        <h5 class="mb-0">Step @Model.ApplicationStep of 9</h5>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Application Details -->
+    <div class="row">
+        <div class="col-md-8">
+            <!-- Main Content -->
+            <div class="card mb-4">
+                <div class="card-header" style="background-color: var(--light-blue);">
+                    <ul class="nav nav-tabs card-header-tabs" id="applicationTabs" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link active" id="founder-tab" data-bs-toggle="tab"
+                                data-bs-target="#founder" type="button" role="tab">
+                                Founder Info
+                            </button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="startup-tab" data-bs-toggle="tab" data-bs-target="#startup"
+                                type="button" role="tab">
+                                Startup Info
+                            </button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="business-tab" data-bs-toggle="tab" data-bs-target="#business"
+                                type="button" role="tab">
+                                Business Model
+                            </button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="documents-tab" data-bs-toggle="tab" data-bs-target="#documents"
+                                type="button" role="tab">
+                                Documents
+                            </button>
+                        </li>
+                    </ul>
+                </div>
+                <div class="card-body">
+                    <div class="tab-content" id="applicationTabsContent">
+                        <!-- Founder Info Tab -->
+                        <div class="tab-pane fade show active" id="founder" role="tabpanel">
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label field-label">Full Name</label>
+                                    <div class="field-value">@Model.FirstName @Model.LastName</div>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label field-label">Date of Birth</label>
+                                    <div class="field-value">@Model.Dob.ToString("MMMM dd, yyyy")</div>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label field-label">Email Address</label>
+                                    <div class="field-value">@Model.Email</div>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label field-label">Phone Number</label>
+                                    <div class="field-value">@Model.Phone</div>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label field-label">Gender</label>
+                                    <div class="field-value">@(Model.Gender ?? "Not specified")</div>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label field-label">Verification Status</label>
+                                    <div class="field-value">
+                                        <span class="badge @(Model.IsVerified ? "bg-success" : "bg-warning")">
+                                            @(Model.IsVerified ? "Verified" : "Not Verified")
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Startup Info Tab -->
+                        <div class="tab-pane fade" id="startup" role="tabpanel">
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label field-label">Startup Name</label>
+                                    <div class="field-value">@(Model.StartupName ?? "Not provided")</div>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label field-label">Website URL</label>
+                                    <div class="field-value">
+                                        @if (!string.IsNullOrEmpty(Model.Url))
+                                        {
+                                            <a href="@Model.Url" target="_blank">@Model.Url</a>
+                                        }
+                                        else
+                                        {
+                                            <span>Not provided</span>
+                                        }
+                                    </div>
+                                </div>
+                                <div class="col-12 mb-3">
+                                    <label class="form-label field-label">Description</label>
+                                    <div class="field-value">@(Model.Description ?? "Not provided")</div>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label field-label">Locations</label>
+                                    <div class="field-value">@(Model.Locations ?? "Not provided")</div>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label field-label">Legally Registered</label>
+                                    <div class="field-value">
+                                        <span class="badge @(Model.LegallyRegistered ? "bg-success" : "bg-secondary")">
+                                            @(Model.LegallyRegistered ? "Yes" : "No")
+                                        </span>
+                                    </div>
+                                </div>
+                                @if (Model.LegallyRegistered)
+                                {
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label field-label">Year of Incorporation</label>
+                                        <div class="field-value">@(Model.YearOfIncorporation?.ToString() ?? "Not provided")
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label field-label">CAC Registration Number</label>
+                                        <div class="field-value">@(Model.CacRegNumber ?? "Not provided")</div>
+                                    </div>
+                                }
+                                <!-- Social Media -->
+                                <div class="col-12 mb-3">
+                                    <label class="form-label field-label">Social Media Links</label>
+                                    <div class="field-value">
+                                        <div class="row">
+                                            @if (!string.IsNullOrEmpty(Model.SocialMedia?.LinkedIn))
+                                            {
+                                                <div class="col-md-3 mb-2">
+                                                    <i class="bi bi-linkedin me-2"></i>
+                                                    <a href="@Model.SocialMedia.LinkedIn" target="_blank">LinkedIn</a>
+                                                </div>
+                                            }
+                                            @if (!string.IsNullOrEmpty(Model.SocialMedia?.X))
+                                            {
+                                                <div class="col-md-3 mb-2">
+                                                    <i class="bi bi-twitter-x me-2"></i>
+                                                    <a href="@Model.SocialMedia.X" target="_blank">X (Twitter)</a>
+                                                </div>
+                                            }
+                                            @if (!string.IsNullOrEmpty(Model.SocialMedia?.Instagram))
+                                            {
+                                                <div class="col-md-3 mb-2">
+                                                    <i class="bi bi-instagram me-2"></i>
+                                                    <a href="@Model.SocialMedia.Instagram" target="_blank">Instagram</a>
+                                                </div>
+                                            }
+                                            @if (!string.IsNullOrEmpty(Model.SocialMedia?.Facebook))
+                                            {
+                                                <div class="col-md-3 mb-2">
+                                                    <i class="bi bi-facebook me-2"></i>
+                                                    <a href="@Model.SocialMedia.Facebook" target="_blank">Facebook</a>
+                                                </div>
+                                            }
+                                            @if (string.IsNullOrEmpty(Model.SocialMedia?.LinkedIn) &&
+                                                                                        string.IsNullOrEmpty(Model.SocialMedia?.X) &&
+                                                                                        string.IsNullOrEmpty(Model.SocialMedia?.Instagram) &&
+                                                                                        string.IsNullOrEmpty(Model.SocialMedia?.Facebook))
+                                            {
+                                                <div class="col-12">
+                                                    <span class="text-muted">No social media links provided</span>
+                                                </div>
+                                            }
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Business Model Tab -->
+                        <div class="tab-pane fade" id="business" role="tabpanel">
+                            <div class="row">
+                                <div class="col-12 mb-3">
+                                    <label class="form-label field-label">Business Model</label>
+                                    <div class="field-value">@(Model.BusinessModel ?? "Not provided")</div>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label field-label">Revenue Generation</label>
+                                    <div class="field-value">
+                                        <span
+                                            class="badge @(Model.IsRevenueGeneration ? "bg-success" : "bg-secondary")">
+                                            @(Model.IsRevenueGeneration ? "Yes" : "No")
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label field-label">Number of Customers</label>
+                                    <div class="field-value">@Model.NoOfCustomers</div>
+                                </div>
+                                <div class="col-12 mb-3">
+                                    <label class="form-label field-label">Go-to-Market Strategy</label>
+                                    <div class="field-value">@(Model.GoToMarketStrategy ?? "Not provided")</div>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label field-label">Average Customer Acquisition Cost</label>
+                                    <div class="field-value">
+                                        @if (Model.AverageCac.HasValue)
+                                        {
+                                            <span>@Model.AverageCac.Value.ToString("C")</span>
+                                        }
+                                        else
+                                        {
+                                            <span>Not provided</span>
+                                        }
+                                    </div>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label field-label">Number of Active Users</label>
+                                    <div class="field-value">@Model.NoOfActiveUsers.ToString("N0")</div>
+                                </div>
+                                <div class="col-12 mb-3">
+                                    <label class="form-label field-label">Primary Users</label>
+                                    <div class="field-value">@(Model.PrimaryUsers ?? "Not provided")</div>
+                                </div>
+                                <div class="col-12 mb-3">
+                                    <label class="form-label field-label">Competitors</label>
+                                    <div class="field-value">@(Model.Competitors ?? "Not provided")</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Documents Tab -->
+                        <div class="tab-pane fade" id="documents" role="tabpanel">
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label field-label">Pitch Deck</label>
+                                    <div class="field-value">
+                                        @if (!string.IsNullOrEmpty(Model.PitchDeckUrl))
+                                        {
+                                            <a href="@Model.PitchDeckUrl" target="_blank"
+                                                class="btn btn-sm btn-outline-primary">
+                                                <i class="bi bi-download me-2"></i>Download Pitch Deck
+                                            </a>
+                                        }
+                                        else
+                                        {
+                                            <span class="text-muted">Not provided</span>
+                                        }
+                                    </div>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label field-label">CAC Document</label>
+                                    <div class="field-value">
+                                        @if (!string.IsNullOrEmpty(Model.CacUrl))
+                                        {
+                                            <a href="@Model.CacUrl" target="_blank" class="btn btn-sm btn-outline-primary">
+                                                <i class="bi bi-download me-2"></i>Download CAC
+                                            </a>
+                                        }
+                                        else
+                                        {
+                                            <span class="text-muted">Not provided</span>
+                                        }
+                                    </div>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label field-label">TIN Document</label>
+                                    <div class="field-value">
+                                        @if (!string.IsNullOrEmpty(Model.TinUrl))
+                                        {
+                                            <a href="@Model.TinUrl" target="_blank" class="btn btn-sm btn-outline-primary">
+                                                <i class="bi bi-download me-2"></i>Download TIN
+                                            </a>
+                                        }
+                                        else
+                                        {
+                                            <span class="text-muted">Not provided</span>
+                                        }
+                                    </div>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label field-label">Other Documents</label>
+                                    <div class="field-value">
+                                        @if (!string.IsNullOrEmpty(Model.OthersUrl))
+                                        {
+                                            <a href="@Model.OthersUrl" target="_blank"
+                                                class="btn btn-sm btn-outline-primary">
+                                                <i class="bi bi-download me-2"></i>Download Other Documents
+                                            </a>
+                                        }
+                                        else
+                                        {
+                                            <span class="text-muted">Not provided</span>
+                                        }
+                                    </div>
+                                </div>
+                                <div class="col-12 mb-3">
+                                    <label class="form-label field-label">Agreements</label>
+                                    <div class="field-value">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" @(Model.AgreeToToS_Ayute ?
+                                                                                                                                            "checked" : "") disabled>
+                                            <label class="form-check-label">
+                                                Agreed to Ayute Terms of Service
+                                            </label>
+                                        </div>
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" @(Model.AgreeToToS_Heifer ?
+                                                                                                                                            "checked" : "") disabled>
+                                            <label class="form-check-label">
+                                                Agreed to Heifer Terms of Service
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Additional Information -->
+            <div class="accordion mb-4" id="additionalInfoAccordion">
+                <!-- Problem & Solution -->
+                <div class="accordion-item">
+                    <h2 class="accordion-header">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                            data-bs-target="#problemSolution">
+                            <i class="bi bi-lightbulb me-2"></i>Problem & Solution
+                        </button>
+                    </h2>
+                    <div id="problemSolution" class="accordion-collapse collapse"
+                        data-bs-parent="#additionalInfoAccordion">
+                        <div class="accordion-body">
+                            <div class="row">
+                                <div class="col-12 mb-3">
+                                    <label class="form-label field-label">Farmer Challenges</label>
+                                    <div class="field-value">@(Model.FarmerChallenges ?? "Not provided")</div>
+                                </div>
+                                <div class="col-12 mb-3">
+                                    <label class="form-label field-label">Solution Description</label>
+                                    <div class="field-value">@(Model.SolutionDescription ?? "Not provided")</div>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label field-label">Product Stage</label>
+                                    <div class="field-value">@(Model.ProductStage ?? "Not provided")</div>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label field-label">Product Link</label>
+                                    <div class="field-value">
+                                        @if (!string.IsNullOrEmpty(Model.ProductLink))
+                                        {
+                                            <a href="@Model.ProductLink" target="_blank">@Model.ProductLink</a>
+                                        }
+                                        else
+                                        {
+                                            <span>Not provided</span>
+                                        }
+                                    </div>
+                                </div>
+                                <div class="col-12 mb-3">
+                                    <label class="form-label field-label">Innovation Highlight</label>
+                                    <div class="field-value">@(Model.InnovationHighlight ?? "Not provided")</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Impact -->
+                <div class="accordion-item">
+                    <h2 class="accordion-header">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                            data-bs-target="#impact">
+                            <i class="bi bi-graph-up me-2"></i>Impact
+                        </button>
+                    </h2>
+                    <div id="impact" class="accordion-collapse collapse" data-bs-parent="#additionalInfoAccordion">
+                        <div class="accordion-body">
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label field-label">Farmers Served (Previous Year)</label>
+                                    <div class="field-value">@Model.FarmersServedPreviousYear.ToString("N0")</div>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label field-label">Farmers Served (Total)</label>
+                                    <div class="field-value">@Model.FarmersServedTotal.ToString("N0")</div>
+                                </div>
+                                <div class="col-12 mb-3">
+                                    <label class="form-label field-label">Impact on Farmers</label>
+                                    <div class="field-value">@(Model.ImpactOnFarmers ?? "Not provided")</div>
+                                </div>
+                                <div class="col-12 mb-3">
+                                    <label class="form-label field-label">Sustainability Promotion</label>
+                                    <div class="field-value">@(Model.SustainabilityPromotion ?? "Not provided")</div>
+                                </div>
+                                <div class="col-12 mb-3">
+                                    <label class="form-label field-label">Impact Evidence</label>
+                                    <div class="field-value">@(Model.ImpactEvidence ?? "Not provided")</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Team -->
+                <div class="accordion-item">
+                    <h2 class="accordion-header">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                            data-bs-target="#team">
+                            <i class="bi bi-people me-2"></i>Team
+                        </button>
+                    </h2>
+                    <div id="team" class="accordion-collapse collapse" data-bs-parent="#additionalInfoAccordion">
+                        <div class="accordion-body">
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label field-label">Number of Founders</label>
+                                    <div class="field-value">@(Model.NoOfFounders?.ToString() ?? "Not provided")</div>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label field-label">Number of Employees</label>
+                                    <div class="field-value">@(Model.NoOfEmployees?.ToString() ?? "Not provided")</div>
+                                </div>
+                                <div class="col-12 mb-3">
+                                    <label class="form-label field-label">Founders Details</label>
+                                    <div class="field-value">@(Model.FoundersDetails ?? "Not provided")</div>
+                                </div>
+                                <div class="col-12 mb-3">
+                                    <label class="form-label field-label">Team Skills</label>
+                                    <div class="field-value">@(Model.TeamSkill ?? "Not provided")</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sidebar -->
+        <div class="col-md-4">
+            <!-- Status Update Card -->
+            <div class="card mb-4">
+                <div class="card-header" style="background-color: var(--light-green);">
+                    <h5 class="mb-0" style="color: var(--primary-blue);">
+                        <i class="bi bi-pencil-square me-2"></i>Update Status
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <label class="form-label">Current Status</label>
+                        <div>
+                            <span class="badge @statusBadgeClass fs-6">@Model.Status.ToUpper()</span>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Change Status To</label>
+                        <select class="form-select" id="newStatus">
+                            <option value="reviewing">Under Review</option>
+                            <option value="approved">Approved</option>
+                            <option value="rejected">Rejected</option>
+                            <option value="submitted">Submitted</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Notes (Optional)</label>
+                        <textarea class="form-control" id="statusNotes" rows="3"
+                            placeholder="Add notes about this status change..."></textarea>
+                    </div>
+                    <button type="button" class="btn btn-primary w-100" onclick="updateStatusWithNotes()">
+                        <i class="bi bi-save me-2"></i>Update Status
+                    </button>
+                </div>
+            </div>
+
+            <!-- Timeline Card -->
+            <div class="card mb-4">
+                <div class="card-header" style="background-color: var(--light-blue);">
+                    <h5 class="mb-0" style="color: var(--primary-blue);">
+                        <i class="bi bi-clock-history me-2"></i>Application Timeline
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="timeline">
+                        <div class="timeline-item">
+                            <div class="timeline-point bg-success"></div>
+                            <div class="timeline-content">
+                                <h6 class="mb-1">Application Created</h6>
+                                <p class="text-muted mb-0">@Model.CreatedAt.ToLocalTime().ToString("MMM dd, yyyy hh:mm                                    tt")</p>
+                            </div>
+                        </div>
+                        <div class="timeline-item">
+                            <div class="timeline-point bg-primary"></div>
+                            <div class="timeline-content">
+                                <h6 class="mb-1">Last Updated</h6>
+                                <p class="text-muted mb-0">@Model.UpdatedAt.ToLocalTime().ToString("MMM dd, yyyy hh:mm                                    tt")</p>
+                            </div>
+                        </div>
+                        @if (Model.Status == "approved" || Model.Status == "rejected")
+                        {
+                            <div class="timeline-item">
+                                <div class="timeline-point @(Model.Status == "approved" ? "bg-success" : "bg-danger")">
+                                </div>
+                                <div class="timeline-content">
+                                    <h6 class="mb-1">@(Model.Status == "approved" ? "Application Approved" : "Application                                    Rejected")</h6>
+                                    <p class="text-muted mb-0">@Model.UpdatedAt.ToLocalTime().ToString("MMM dd, yyyy hh:mm                                    tt")</p>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick Actions -->
+            <div class="card">
+                <div class="card-header" style="background-color: var(--light-green);">
+                    <h5 class="mb-0" style="color: var(--primary-blue);">
+                        <i class="bi bi-lightning-charge me-2"></i>Quick Actions
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="d-grid gap-2">
+                        <button type="button" class="btn btn-outline-primary" onclick="sendEmail()">
+                            <i class="bi bi-envelope me-2"></i>Send Email
+                        </button>
+                        <button type="button" class="btn btn-outline-success" onclick="downloadApplication()">
+                            <i class="bi bi-download me-2"></i>Download PDF
+                        </button>
+                        <button type="button" class="btn btn-outline-warning" onclick="addNote()">
+                            <i class="bi bi-sticky me-2"></i>Add Internal Note
+                        </button>
+                        <button type="button" class="btn btn-outline-danger" onclick="deleteApplication()">
+                            <i class="bi bi-trash me-2"></i>Delete Application
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Styles {
+    <style>
+        .field-label {
+            font-weight: 600;
+            color: var(--primary-blue);
+            margin-bottom: 5px;
+            font-size: 14px;
+        }
+
+        .field-value {
+            padding: 8px 12px;
+            background-color: var(--light-gray);
+            border-radius: 6px;
+            border-left: 3px solid var(--primary-green);
+            margin-bottom: 15px;
+            min-height: 44px;
+            display: flex;
+            align-items: center;
+        }
+
+        .nav-tabs .nav-link {
+            color: var(--primary-blue);
+            font-weight: 500;
+            border: none;
+            padding: 10px 20px;
+        }
+
+        .nav-tabs .nav-link.active {
+            color: var(--primary-green);
+            border-bottom: 3px solid var(--primary-green);
+            background-color: transparent;
+        }
+
+        .nav-tabs .nav-link:hover:not(.active) {
+            color: var(--primary-green);
+            border-bottom: 3px solid rgba(57, 179, 74, 0.3);
+        }
+
+        .accordion-button {
+            background-color: var(--light-green);
+            color: var(--primary-blue);
+            font-weight: 500;
+        }
+
+        .accordion-button:not(.collapsed) {
+            background-color: var(--light-green);
+            color: var(--primary-blue);
+            box-shadow: none;
+        }
+
+        .accordion-button:focus {
+            box-shadow: none;
+            border-color: var(--light-green);
+        }
+
+        .timeline {
+            position: relative;
+            padding-left: 20px;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 9px;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background-color: var(--light-green);
+        }
+
+        .timeline-item {
+            position: relative;
+            margin-bottom: 20px;
+        }
+
+        .timeline-point {
+            position: absolute;
+            left: -20px;
+            top: 5px;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            border: 2px solid white;
+        }
+
+        .timeline-content {
+            margin-left: 10px;
+        }
+
+        .avatar-lg {
+            flex-shrink: 0;
+        }
+
+        .badge {
+            font-size: 12px;
+            padding: 6px 12px;
+            border-radius: 20px;
+        }
+
+        .btn-group .btn {
+            border-radius: 6px;
+        }
+    </style>
+}
+
+@section Scripts {
+    <script>
+        function updateStatus(newStatus) {
+            if (confirm(`Are you sure you want to mark this application as ${newStatus}?`)) {
+                updateStatusWithApi(newStatus, '');
+            }
+        }
+
+        function updateStatusWithNotes() {
+            const newStatus = document.getElementById('newStatus').value;
+            const notes = document.getElementById('statusNotes').value;
+
+            if (confirm(`Update application status to ${newStatus}?`)) {
+                updateStatusWithApi(newStatus, notes);
+            }
+        }
+
+        async function updateStatusWithApi(newStatus, notes) {
+            try {
+                const response = await fetch(`/api/applications/@Model.Id/status`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]').value
+                    },
+                    body: JSON.stringify({
+                        status: newStatus,
+                        notes: notes
+                    })
+                });
+
+                if (response.ok) {
+                    showToast('Status updated successfully', 'success');
+                    setTimeout(() => {
+                        window.location.reload();
+                    }, 1500);
+                } else {
+                    throw new Error('Failed to update status');
+                }
+            } catch (error) {
+                console.error('Error updating status:', error);
+                showToast('Failed to update status', 'danger');
+            }
+        }
+
+        function downloadApplication() {
+            window.open(`/api/application/@Model.Id/download`, '_blank');
+            showToast('Download started...', 'info');
+        }
+
+        function sendEmail() {
+            const subject = encodeURIComponent(`Regarding your application: ${Model.ReferenceNumber}`);
+            const body = encodeURIComponent(`Dear ${Model.FirstName},\n\n`);
+            window.location.href = `mailto:${Model.Email}?subject=${subject}&body=${body}`;
+        }
+
+        function addNote() {
+            const note = prompt('Enter internal note:');
+            if (note) {
+                showToast('Note added successfully', 'success');
+                // In a real app, you would save this to the database
+                console.log('Note added:', note);
+            }
+        }
+
+        function deleteApplication() {
+            if (confirm('Are you sure you want to delete this application? This action cannot be undone.')) {
+                // In a real app, you would call delete API
+                showToast('Application deleted (demo only)', 'warning');
+            }
+        }
+
+        function showToast(message, type) {
+            const toast = document.createElement('div');
+            toast.className = `toast align-items-center text-white bg-${type} border-0 position-fixed bottom-0 end-0 m-3`;
+            toast.style.zIndex = '1060';
+            toast.innerHTML = `
+                                                <div class="d-flex">
+                                                    <div class="toast-body">
+                                                        ${message}
+                                                    </div>
+                                                    <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+                                                </div>
+                                            `;
+
+            document.body.appendChild(toast);
+            const bsToast = new bootstrap.Toast(toast);
+            bsToast.show();
+
+            setTimeout(() => {
+                if (toast.parentNode) {
+                    toast.parentNode.removeChild(toast);
+                }
+            }, 3000);
+        }
+
+        // Initialize tooltips
+        document.addEventListener('DOMContentLoaded', function () {
+            var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+            var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+                return new bootstrap.Tooltip(tooltipTriggerEl);
+            });
+        });
+    </script>
+}

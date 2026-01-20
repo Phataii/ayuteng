@@ -1,0 +1,857 @@
+@model ayuteng.Models.Application
+
+@{
+    ViewData["Title"] = "Company Information";
+    ViewData["CurrentStep"] = 2;
+    ViewData["StepTitle"] = "Company Details";
+    ViewData["CompletedSteps"] = new List<int> { 1 };
+    ViewData["Previous"] = ViewBag.Previous;
+}
+
+<div class="step-form">
+    <h2>Company Information</h2>
+    <p class="form-subtitle">Tell us about your startup or company.</p>
+
+    <form id="step2Form" method="post">
+        @Html.AntiForgeryToken()
+
+        <div class="form-grid">
+            <!-- Startup Name -->
+            <div class="form-group">
+                <label for="StartupName" class="form-label required">
+                    Company/Startup Name
+                    <span class="field-info">Required for registered companies</span>
+                </label>
+                <input name="StartupName" id="StartupName" type="text" class="form-control"
+                    placeholder="Enter company name" maxlength="200" value="@Model?.StartupName">
+                <span class="validation-error" id="StartupNameError"></span>
+            </div>
+
+            <!-- Website URL - Now Optional -->
+            <div class="form-group">
+                <label for="Url" class="form-label">
+                    Website URL
+                    <span class="field-info">Optional - Leave blank if not available</span>
+                </label>
+                <div class="input-with-icon">
+                    <span class="input-icon">🌐</span>
+                    <input name="Url" id="Url" type="url" class="form-control" placeholder="https://example.com"
+                        value="@Model?.Url">
+                </div>
+                <span class="field-info">Enter full URL (https://) or leave empty</span>
+                <span class="validation-error" id="UrlError"></span>
+            </div>
+
+            <!-- Social Media Section - All Optional -->
+            <div class="form-group full-width">
+                <label class="form-label">Social Media Profiles</label>
+                <span class="field-info">Optional - Provide links to your social media profiles (leave empty if not
+                    available)</span>
+                <div class="social-media-grid">
+                    <!-- LinkedIn -->
+                    <div class="social-input">
+                        <div class="social-icon">in</div>
+                        <input name="SocialMedia.LinkedIn" id="SocialMedia_LinkedIn" type="url" class="form-control"
+                            placeholder="LinkedIn URL (optional)" value="@Model?.SocialMedia?.LinkedIn">
+                    </div>
+
+                    <!-- Twitter/X -->
+                    <div class="social-input">
+                        <div class="social-icon">𝕏</div>
+                        <input name="SocialMedia.X" id="SocialMedia_X" type="url" class="form-control"
+                            placeholder="Twitter/X URL (optional)" value="@Model?.SocialMedia?.X">
+                    </div>
+
+                    <!-- Facebook -->
+                    <div class="social-input">
+                        <div class="social-icon">f</div>
+                        <input name="SocialMedia.Facebook" id="SocialMedia_Facebook" type="url" class="form-control"
+                            placeholder="Facebook URL (optional)" value="@Model?.SocialMedia?.Facebook">
+                    </div>
+
+                    <!-- Instagram -->
+                    <div class="social-input">
+                        <div class="social-icon">📷</div>
+                        <input name="SocialMedia.Instagram" id="SocialMedia_Instagram" type="url" class="form-control"
+                            placeholder="Instagram URL (optional)" value="@Model?.SocialMedia?.Instagram">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Company Description -->
+            <div class="form-group full-width">
+                <label for="Description" class="form-label">
+                    Company Description
+                    <span class="field-info">Tell us about your company's mission, products, or services</span>
+                </label>
+                <textarea name="Description" id="Description" class="form-control textarea" rows="4"
+                    placeholder="Describe your company, what you do, and what makes you unique..."
+                    maxlength="1000">@Model?.Description</textarea>
+                <div class="textarea-counter">
+                    <span id="descriptionCounter">@(Model?.Description?.Length ?? 0)</span>/1000 characters
+                </div>
+                <span class="validation-error" id="DescriptionError"></span>
+            </div>
+
+            <!-- Locations -->
+            <div class="form-group full-width">
+                <label for="Locations" class="form-label">
+                    Operating Locations
+                    <span class="field-info">Where does your company operate? (Cities, Countries)</span>
+                </label>
+                <textarea name="Locations" id="Locations" class="form-control textarea" rows="3"
+                    placeholder="e.g., Lagos, Nigeria; London, UK; Remote" maxlength="500">@Model?.Locations</textarea>
+                <div class="textarea-counter">
+                    <span id="locationsCounter">@(Model?.Locations?.Length ?? 0)</span>/500 characters
+                </div>
+                <span class="validation-error" id="LocationsError"></span>
+            </div>
+
+            <!-- Legal Registration Toggle -->
+            <div class="form-group full-width">
+                <div class="toggle-group">
+                    <label class="form-label">Is your company legally registered?</label>
+                    <div class="toggle-switch">
+                        <input name="LegallyRegistered" id="LegallyRegistered" type="checkbox" class="toggle-checkbox"
+                            @(Model?.LegallyRegistered == true ? "checked" : "")>
+                        <label for="LegallyRegistered" class="toggle-label">
+                            <span class="toggle-text">No</span>
+                            <span class="toggle-slider"></span>
+                            <span class="toggle-text">Yes</span>
+                        </label>
+                    </div>
+                    <span class="field-info">Select "Yes" only if your company is legally registered. Registration
+                        details are optional for non-registered companies.</span>
+                </div>
+                <span class="validation-error" id="LegallyRegisteredError"></span>
+            </div>
+
+            <!-- Registration Details (Conditional) -->
+            <div id="registrationDetails" class="conditional-section full-width"
+                style="display: @(Model?.LegallyRegistered == true ? "block" : "none");">
+                <div class="section-divider">
+                    <span>Registration Details</span>
+                </div>
+                <p class="field-info" style="margin-bottom: 20px; text-align: center;">
+                    Optional - Provide registration details if available
+                </p>
+
+                <div class="form-grid">
+                    <!-- Year of Incorporation -->
+                    <div class="form-group">
+                        <label for="YearOfIncorporation" class="form-label">
+                            Year of Incorporation
+                            <span class="field-info">Optional - When was your company registered?</span>
+                        </label>
+                        <input name="YearOfIncorporation" id="YearOfIncorporation" type="number" class="form-control"
+                            placeholder="YYYY" min="1900" max="@DateTime.Now.Year" value="@Model?.YearOfIncorporation">
+                        <span class="validation-error" id="YearOfIncorporationError"></span>
+                    </div>
+
+                    <!-- CAC Registration Number -->
+                    <div class="form-group">
+                        <label for="CacRegNumber" class="form-label">
+                            Registration Number
+                            <span class="field-info">Optional - e.g., CAC/RC/123456</span>
+                        </label>
+                        <input name="CacRegNumber" id="CacRegNumber" type="text" class="form-control"
+                            placeholder="Registration number" value="@Model?.CacRegNumber">
+                        <span class="validation-error" id="CacRegNumberError"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-actions">
+            <button type="submit" class="btn btn-primary btn-submit" id="submitBtn">
+                Save & Continue →
+            </button>
+        </div>
+    </form>
+</div>
+
+<style>
+    /* Step 2 Specific Styles */
+    .step-form {
+        max-width: 800px;
+        margin: 0 auto;
+    }
+
+    h2 {
+        color: var(--primary-blue);
+        margin-bottom: 8px;
+        font-size: 28px;
+        font-weight: 700;
+    }
+
+    .form-subtitle {
+        color: var(--gray);
+        margin-bottom: 30px;
+        font-size: 16px;
+        line-height: 1.5;
+    }
+
+    .form-grid {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 20px;
+        margin-bottom: 30px;
+    }
+
+    @@media (min-width: 768px) {
+        .form-grid {
+            grid-template-columns: 1fr 1fr;
+        }
+
+        .full-width {
+            grid-column: 1 / -1;
+        }
+    }
+
+    .form-group {
+        margin-bottom: 0;
+    }
+
+    .form-label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: 600;
+        color: var(--primary-blue);
+        font-size: 14px;
+    }
+
+    .field-info {
+        display: block;
+        font-weight: normal;
+        font-size: 12px;
+        color: var(--gray);
+        margin-top: 2px;
+    }
+
+    .form-control {
+        width: 100%;
+        padding: 12px 16px;
+        border: 2px solid var(--input-border);
+        border-radius: 8px;
+        font-size: 16px;
+        transition: all 0.3s ease;
+        background: var(--white);
+        color: var(--primary-blue);
+    }
+
+    .form-label.required::after {
+        content: ' *';
+        color: var(--error-color);
+    }
+
+    .form-control:focus {
+        outline: none;
+        border-color: var(--primary-green);
+        box-shadow: 0 0 0 3px rgba(57, 179, 74, 0.1);
+    }
+
+    .form-control::placeholder {
+        color: #a0a0a0;
+    }
+
+    /* Input with Icon */
+    .input-with-icon {
+        position: relative;
+    }
+
+    .input-icon {
+        position: absolute;
+        left: 16px;
+        top: 50%;
+        transform: translateY(-50%);
+        font-size: 18px;
+        color: var(--gray);
+    }
+
+    .input-with-icon .form-control {
+        padding-left: 44px;
+    }
+
+    /* Social Media Grid */
+    .social-media-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        gap: 15px;
+        margin: 15px 0;
+    }
+
+    @@media (max-width: 480px) {
+        .social-media-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    .social-input {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .social-icon {
+        width: 36px;
+        height: 36px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: var(--light-gray);
+        border-radius: 6px;
+        font-weight: 600;
+        color: var(--primary-blue);
+        flex-shrink: 0;
+        font-size: 14px;
+    }
+
+    .social-input .form-control {
+        flex: 1;
+    }
+
+    /* Textareas */
+    .textarea {
+        resize: vertical;
+        min-height: 100px;
+        font-family: inherit;
+        line-height: 1.5;
+    }
+
+    .textarea-counter {
+        text-align: right;
+        font-size: 12px;
+        color: var(--gray);
+        margin-top: 4px;
+    }
+
+    /* Toggle Switch */
+    .toggle-group {
+        background: var(--light-gray);
+        padding: 20px;
+        border-radius: 12px;
+        border: 2px solid var(--input-border);
+    }
+
+    .toggle-switch {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        margin: 10px 0;
+    }
+
+    .toggle-checkbox {
+        display: none;
+    }
+
+    .toggle-label {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        cursor: pointer;
+    }
+
+    .toggle-slider {
+        position: relative;
+        width: 60px;
+        height: 30px;
+        background: var(--gray);
+        border-radius: 30px;
+        transition: all 0.3s ease;
+    }
+
+    .toggle-slider::before {
+        content: '';
+        position: absolute;
+        width: 26px;
+        height: 26px;
+        background: white;
+        border-radius: 50%;
+        top: 2px;
+        left: 2px;
+        transition: all 0.3s ease;
+    }
+
+    .toggle-checkbox:checked+.toggle-label .toggle-slider {
+        background: var(--primary-green);
+    }
+
+    .toggle-checkbox:checked+.toggle-label .toggle-slider::before {
+        transform: translateX(30px);
+    }
+
+    .toggle-text {
+        font-weight: 600;
+        font-size: 14px;
+        color: var(--gray);
+        min-width: 30px;
+    }
+
+    .toggle-checkbox:not(:checked)+.toggle-label .toggle-text:first-child {
+        color: var(--primary-blue);
+    }
+
+    .toggle-checkbox:checked+.toggle-label .toggle-text:last-child {
+        color: var(--primary-green);
+    }
+
+    /* Conditional Section */
+    .conditional-section {
+        margin-top: 30px;
+        padding: 25px;
+        background: var(--light-blue);
+        border-radius: 12px;
+        border: 2px solid var(--input-border);
+        animation: slideDown 0.3s ease;
+    }
+
+    @@keyframes slideDown {
+        from {
+            opacity: 0;
+            transform: translateY(-10px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .section-divider {
+        text-align: center;
+        margin-bottom: 25px;
+        position: relative;
+    }
+
+    .section-divider span {
+        background: var(--light-blue);
+        padding: 0 15px;
+        color: var(--primary-blue);
+        font-weight: 600;
+        font-size: 14px;
+        position: relative;
+        z-index: 1;
+    }
+
+    .section-divider::before {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 0;
+        right: 0;
+        height: 1px;
+        background: var(--input-border);
+        z-index: 0;
+    }
+
+    /* Validation Styles */
+    .validation-error {
+        display: block;
+        color: var(--error-color);
+        font-size: 12px;
+        margin-top: 6px;
+        min-height: 18px;
+    }
+
+    .form-control.input-validation-error {
+        border-color: var(--error-color);
+    }
+
+    .form-control.input-validation-error:focus {
+        box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
+    }
+
+    /* Form Actions */
+    .form-actions {
+        margin-top: 40px;
+        padding-top: 20px;
+        border-top: 1px solid var(--input-border);
+    }
+
+    .btn-submit {
+        width: 100%;
+        padding: 16px;
+        font-size: 16px;
+        font-weight: 600;
+    }
+
+    /* Mobile Optimizations */
+    @@media (max-width: 767px) {
+        h2 {
+            font-size: 24px;
+        }
+
+        .form-subtitle {
+            font-size: 15px;
+        }
+
+        .form-control {
+            padding: 14px 16px;
+            font-size: 16px;
+        }
+
+        .toggle-group {
+            padding: 15px;
+        }
+
+        .conditional-section {
+            padding: 20px;
+        }
+    }
+
+    /* Loading State */
+    .btn-submit.loading {
+        position: relative;
+        color: transparent;
+    }
+
+    .btn-submit.loading::after {
+        content: '';
+        position: absolute;
+        width: 20px;
+        height: 20px;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        border: 2px solid rgba(255, 255, 255, 0.3);
+        border-radius: 50%;
+        border-top-color: white;
+        animation: spin 1s ease infinite;
+    }
+
+    @@keyframes spin {
+        to {
+            transform: translate(-50%, -50%) rotate(360deg);
+        }
+    }
+</style>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const form = document.getElementById('step2Form');
+        const submitBtn = document.getElementById('submitBtn');
+        const legallyRegisteredCheckbox = document.getElementById('LegallyRegistered');
+        const registrationDetails = document.getElementById('registrationDetails');
+        const descriptionTextarea = document.getElementById('Description');
+        const locationsTextarea = document.getElementById('Locations');
+        const descriptionCounter = document.getElementById('descriptionCounter');
+        const locationsCounter = document.getElementById('locationsCounter');
+
+        // Extract application ID from current URL
+        const currentUrl = window.location.pathname;
+        const urlSegments = currentUrl.split('/');
+        const applicationId = urlSegments[urlSegments.length - 1]; // Get last segment
+
+        // Validate it's a GUID
+        const guidPattern = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
+        if (!guidPattern.test(applicationId)) {
+            console.error('Invalid application ID in URL:', applicationId);
+            showAlert('Invalid application. Please start from step 1.');
+            return;
+        }
+
+        // API endpoint with application ID
+        const API_ENDPOINT = `/api/application/step-two/${applicationId}`;
+
+        // Initialize counters
+        if (descriptionTextarea && descriptionCounter) {
+            descriptionCounter.textContent = descriptionTextarea.value.length;
+            updateCounterColor(descriptionCounter, descriptionTextarea.value.length, 1000);
+        }
+
+        if (locationsTextarea && locationsCounter) {
+            locationsCounter.textContent = locationsTextarea.value.length;
+            updateCounterColor(locationsCounter, locationsTextarea.value.length, 500);
+        }
+
+        function updateCounterColor(counterElement, length, maxLength) {
+            const errorColor = getComputedStyle(document.documentElement)
+                .getPropertyValue('--error-color').trim() || '#EF4444';
+
+            if (length > maxLength * 0.9) {
+                counterElement.style.color = errorColor;
+            } else if (length > maxLength * 0.75) {
+                counterElement.style.color = '#F59E0B';
+            } else {
+                counterElement.style.color = '#6B7280';
+            }
+        }
+
+        // Toggle registration details
+        legallyRegisteredCheckbox.addEventListener('change', function () {
+            if (this.checked) {
+                registrationDetails.style.display = 'block';
+                registrationDetails.style.animation = 'none';
+                setTimeout(() => {
+                    registrationDetails.style.animation = 'slideDown 0.3s ease';
+                }, 10);
+            } else {
+                registrationDetails.style.display = 'none';
+            }
+        });
+
+        // Character counters
+        if (descriptionTextarea) {
+            descriptionTextarea.addEventListener('input', function () {
+                const length = this.value.length;
+                descriptionCounter.textContent = length;
+                updateCounterColor(descriptionCounter, length, 1000);
+            });
+        }
+
+        if (locationsTextarea) {
+            locationsTextarea.addEventListener('input', function () {
+                const length = this.value.length;
+                locationsCounter.textContent = length;
+                updateCounterColor(locationsCounter, length, 500);
+            });
+        }
+
+        // URL validation helper
+        function isValidUrl(string) {
+            if (!string || string.trim() === '') {
+                return true; // Empty is allowed
+            }
+            try {
+                new URL(string);
+                return true;
+            } catch (_) {
+                return false;
+            }
+        }
+
+        // Social media URL formatting (only if provided)
+        const socialInputs = document.querySelectorAll('.social-input input');
+        socialInputs.forEach(input => {
+            input.addEventListener('blur', function () {
+                if (this.value.trim() && !this.value.startsWith('http') && !this.value.startsWith('https')) {
+                    let url = this.value.trim();
+                    url = 'https://' + url;
+                    this.value = url;
+                }
+            });
+        });
+
+        // Form submission via API
+        form.addEventListener('submit', async function (e) {
+            e.preventDefault();
+
+            // Clear previous errors
+            clearErrors();
+
+            let isValid = true;
+
+            // Validate Website URL (only if provided)
+            const urlField = document.getElementById('Url');
+            if (urlField.value.trim() && !isValidUrl(urlField.value)) {
+                showFieldError('Url', 'Please enter a valid URL or leave empty');
+                isValid = false;
+            }
+
+            // Validate Social Media URLs (only if provided)
+            const socialFields = document.querySelectorAll('.social-input input');
+            socialFields.forEach(field => {
+                if (field.value.trim() && !isValidUrl(field.value)) {
+                    showFieldError(field.id, 'Please enter a valid URL or leave empty');
+                    isValid = false;
+                }
+            });
+
+            // Validate conditional fields only if legally registered AND values are provided
+            if (legallyRegisteredCheckbox.checked) {
+                const yearField = document.getElementById('YearOfIncorporation');
+                const regNumberField = document.getElementById('CacRegNumber');
+
+                // Year validation (only if provided)
+                if (yearField.value.trim()) {
+                    const year = parseInt(yearField.value);
+                    const currentYear = new Date().getFullYear();
+
+                    if (isNaN(year)) {
+                        showFieldError('YearOfIncorporation', 'Please enter a valid year or leave empty');
+                        isValid = false;
+                    } else if (year > currentYear) {
+                        showFieldError('YearOfIncorporation', 'Year cannot be in the future');
+                        isValid = false;
+                    } else if (year < 1900) {
+                        showFieldError('YearOfIncorporation', 'Please enter a year after 1900');
+                        isValid = false;
+                    }
+                }
+
+                // Registration number validation (only if provided)
+                if (regNumberField.value.trim() && regNumberField.value.length < 3) {
+                    showFieldError('CacRegNumber', 'Registration number should be at least 3 characters if provided');
+                    isValid = false;
+                }
+            }
+
+            // Validate text length limits
+            if (descriptionTextarea && descriptionTextarea.value.length > 1000) {
+                showFieldError('Description', 'Description cannot exceed 1000 characters');
+                isValid = false;
+            }
+
+            if (locationsTextarea && locationsTextarea.value.length > 500) {
+                showFieldError('Locations', 'Locations cannot exceed 500 characters');
+                isValid = false;
+            }
+
+            if (!isValid) {
+                return;
+            }
+
+            // Show loading state
+            submitBtn.classList.add('loading');
+            submitBtn.disabled = true;
+
+            try {
+                // Prepare form data - null for empty optional fields
+                const data = {
+                    StartupName: document.getElementById('StartupName').value,
+                    Url: document.getElementById('Url').value.trim() || null,
+                    Description: document.getElementById('Description').value,
+                    Locations: document.getElementById('Locations').value,
+                    LegallyRegistered: legallyRegisteredCheckbox.checked,
+                    YearOfIncorporation: legallyRegisteredCheckbox.checked ?
+                        (document.getElementById('YearOfIncorporation').value.trim() || null) : null,
+                    CacRegNumber: legallyRegisteredCheckbox.checked ?
+                        (document.getElementById('CacRegNumber').value.trim() || null) : null,
+                    SocialMedia: {
+                        LinkedIn: document.getElementById('SocialMedia_LinkedIn').value.trim() || null,
+                        X: document.getElementById('SocialMedia_X').value.trim() || null,
+                        Facebook: document.getElementById('SocialMedia_Facebook').value.trim() || null,
+                        Instagram: document.getElementById('SocialMedia_Instagram').value.trim() || null
+                    }
+                };
+
+                // Get anti-forgery token
+                const token = document.querySelector('input[name="__RequestVerificationToken"]').value;
+
+                // Submit to API with application ID in route
+                const response = await fetch(API_ENDPOINT, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'RequestVerificationToken': token
+                    },
+                    credentials: 'include',
+                    body: JSON.stringify(data)
+                });
+
+                const result = await response.json();
+
+                if (response.ok && result.success) {
+                    // Success - redirect to next step
+                    if (result.redirectUrl) {
+                        window.location.href = result.redirectUrl;
+                    } else {
+                        // Default redirect to step 3 with same application ID pattern
+                        window.location.href = `/application/step-three/${applicationId}`;
+                    }
+                } else {
+                    // Handle validation errors from server
+                    if (result.errors) {
+                        displayServerErrors(result.errors);
+                    } else {
+                        throw new Error(result.message || 'Submission failed');
+                    }
+                }
+
+            } catch (error) {
+                console.error('Submission error:', error);
+                showAlert(error.message || 'An error occurred. Please try again.');
+            } finally {
+                submitBtn.classList.remove('loading');
+                submitBtn.disabled = false;
+            }
+        });
+
+        function showFieldError(fieldId, message) {
+            const field = document.getElementById(fieldId);
+            const errorElement = document.getElementById(fieldId + 'Error');
+
+            if (field) {
+                field.classList.add('input-validation-error');
+            }
+
+            if (errorElement) {
+                errorElement.textContent = message;
+            }
+        }
+
+        function clearErrors() {
+            document.querySelectorAll('.validation-error').forEach(el => {
+                el.textContent = '';
+            });
+
+            document.querySelectorAll('.form-control').forEach(el => {
+                el.classList.remove('input-validation-error');
+            });
+        }
+
+        function displayServerErrors(errors) {
+            clearErrors();
+
+            Object.keys(errors).forEach(fieldName => {
+                // Convert dot notation to underscore for ID matching
+                const fieldId = fieldName.replace('.', '_');
+                const field = document.getElementById(fieldId);
+                const errorElement = document.getElementById(fieldId + 'Error');
+
+                if (field && errorElement) {
+                    field.classList.add('input-validation-error');
+                    errorElement.textContent = errors[fieldName].join(', ');
+
+                    if (Object.keys(errors)[0] === fieldName) {
+                        field.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    }
+                }
+            });
+        }
+
+        function showAlert(message) {
+            alert(message);
+        }
+
+        // Real-time validation
+        const inputs = form.querySelectorAll('.form-control');
+        inputs.forEach(input => {
+            input.addEventListener('input', function () {
+                this.classList.remove('input-validation-error');
+                const errorElement = document.getElementById(this.id + 'Error');
+                if (errorElement) errorElement.textContent = '';
+            });
+        });
+
+        // Year field validation
+        const yearField = document.getElementById('YearOfIncorporation');
+        if (yearField) {
+            yearField.addEventListener('change', function () {
+                if (this.value.trim()) {
+                    const year = parseInt(this.value);
+                    const currentYear = new Date().getFullYear();
+
+                    if (isNaN(year) || year > currentYear || year < 1900) {
+                        this.classList.add('input-validation-error');
+                        const errorElement = document.getElementById('YearOfIncorporationError');
+                        if (errorElement) {
+                            errorElement.textContent = isNaN(year)
+                                ? 'Please enter a valid year or leave empty'
+                                : year > currentYear
+                                    ? 'Year cannot be in the future'
+                                    : 'Please enter a year after 1900';
+                        }
+                    }
+                }
+            });
+        }
+    });
+</script>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}
