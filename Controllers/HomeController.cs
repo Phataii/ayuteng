@@ -118,11 +118,11 @@ public class HomeController : Controller
     public async Task<IActionResult> Create()
     {
         // Sw86Z6DmomTe
-        var loggedInUser = await _userHelper.GetLoggedInAdmin(Request);
-        if (loggedInUser == null)
-        {
-            return Redirect("/ayute/admin/login");
-        }
+        // var loggedInUser = await _userHelper.GetLoggedInAdmin(Request);
+        // if (loggedInUser == null)
+        // {
+        //     return Redirect("/ayute/admin/login");
+        // }
         return View("Admin/create");
     }
 
