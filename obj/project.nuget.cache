@@ -1,11 +1,10 @@
 {
   "version": 2,
-  "dgSpecHash": "NdPddqtIuG0=",
+  "dgSpecHash": "r6xA6guRM+w=",
   "success": true,
   "projectFilePath": "C:\\Users\\phata\\Documents\\archive\\work\\wennovation-hub\\ayute\\ayuteng\\ayuteng\\ayuteng.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\phata\\.nuget\\packages\\bcrypt.net-next\\4.0.3\\bcrypt.net-next.4.0.3.nupkg.sha512",
-    "C:\\Users\\phata\\.nuget\\packages\\cloudinarydotnet\\1.27.9\\cloudinarydotnet.1.27.9.nupkg.sha512",
     "C:\\Users\\phata\\.nuget\\packages\\dotnetenv\\3.1.1\\dotnetenv.3.1.1.nupkg.sha512",
     "C:\\Users\\phata\\.nuget\\packages\\humanizer.core\\2.14.1\\humanizer.core.2.14.1.nupkg.sha512",
     "C:\\Users\\phata\\.nuget\\packages\\microsoft.aspnetcore.authentication.jwtbearer\\8.0.0\\microsoft.aspnetcore.authentication.jwtbearer.8.0.0.nupkg.sha512",

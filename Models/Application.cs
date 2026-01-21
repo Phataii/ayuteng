@@ -36,6 +36,7 @@ namespace ayuteng.Models
         public DateTime Dob { get; set; } = default!;
 
         public bool IsVerified { get; set; } = false;
+        public string? EmailVerificationToken { get; set; }
 
         // ======================
         // SECTION B – Startup Info

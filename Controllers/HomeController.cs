@@ -11,11 +11,15 @@ public class HomeController : Controller
     private readonly ILogger<HomeController> _logger;
     private readonly ApplicationDbContext _context;
     private readonly UserHelper _userHelper;
-    public HomeController(ILogger<HomeController> logger, ApplicationDbContext context, UserHelper userHelper)
+    private readonly IEmailVerificationService _verificationService;
+    private readonly IUserService _userService;
+    public HomeController(IEmailVerificationService verificationService, IUserService userService, ILogger<HomeController> logger, ApplicationDbContext context, UserHelper userHelper)
     {
         _logger = logger;
         _context = context;
         _userHelper = userHelper;
+        _userService = userService;
+        _verificationService = verificationService;
     }
 
 
@@ -42,6 +46,67 @@ public class HomeController : Controller
 
         return View(model);
     }
+
+    [HttpGet("verify-email")]
+    public async Task<IActionResult> VerifyEmail([FromQuery] string token)
+    {
+        try
+        {
+            // Validate token
+            var isValid = await _verificationService.ValidateTokenAsync(token);
+
+            if (!isValid)
+            {
+                return BadRequest(new
+                {
+                    success = false,
+                    message = "Invalid or expired verification token"
+                });
+            }
+
+            // Get token details
+            var verificationToken = await _verificationService.GetTokenAsync(token);
+
+            if (verificationToken == null)
+            {
+                return BadRequest(new
+                {
+                    success = false,
+                    message = "Token not found"
+                });
+            }
+
+            // Verify user's email
+            var verificationResult = await _userService.VerifyUserEmailAsync(verificationToken.UserId, token);
+
+            if (!verificationResult)
+            {
+                return StatusCode(500, new
+                {
+                    success = false,
+                    message = "Failed to verify email"
+                });
+            }
+
+            // Mark token as used
+            await _verificationService.UseTokenAsync(token);
+
+            _logger.LogInformation($"Email verified for user: {verificationToken.UserId}");
+            TempData["Success"] = "Email Verified. Kindly login to continue";
+            // Return success response
+            return Redirect("/login");
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error verifying email");
+            return StatusCode(500, new
+            {
+                success = false,
+                message = "An error occurred during verification"
+            });
+        }
+    }
+
 
     [HttpGet("/ayute/admin/login")]
     public IActionResult AdminLogin()

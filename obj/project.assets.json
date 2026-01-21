@@ -15,24 +15,6 @@
           }
         }
       },
-      "CloudinaryDotNet/1.27.9": {
-        "type": "package",
-        "dependencies": {
-          "Newtonsoft.Json": "13.0.3",
-          "System.Net.Http": "4.3.4",
-          "System.Text.RegularExpressions": "4.3.1"
-        },
-        "compile": {
-          "lib/netstandard2.0/CloudinaryDotNet.dll": {
-            "related": ".xml"
-          }
-        },
-        "runtime": {
-          "lib/netstandard2.0/CloudinaryDotNet.dll": {
-            "related": ".xml"
-          }
-        }
-      },
       "DotNetEnv/3.1.1": {
         "type": "package",
         "dependencies": {
@@ -2643,25 +2625,6 @@
         "lib/netstandard2.1/BCrypt.Net-Next.dll",
         "lib/netstandard2.1/BCrypt.Net-Next.xml",
         "readme.md"
-      ]
-    },
-    "CloudinaryDotNet/1.27.9": {
-      "sha512": "cQ3/+kHrA1SnwT6Bx6ZamJKKF/sb5Cl8uFAHTHpZ2HjdpfeCjSdfBRUA+aASOdbLGdL64jhLIEMaoWqXwAr9hQ==",
-      "type": "package",
-      "path": "cloudinarydotnet/1.27.9",
-      "files": [
-        ".nupkg.metadata",
-        ".signature.p7s",
-        "CloudinaryIcon.png",
-        "README.md",
-        "cloudinarydotnet.1.27.9.nupkg.sha512",
-        "cloudinarydotnet.nuspec",
-        "lib/net452/CloudinaryDotNet.dll",
-        "lib/net452/CloudinaryDotNet.xml",
-        "lib/netstandard1.3/CloudinaryDotNet.dll",
-        "lib/netstandard1.3/CloudinaryDotNet.xml",
-        "lib/netstandard2.0/CloudinaryDotNet.dll",
-        "lib/netstandard2.0/CloudinaryDotNet.xml"
       ]
     },
     "DotNetEnv/3.1.1": {
@@ -7923,7 +7886,6 @@
   "projectFileDependencyGroups": {
     "net8.0": [
       "BCrypt.Net-Next >= 4.0.3",
-      "CloudinaryDotNet >= 1.27.9",
       "DotNetEnv >= 3.1.1",
       "Microsoft.AspNetCore.Authentication.JwtBearer >= 8.0.0",
       "Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore >= 8.0.0",
@@ -7981,10 +7943,6 @@
           "BCrypt.Net-Next": {
             "target": "Package",
             "version": "[4.0.3, )"
-          },
-          "CloudinaryDotNet": {
-            "target": "Package",
-            "version": "[1.27.9, )"
           },
           "DotNetEnv": {
             "target": "Package",

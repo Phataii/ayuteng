@@ -7,8 +7,6 @@ using Microsoft.AspNetCore.Session;
 using Microsoft.Extensions.Caching.Memory;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
-using CloudinaryDotNet;
-using CloudinaryDotNet.Actions;
 
 using ayuteng.Models;
 using ayuteng.Data;
@@ -21,27 +19,26 @@ namespace ayuteng.Controllers
     [Route("api/[controller]")]
     public class ApplicationController : Controller
     {
-        private readonly Cloudinary _cloudinary;
         private readonly ILogger<ApplicationController> _logger;
         private readonly ApplicationDbContext _context;
         private readonly IBrevoEmailService _emailService;
-        public ApplicationController(ILogger<ApplicationController> logger, ApplicationDbContext context, IConfiguration configuration, IBrevoEmailService emailService)
+        private readonly IWebHostEnvironment _hostingEnvironment;
+        private readonly IEmailVerificationService _verificationService;
+        private readonly IUserService _userService;
+        public ApplicationController(IUserService userService, IEmailVerificationService verificationService, IWebHostEnvironment hostingEnvironment, ILogger<ApplicationController> logger, ApplicationDbContext context, IConfiguration configuration, IBrevoEmailService emailService)
         {
             _context = context;
             _logger = logger;
             _emailService = emailService;
-            // Initialize Cloudinary
-            var cloudName = configuration["Cloudinary:CloudName"];
-            var apiKey = configuration["Cloudinary:ApiKey"];
-            var apiSecret = configuration["Cloudinary:ApiSecret"];
+            _verificationService = verificationService;
+            _hostingEnvironment = hostingEnvironment;
+            _userService = userService;
 
-            var account = new Account(cloudName, apiKey, apiSecret);
-            _cloudinary = new Cloudinary(account);
         }
         private IActionResult LoginFailed(string message)
         {
             TempData["Error"] = message;
-            return RedirectToAction(nameof(Login));
+            return Redirect("/login");
         }
 
 
@@ -58,6 +55,10 @@ namespace ayuteng.Controllers
             if (user == null || !BCrypt.Net.BCrypt.Verify(password, user.Password))
                 return LoginFailed("Invalid email or password");
 
+            if (user.IsVerified != true)
+            {
+                return LoginFailed("Email not verified. Check your email or contact support");
+            }
             // Generate JWT
             var token = new JwtHelper().GenerateJwtToken(user);
 
@@ -75,12 +76,7 @@ namespace ayuteng.Controllers
             }
             // Resolve next step
             var step = StepRoutes.GetValueOrDefault(user.ApplicationStep, "step-two");
-            await _emailService.SendEmailAsync(
-                "esanni5@gmail.com",
-                "Applicant",
-                "Application Received",
-                "<h2>Thank you for applying</h2><p>Your application has been received.</p>"
-            );
+
             return Redirect($"/application/{step}/{user.Id}");
         }
 
@@ -161,8 +157,40 @@ namespace ayuteng.Controllers
 
                 // Save to database
                 await _context.SaveChangesAsync();
+                // Example token generation
+                // Generate verification token
+                var token = await _verificationService.GenerateAndSaveTokenAsync(application.Id.ToString());
+                var environment = HttpContext.Request; // Use HttpContext directly
+                var baseUrl = $"{environment.Scheme}://{environment.Host}";
+                // Build verification URL
+                var verificationUrl = $"{baseUrl}/verify-email?token={token}";
 
                 //Send email
+                await _emailService.SendEmailAsync(
+                   application.Email,
+                   "Applicant",
+                   "Application Received",
+                   $@"<h2>Thank you for applying for the AYuTe Africa Challenge Nigeria</h2>
+                    <p>Your application has been received.</p>
+                    <p>Please verify your email address by clicking the button below:</p>
+                    <div style='margin: 20px 0;'>
+                        <a href='{verificationUrl}' 
+                            style='
+                            background-color: #007bff;
+                            color: white;
+                            padding: 12px 24px;
+                            text-decoration: none;
+                            border-radius: 4px;
+                            font-weight: bold;
+                            display: inline-block;
+                            '>
+                        Verify Email Address
+                        </a>
+                    </div>
+                    <p>If the button doesn't work, you can also copy and paste this link:</p>
+                    <p>{verificationUrl}</p>
+                    <p><small>This verification link will expire in 24 hours.</small></p>"
+               );
                 TempData["Success"] = "Signup successful. Please login to continue";
                 // Return success response
                 return Ok(new
@@ -184,6 +212,37 @@ namespace ayuteng.Controllers
                 });
             }
         }
+
+
+        // [HttpPost("resend-verification")]
+        // public async Task<IActionResult> ResendVerification([FromBody] ResendVerificationRequest request)
+        // {
+        //     // Assuming you have user ID from auth or request
+        //     var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+        //     if (string.IsNullOrEmpty(userId))
+        //     {
+        //         return Unauthorized();
+        //     }
+
+        //     var result = await _userService.ResendVerificationEmailAsync(userId);
+
+        //     if (result)
+        //     {
+        //         return Ok(new
+        //         {
+        //             success = true,
+        //             message = "Verification email sent"
+        //         });
+        //     }
+
+        //     return BadRequest(new
+        //     {
+        //         success = false,
+        //         message = "Failed to send verification email"
+        //     });
+
+        // }
 
         [HttpPost("step-two/{applicationId}")] // Route parameter
         public async Task<IActionResult> StepTwo(
@@ -1181,9 +1240,9 @@ namespace ayuteng.Controllers
 
         [HttpPost("upload-document")]
         public async Task<IActionResult> UploadDocument(
-               [FromForm] IFormFile file,
-               [FromForm] string fieldName,
-               [FromForm] string applicationId)
+            [FromForm] IFormFile file,
+            [FromForm] string fieldName,
+            [FromForm] string applicationId)
         {
             try
             {
@@ -1204,24 +1263,24 @@ namespace ayuteng.Controllers
                     return BadRequest(new { success = false, message = "File size must be less than 10MB" });
                 }
 
-                // Upload to Cloudinary
-                var uploadResult = await UploadToCloudinary(file, fieldName, applicationId);
+                // Upload to local storage
+                var uploadResult = await UploadToLocalStorage(file, fieldName, applicationId);
 
-                if (uploadResult.Error != null)
+                if (!uploadResult.Success)
                 {
-                    _logger.LogError("Cloudinary upload error: {Error}", uploadResult.Error.Message);
+                    _logger.LogError("Local storage upload error: {Error}", uploadResult.ErrorMessage);
                     return StatusCode(500, new
                     {
                         success = false,
-                        message = $"Upload failed: {uploadResult.Error.Message}"
+                        message = $"Upload failed: {uploadResult.ErrorMessage}"
                     });
                 }
 
                 return Ok(new
                 {
                     success = true,
-                    url = uploadResult.SecureUrl.ToString(),
-                    publicId = uploadResult.PublicId,
+                    url = uploadResult.Url,
+                    fileName = uploadResult.FileName,
                     message = "File uploaded successfully"
                 });
             }
@@ -1236,43 +1295,152 @@ namespace ayuteng.Controllers
             }
         }
 
-        private bool IsValidPdfFile(IFormFile file)
+        private async Task<LocalUploadResult> UploadToLocalStorage(IFormFile file, string fieldName, string applicationId)
         {
-            // Check content type
-            var validContentTypes = new[]
+            try
             {
-            "application/pdf",
-            "application/x-pdf"
-        };
+                // Get the web root path
+                var webRootPath = _hostingEnvironment.WebRootPath;
 
-            if (validContentTypes.Contains(file.ContentType.ToLower()))
+                // If web root doesn't exist, use content root
+                if (string.IsNullOrEmpty(webRootPath))
+                {
+                    webRootPath = _hostingEnvironment.ContentRootPath;
+                }
+
+                // Create folder by field type (PitchDeckUrl, CacUrl, etc.)
+                var uploadsFolder = Path.Combine(webRootPath, "uploads", fieldName.ToLower());
+                Directory.CreateDirectory(uploadsFolder);
+
+                // Get unique filename in format: {applicationId}_{fieldName.ToLower()}.pdf
+                var finalFileName = GetUniqueFileName(uploadsFolder, file.FileName, applicationId, fieldName);
+                var filePath = Path.Combine(uploadsFolder, finalFileName);
+
+                // Save file
+                using (var fileStream = new System.IO.FileStream(filePath, FileMode.Create))
+                {
+                    await file.CopyToAsync(fileStream);
+                }
+
+                // Generate ABSOLUTE URL
+                var request = HttpContext.Request; // Use HttpContext directly
+                var baseUrl = $"{request.Scheme}://{request.Host}";
+                var url = $"{baseUrl}/uploads/{fieldName.ToLower()}/{finalFileName}";
+
+                return new LocalUploadResult
+                {
+                    Success = true,
+                    Url = url, // Now this is an absolute URL
+                    FileName = finalFileName,
+                    ErrorMessage = null
+                };
+            }
+            catch (Exception ex)
             {
-                return true;
+                _logger.LogError(ex, "Error uploading to local storage");
+                return new LocalUploadResult
+                {
+                    Success = false,
+                    Url = null,
+                    FileName = null,
+                    ErrorMessage = ex.Message
+                };
+            }
+        }
+        // Helper method to sanitize filename
+        private string SanitizeFileName(string fileName)
+        {
+            // Remove path characters
+            var invalidChars = Path.GetInvalidFileNameChars();
+            var sanitized = new string(fileName
+                .Where(ch => !invalidChars.Contains(ch))
+                .ToArray());
+
+            // Replace spaces with underscores (optional)
+            sanitized = sanitized.Replace(" ", "_");
+
+            // Trim to reasonable length
+            if (sanitized.Length > 100)
+            {
+                var extension = Path.GetExtension(sanitized);
+                var nameWithoutExtension = Path.GetFileNameWithoutExtension(sanitized);
+                sanitized = nameWithoutExtension.Substring(0, 95) + extension;
             }
 
+            return sanitized;
+        }
+        private string GetUniqueFileName(string folderPath, string fileName, string applicationId, string fieldName)
+        {
+            // Generate base filename: {applicationId}_{fieldName.ToLower()}
+            var baseFileName = $"{applicationId}_{fieldName.ToLower()}";
+            var extension = Path.GetExtension(fileName); // Keep original file extension
+
+            // Combine to create final filename
+            var newFileName = $"{baseFileName}{extension}";
+            var filePath = Path.Combine(folderPath, newFileName);
+
+            // If file doesn't exist, return the generated filename
+            if (!System.IO.File.Exists(filePath))
+            {
+                return newFileName;
+            }
+
+            // If file exists (shouldn't happen with this format), append counter
+            var counter = 1;
+            while (System.IO.File.Exists(filePath))
+            {
+                newFileName = $"{baseFileName}_{counter}{extension}";
+                filePath = Path.Combine(folderPath, newFileName);
+                counter++;
+
+                // Safety limit
+                if (counter > 100)
+                {
+                    // Fallback with timestamp
+                    var timestamp = DateTime.Now.ToString("yyyyMMddHHmmss");
+                    return $"{baseFileName}_{timestamp}{extension}";
+                }
+            }
+
+            return newFileName;
+        }
+        private bool IsValidPdfFile(IFormFile file)
+        {
             // Check file extension
             var validExtensions = new[] { ".pdf" };
             var extension = Path.GetExtension(file.FileName).ToLowerInvariant();
 
-            return validExtensions.Contains(extension);
-        }
-
-        private async Task<RawUploadResult> UploadToCloudinary(IFormFile file, string fieldName, string applicationId)
-        {
-            using var stream = file.OpenReadStream();
-
-            var uploadParams = new RawUploadParams
+            if (!validExtensions.Contains(extension))
             {
-                File = new FileDescription(file.FileName, stream),
-                Folder = $"applications/{applicationId}/{fieldName}",
-                // ResourceType = "raw", // For PDF files
-                UseFilename = true,
-                UniqueFilename = true,
-                Overwrite = false,
-                Tags = $"application,{fieldName}"
+                return false;
+            }
+
+            // Check content type
+            var validContentTypes = new[]
+            {
+                "application/pdf",
+                "application/x-pdf"
             };
 
-            return await _cloudinary.UploadAsync(uploadParams);
+            if (!validContentTypes.Contains(file.ContentType.ToLower()))
+            {
+                return false;
+            }
+
+            // Read first bytes to check PDF signature
+            using (var stream = file.OpenReadStream())
+            {
+                byte[] header = new byte[5];
+                stream.Read(header, 0, 5);
+                stream.Position = 0; // Reset stream position
+
+                // Check if file starts with PDF signature "%PDF-"
+                return header[0] == 0x25 && // %
+                       header[1] == 0x50 && // P
+                       header[2] == 0x44 && // D
+                       header[3] == 0x46 && // F
+                       header[4] == 0x2D;   // -
+            }
         }
 
         [HttpPost("step-nine/{applicationId}")]
@@ -1280,6 +1448,7 @@ namespace ayuteng.Controllers
             Guid applicationId,
             [FromBody] StepNineRequest request)
         {
+            Console.WriteLine("ksdcdcsdc");
             try
             {
                 // Validate the request
@@ -1387,7 +1556,24 @@ namespace ayuteng.Controllers
 
                 // Save to database
                 await _context.SaveChangesAsync();
+                await _emailService.SendEmailAsync(
+                  application.Email,
+                  "Applicant",
+                  "Application Received",
+                  $@"
+                    <h2>Thank You for Applying to the AYuTe Africa Challenge Nigeria</h2>
 
+                    <p>Thank you for your interest in the AYuTe Africa Challenge Nigeria. We have successfully received your application. Ref: {application.ReferenceNumber}</p>
+
+                    <p>You will receive a follow-up email from us soon with next steps and additional information regarding your application.</p>
+
+                    <p>If you did not submit an application for the AYuTe Africa Challenge Nigeria, you may safely ignore this email.</p>
+
+                    <p>Best regards,<br/>
+                    <strong>AYuTe Africa Challenge Nigeria Team</strong></p>
+                    "
+
+              );
                 // Return success response
                 return Ok(new
                 {
@@ -1950,28 +2136,24 @@ public class StepEightRequest
 }
 
 // DTO for Step 9
+public class LocalUploadResult
+{
+    public bool Success { get; set; }
+    public string Url { get; set; }
+    public string FileName { get; set; }
+    public string ErrorMessage { get; set; }
+}
 public class StepNineRequest
 {
-    [Required(ErrorMessage = "Pitch Deck URL is required")]
-    [Url(ErrorMessage = "Please provide a valid URL for Pitch Deck")]
     public string PitchDeckUrl { get; set; }
-
-    [Required(ErrorMessage = "CAC Certificate URL is required")]
-    [Url(ErrorMessage = "Please provide a valid URL for CAC Certificate")]
     public string CacUrl { get; set; }
-
-    [Url(ErrorMessage = "Please provide a valid URL for TIN Certificate")]
     public string TinUrl { get; set; }
-
-    // [Url(ErrorMessage = "Please provide a valid URL for other documents")]
     public string? OthersUrl { get; set; }
 
     [Required(ErrorMessage = "You must agree to Ayute Terms of Service")]
-    [MustBeTrue(ErrorMessage = "You must agree to Ayute Terms of Service")]
     public bool AgreeToToS_Ayute { get; set; }
 
     [Required(ErrorMessage = "You must agree to Heifer International Terms")]
-    [MustBeTrue(ErrorMessage = "You must agree to Heifer International Terms")]
     public bool AgreeToToS_Heifer { get; set; }
 }
 
@@ -1997,4 +2179,9 @@ public class SocialMediaRequest
 
     [Url(ErrorMessage = "Please enter a valid Instagram URL")]
     public string? Instagram { get; set; }
+}
+
+public class ResendVerificationRequest
+{
+    public string Email { get; set; }
 }

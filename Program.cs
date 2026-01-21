@@ -1,8 +1,8 @@
 using ayuteng.Data;
 using ayuteng.Services;
-using CloudinaryDotNet;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.FileProviders;
 
 var builder = WebApplication.CreateBuilder(args);
 var configuration = builder.Configuration;
@@ -13,17 +13,6 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString)));
 
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
-
-// -------------------- Cloudinary Configuration --------------------
-builder.Services.AddSingleton<Cloudinary>(sp =>
-{
-    var account = new Account(
-        configuration["Cloudinary:CloudName"],
-        configuration["Cloudinary:ApiKey"],
-        configuration["Cloudinary:ApiSecret"]
-    );
-    return new Cloudinary(account);
-});
 
 // -------------------- Authentication --------------------
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
@@ -40,6 +29,8 @@ builder.Services.AddAuthorization();
 
 // -------------------- Application Services --------------------
 builder.Services.AddScoped<IBrevoEmailService, BrevoEmailService>();
+builder.Services.AddScoped<IEmailVerificationService, EmailVerificationService>();
+builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<UserHelper>();
 
 // -------------------- Session --------------------
@@ -70,7 +61,14 @@ else
 }
 
 app.UseHttpsRedirection();
-app.UseStaticFiles();
+// Serve static files from wwwroot/uploads
+app.UseStaticFiles(new StaticFileOptions
+{
+    FileProvider = new PhysicalFileProvider(
+        Path.Combine(builder.Environment.ContentRootPath, "wwwroot", "uploads")),
+    RequestPath = "/uploads"
+});
+
 app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();

@@ -9,7 +9,6 @@
       "ayuteng/1.0.0": {
         "dependencies": {
           "BCrypt.Net-Next": "4.0.3",
-          "CloudinaryDotNet": "1.27.9",
           "DotNetEnv": "3.1.1",
           "Microsoft.AspNetCore.Authentication.JwtBearer": "8.0.0",
           "Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore": "8.0.0",
@@ -30,19 +29,6 @@
           "lib/net6.0/BCrypt.Net-Next.dll": {
             "assemblyVersion": "4.0.3.0",
             "fileVersion": "4.0.3.0"
-          }
-        }
-      },
-      "CloudinaryDotNet/1.27.9": {
-        "dependencies": {
-          "Newtonsoft.Json": "13.0.3",
-          "System.Net.Http": "4.3.4",
-          "System.Text.RegularExpressions": "4.3.1"
-        },
-        "runtime": {
-          "lib/netstandard2.0/CloudinaryDotNet.dll": {
-            "assemblyVersion": "1.27.9.0",
-            "fileVersion": "1.27.9.0"
           }
         }
       },
@@ -1473,13 +1459,6 @@
       "sha512": "sha512-W+U9WvmZQgi5cX6FS5GDtDoPzUCV4LkBLkywq/kRZhuDwcbavOzcDAr3LXJFqHUi952Yj3LEYoWW0jbEUQChsA==",
       "path": "bcrypt.net-next/4.0.3",
       "hashPath": "bcrypt.net-next.4.0.3.nupkg.sha512"
-    },
-    "CloudinaryDotNet/1.27.9": {
-      "type": "package",
-      "serviceable": true,
-      "sha512": "sha512-cQ3/+kHrA1SnwT6Bx6ZamJKKF/sb5Cl8uFAHTHpZ2HjdpfeCjSdfBRUA+aASOdbLGdL64jhLIEMaoWqXwAr9hQ==",
-      "path": "cloudinarydotnet/1.27.9",
-      "hashPath": "cloudinarydotnet.1.27.9.nupkg.sha512"
     },
     "DotNetEnv/3.1.1": {
       "type": "package",

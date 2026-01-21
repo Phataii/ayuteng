@@ -262,7 +262,7 @@
         color: var(--error-color);
     }
 
-    /* Upload Area */
+    /* Upload Area - FIXED */
     .upload-area {
         border: 2px dashed var(--input-border);
         border-radius: 8px;
@@ -271,6 +271,7 @@
         cursor: pointer;
         transition: all 0.3s ease;
         background: var(--white);
+        position: relative;
     }
 
     .upload-area:hover {
@@ -290,6 +291,16 @@
 
     .upload-content {
         pointer-events: none;
+        /* Remove this line */
+    }
+
+    /* Instead, make the upload-link specifically clickable */
+    .upload-link {
+        color: var(--primary-green);
+        font-weight: 600;
+        cursor: pointer;
+        pointer-events: auto;
+        text-decoration: underline;
     }
 
     .upload-icon {
@@ -306,6 +317,12 @@
     .upload-link {
         color: var(--primary-green);
         font-weight: 600;
+        cursor: pointer;
+        text-decoration: underline;
+    }
+
+    .upload-link:hover {
+        color: var(--primary-blue);
     }
 
     .upload-subtext {
@@ -451,6 +468,12 @@
             width: 100%;
         }
     }
+
+    /* Loading state */
+    .loading {
+        opacity: 0.7;
+        cursor: not-allowed;
+    }
 </style>
 
 <script>
@@ -491,14 +514,22 @@
             progressBar.innerHTML = '<div class="progress-fill"></div>';
             uploadStatus.parentNode.insertBefore(progressBar, uploadStatus.nextSibling);
 
-            // Click to upload
-            area.addEventListener('click', () => fileInput.click());
+            // FIXED: Click to upload - working version
+            area.addEventListener('click', function (e) {
+                // Only trigger file input if not clicking on a link
+                if (!e.target.classList.contains('upload-link') &&
+                    !e.target.closest('.upload-link')) {
+                    fileInput.click();
+                }
+            });
 
-            // Browse link
+            // Make browse link specifically clickable
             const browseLink = area.querySelector('.upload-link');
             if (browseLink) {
-                browseLink.parentElement.style.pointerEvents = 'auto';
-                browseLink.addEventListener('click', (e) => {
+                browseLink.style.cursor = 'pointer';
+
+                browseLink.addEventListener('click', function (e) {
+                    e.preventDefault();
                     e.stopPropagation();
                     fileInput.click();
                 });
@@ -581,64 +612,67 @@
                 // Get anti-forgery token
                 const token = document.querySelector('input[name="__RequestVerificationToken"]').value;
 
-                // Upload file
-                const response = await fetch(UPLOAD_API_ENDPOINT, {
-                    method: 'POST',
-                    headers: {
-                        'RequestVerificationToken': token
-                    },
-                    body: formData
+                // Use XMLHttpRequest for better progress tracking
+                return new Promise((resolve, reject) => {
+                    const xhr = new XMLHttpRequest();
+
+                    // Progress event
+                    xhr.upload.addEventListener('progress', (e) => {
+                        if (e.lengthComputable) {
+                            const percent = Math.round((e.loaded / e.total) * 100);
+                            progressFill.style.width = percent + '%';
+                        }
+                    });
+
+                    // Load event (when request completes)
+                    xhr.addEventListener('load', () => {
+                        if (xhr.status === 200) {
+                            try {
+                                const result = JSON.parse(xhr.responseText);
+
+                                if (result.success) {
+                                    // Update hidden input with local URL
+                                    if (hiddenInput) {
+                                        hiddenInput.value = result.url;
+                                    }
+
+                                    // Show success status
+                                    updateStatus(statusElement, `Uploaded: ${file.name}`, 'success');
+
+                                    // Store in localStorage for draft
+                                    const key = `draft_${fieldName}`;
+                                    localStorage.setItem(key, result.url);
+                                } else {
+                                    updateStatus(statusElement, result.message || 'Upload failed', 'error');
+                                }
+                            } catch (e) {
+                                updateStatus(statusElement, 'Error parsing response', 'error');
+                            }
+                        } else {
+                            updateStatus(statusElement, `Upload failed (${xhr.status})`, 'error');
+                        }
+                        resolve();
+                    });
+
+                    // Error event
+                    xhr.addEventListener('error', () => {
+                        updateStatus(statusElement, 'Network error', 'error');
+                        resolve();
+                    });
+
+                    // Timeout event
+                    xhr.addEventListener('timeout', () => {
+                        updateStatus(statusElement, 'Upload timeout', 'error');
+                        resolve();
+                    });
+
+                    // Send request
+                    xhr.open('POST', UPLOAD_API_ENDPOINT, true);
+                    xhr.setRequestHeader('RequestVerificationToken', token);
+                    xhr.timeout = 300000; // 5 minute timeout
+                    xhr.send(formData);
                 });
 
-                // Handle progress
-                const reader = response.body.getReader();
-                const contentLength = +response.headers.get('Content-Length');
-                let receivedLength = 0;
-                let chunks = [];
-
-                while (true) {
-                    const { done, value } = await reader.read();
-
-                    if (done) {
-                        break;
-                    }
-
-                    chunks.push(value);
-                    receivedLength += value.length;
-
-                    // Update progress
-                    if (contentLength) {
-                        const percent = Math.round((receivedLength / contentLength) * 100);
-                        progressFill.style.width = percent + '%';
-                    }
-                }
-
-                // Combine chunks
-                const chunksAll = new Uint8Array(receivedLength);
-                let position = 0;
-                for (let chunk of chunks) {
-                    chunksAll.set(chunk, position);
-                    position += chunk.length;
-                }
-
-                // Parse response
-                const result = JSON.parse(new TextDecoder("utf-8").decode(chunksAll));
-
-                if (result.success) {
-                    // Update hidden input with Cloudinary URL
-                    if (hiddenInput) {
-                        hiddenInput.value = result.url;
-                    }
-
-                    // Show success status
-                    updateStatus(statusElement, `Uploaded: ${file.name}`, 'success');
-
-                    // Store in localStorage for draft
-                    const key = `draft_${fieldName}`;
-                    localStorage.setItem(key, result.url);
-                } else {
-                    updateStatus(statusElement, result.message || 'Upload failed', 'error');
-                }
             } catch (error) {
                 console.error('Upload error:', error);
                 updateStatus(statusElement, 'Upload failed. Please try again.', 'error');
@@ -657,6 +691,7 @@
             switch (status) {
                 case 'uploading':
                     icon.textContent = '⏳';
+                    textSpan.classList.add('uploading');
                     break;
                 case 'success':
                     icon.textContent = '✅';
@@ -739,6 +774,7 @@
             // Show loading
             submitBtn.classList.add('loading');
             submitBtn.disabled = true;
+            submitBtn.innerHTML = '🔄 Submitting...';
 
             try {
                 // Prepare form data
@@ -790,6 +826,7 @@
             } finally {
                 submitBtn.classList.remove('loading');
                 submitBtn.disabled = false;
+                submitBtn.innerHTML = '🚀 Submit Application';
             }
         });
 
