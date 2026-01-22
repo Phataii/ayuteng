@@ -110,18 +110,18 @@ namespace ayuteng.Controllers
                 }
 
                 // Check if email already exists
-                var existingApplication = await _context.Applications
-                    .FirstOrDefaultAsync(a => a.Email == request.Email);
+                // var existingApplication = await _context.Applications
+                //     .FirstOrDefaultAsync(a => a.Email == request.Email);
 
-                if (existingApplication != null)
-                {
-                    ModelState.AddModelError(nameof(request.Email), "Email address is already registered");
-                    return BadRequest(new
-                    {
-                        success = false,
-                        errors = new { Email = new[] { "Email address is already registered" } }
-                    });
-                }
+                // if (existingApplication != null)
+                // {
+                //     ModelState.AddModelError(nameof(request.Email), "Email address is already registered");
+                //     return BadRequest(new
+                //     {
+                //         success = false,
+                //         errors = new { Email = new[] { "Email address is already registered" } }
+                //     });
+                // }
 
                 // Create new application or update existing one from session
                 var application = new Application();
@@ -191,7 +191,7 @@ namespace ayuteng.Controllers
                     <p>{verificationUrl}</p>
                     <p><small>This verification link will expire in 24 hours.</small></p>"
                );
-                TempData["Success"] = "Signup successful. Please login to continue";
+                // TempData["Success"] = "Signup successful. Please login to continue";
                 // Return success response
                 return Ok(new
                 {
