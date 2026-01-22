@@ -14,7 +14,6 @@
     </div>
 
     <form id="step9Form" method="post">
-        @Html.AntiForgeryToken()
 
         <div class="section-card">
             <h3 class="section-title">
@@ -609,8 +608,6 @@
             formData.append('applicationId', applicationId);
 
             try {
-                // Get anti-forgery token
-                const token = document.querySelector('input[name="__RequestVerificationToken"]').value;
 
                 // Use XMLHttpRequest for better progress tracking
                 return new Promise((resolve, reject) => {
@@ -668,7 +665,6 @@
 
                     // Send request
                     xhr.open('POST', UPLOAD_API_ENDPOINT, true);
-                    xhr.setRequestHeader('RequestVerificationToken', token);
                     xhr.timeout = 300000; // 5 minute timeout
                     xhr.send(formData);
                 });
@@ -787,15 +783,11 @@
                     AgreeToToS_Heifer: document.getElementById('AgreeToToS_Heifer').checked
                 };
 
-                // Get anti-forgery token
-                const token = document.querySelector('input[name="__RequestVerificationToken"]').value;
-
                 // Submit to API with application ID in route
                 const response = await fetch(STEP9_API_ENDPOINT, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
-                        'RequestVerificationToken': token
                     },
                     credentials: 'include',
                     body: JSON.stringify(data)

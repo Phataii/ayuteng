@@ -10,12 +10,12 @@
 <div class="step-form">
     <div class="section-header">
         <h2>Inclusion & Sustainability</h2>
-        <p class="form-subtitle">Describe your approach to gender inclusion, job creation, and environmental sustainability.</p>
+        <p class="form-subtitle">Describe your approach to gender inclusion, job creation, and environmental
+            sustainability.</p>
     </div>
 
     <form id="step6Form" method="post">
-        @Html.AntiForgeryToken()
-        
+
         <div class="section-card">
             <h3 class="section-title">
                 <span class="section-icon">♀️♂️</span>
@@ -24,15 +24,12 @@
             <div class="form-group">
                 <label for="GenderInclusion" class="form-label required">
                     How does your solution promote gender inclusion?
-                    <span class="field-info">E.g., women farmers targeted, women in leadership, gender-sensitive design</span>
+                    <span class="field-info">E.g., women farmers targeted, women in leadership, gender-sensitive
+                        design</span>
                 </label>
-                <textarea name="GenderInclusion"
-                          id="GenderInclusion"
-                          class="form-control textarea" 
-                          rows="4"
-                          placeholder="Describe how your solution addresses gender equality and empowers women in agriculture..."
-                          maxlength="1500"
-                          required>@Model?.GenderInclusion</textarea>
+                <textarea name="GenderInclusion" id="GenderInclusion" class="form-control textarea" rows="4"
+                    placeholder="Describe how your solution addresses gender equality and empowers women in agriculture..."
+                    maxlength="1500" required>@Model?.GenderInclusion</textarea>
                 <div class="textarea-counter">
                     <span id="GenderInclusionCounter">@(Model?.GenderInclusion?.Length ?? 0)</span>/1500 characters
                 </div>
@@ -50,15 +47,8 @@
                     Direct Jobs Created
                     <span class="field-info">Number of direct employment opportunities created</span>
                 </label>
-                <input name="JobsCreated"
-                       id="JobsCreated"
-                       type="number" 
-                       class="form-control" 
-                       min="0"
-                       max="10000"
-                       placeholder="0"
-                       value="@Model?.JobsCreated"
-                       required>
+                <input name="JobsCreated" id="JobsCreated" type="number" class="form-control" min="0" max="10000"
+                    placeholder="0" value="@Model?.JobsCreated" required>
                 <span class="validation-error" id="JobsCreatedError"></span>
             </div>
         </div>
@@ -73,15 +63,13 @@
                     Environmental Impact & Sustainability
                     <span class="field-info">How does your solution minimize environmental impact?</span>
                 </label>
-                <textarea name="EnvironmentalSustainability"
-                          id="EnvironmentalSustainability"
-                          class="form-control textarea" 
-                          rows="4"
-                          placeholder="Describe environmental benefits, reduction in waste, energy efficiency, etc..."
-                          maxlength="1500"
-                          required>@Model?.EnvironmentalSustainability</textarea>
+                <textarea name="EnvironmentalSustainability" id="EnvironmentalSustainability"
+                    class="form-control textarea" rows="4"
+                    placeholder="Describe environmental benefits, reduction in waste, energy efficiency, etc..."
+                    maxlength="1500" required>@Model?.EnvironmentalSustainability</textarea>
                 <div class="textarea-counter">
-                    <span id="EnvironmentalSustainabilityCounter">@(Model?.EnvironmentalSustainability?.Length ?? 0)</span>/1500 characters
+                    <span id="EnvironmentalSustainabilityCounter">@(Model?.EnvironmentalSustainability?.Length ??
+                                                0)</span>/1500 characters
                 </div>
                 <span class="validation-error" id="EnvironmentalSustainabilityError"></span>
             </div>
@@ -97,15 +85,12 @@
                     Data Protection & Privacy Measures
                     <span class="field-info">How do you protect user data and ensure privacy?</span>
                 </label>
-                <textarea name="DataProtectionMeasures"
-                          id="DataProtectionMeasures"
-                          class="form-control textarea" 
-                          rows="4"
-                          placeholder="Describe your data security, privacy policies, and compliance measures..."
-                          maxlength="1500"
-                          required>@Model?.DataProtectionMeasures</textarea>
+                <textarea name="DataProtectionMeasures" id="DataProtectionMeasures" class="form-control textarea"
+                    rows="4" placeholder="Describe your data security, privacy policies, and compliance measures..."
+                    maxlength="1500" required>@Model?.DataProtectionMeasures</textarea>
                 <div class="textarea-counter">
-                    <span id="DataProtectionMeasuresCounter">@(Model?.DataProtectionMeasures?.Length ?? 0)</span>/1500 characters
+                    <span id="DataProtectionMeasuresCounter">@(Model?.DataProtectionMeasures?.Length ?? 0)</span>/1500
+                    characters
                 </div>
                 <span class="validation-error" id="DataProtectionMeasuresError"></span>
             </div>
@@ -151,7 +136,7 @@
         .form-grid {
             grid-template-columns: 1fr 1fr;
         }
-        
+
         .full-width {
             grid-column: 1 / -1;
         }
@@ -214,7 +199,7 @@
         padding: 25px;
         margin-bottom: 25px;
         border: 1px solid var(--input-border);
-        box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
     }
 
     .section-title {
@@ -289,16 +274,16 @@
         h2 {
             font-size: 24px;
         }
-        
+
         .form-subtitle {
             font-size: 15px;
         }
-        
+
         .form-control {
             padding: 14px 16px;
             font-size: 16px;
         }
-        
+
         .section-card {
             padding: 20px;
         }
@@ -325,73 +310,74 @@
     }
 
     @@keyframes spin {
-        to { transform: translate(-50%, -50%) rotate(360deg); }
+        to {
+            transform: translate(-50%, -50%) rotate(360deg);
+        }
     }
-
 </style>
 
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
+    document.addEventListener('DOMContentLoaded', function () {
         const form = document.getElementById('step6Form');
         const submitBtn = document.getElementById('submitBtn');
-        
+
         // Extract application ID from current URL
         const currentUrl = window.location.pathname;
         const urlSegments = currentUrl.split('/');
         const applicationId = urlSegments[urlSegments.length - 1];
-        
+
         // Validate it's a GUID
         const guidPattern = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
-        
+
         if (!guidPattern.test(applicationId)) {
             console.error('Invalid application ID in URL:', applicationId);
             showAlert('Invalid application. Please start from step 1.');
             return;
         }
-        
+
         // API endpoint with application ID
         const API_ENDPOINT = `/api/application/step-six/${applicationId}`;
-        
+
         // Character counters
         const textareas = document.querySelectorAll('.textarea');
         textareas.forEach(textarea => {
             const counterId = textarea.id + 'Counter';
             const counter = document.getElementById(counterId);
-            
+
             if (counter) {
                 // Initialize counter
                 counter.textContent = textarea.value.length;
                 updateCounterStyle(counter, textarea.value.length, textarea.maxLength);
-                
+
                 // Update on input
-                textarea.addEventListener('input', function() {
+                textarea.addEventListener('input', function () {
                     counter.textContent = this.value.length;
                     updateCounterStyle(counter, this.value.length, this.maxLength);
                 });
             }
         });
-        
+
         function updateCounterStyle(counter, length, maxLength) {
             const max = parseInt(maxLength) || 0;
             counter.classList.remove('warning', 'danger');
-            
+
             if (length > max * 0.9) {
                 counter.classList.add('danger');
             } else if (length > max * 0.75) {
                 counter.classList.add('warning');
             }
         }
-        
+
         // Form submission via API
-        form.addEventListener('submit', async function(e) {
+        form.addEventListener('submit', async function (e) {
             e.preventDefault();
-            
+
             // Clear previous errors
             clearErrors();
-            
+
             // Client-side validation
             let isValid = true;
-            
+
             // Validate number field
             const jobsField = document.getElementById('JobsCreated');
             if (jobsField && jobsField.value) {
@@ -407,14 +393,14 @@
                 showFieldError('JobsCreated', 'Number of jobs created is required');
                 isValid = false;
             }
-            
+
             // Validate text length limits
             const textareaIds = [
                 { id: 'GenderInclusion', max: 1500 },
                 { id: 'EnvironmentalSustainability', max: 1500 },
                 { id: 'DataProtectionMeasures', max: 1500 }
             ];
-            
+
             textareaIds.forEach(field => {
                 const textarea = document.getElementById(field.id);
                 if (textarea && textarea.value.length > field.max) {
@@ -422,15 +408,15 @@
                     isValid = false;
                 }
             });
-            
+
             if (!isValid) {
                 return;
             }
-            
+
             // Show loading state
             submitBtn.classList.add('loading');
             submitBtn.disabled = true;
-            
+
             try {
                 // Prepare form data
                 const data = {
@@ -439,23 +425,20 @@
                     EnvironmentalSustainability: document.getElementById('EnvironmentalSustainability').value,
                     DataProtectionMeasures: document.getElementById('DataProtectionMeasures').value
                 };
-                
-                // Get anti-forgery token
-                const token = document.querySelector('input[name="__RequestVerificationToken"]').value;
-                
+
+
                 // Submit to API with application ID in route
                 const response = await fetch(API_ENDPOINT, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
-                        'RequestVerificationToken': token
                     },
                     credentials: 'include',
                     body: JSON.stringify(data)
                 });
-                
+
                 const result = await response.json();
-                
+
                 if (response.ok && result.success) {
                     // Success - redirect to next step (final step or review)
                     if (result.redirectUrl) {
@@ -472,7 +455,7 @@
                         throw new Error(result.message || 'Submission failed');
                     }
                 }
-                
+
             } catch (error) {
                 console.error('Submission error:', error);
                 showAlert(error.message || 'An error occurred. Please try again.');
@@ -481,65 +464,65 @@
                 submitBtn.disabled = false;
             }
         });
-        
+
         function showFieldError(fieldId, message) {
             const field = document.getElementById(fieldId);
             const errorElement = document.getElementById(fieldId + 'Error');
-            
+
             if (field) {
                 field.classList.add('input-validation-error');
             }
-            
+
             if (errorElement) {
                 errorElement.textContent = message;
             }
         }
-        
+
         function clearErrors() {
             document.querySelectorAll('.validation-error').forEach(el => {
                 el.textContent = '';
             });
-            
+
             document.querySelectorAll('.form-control').forEach(el => {
                 el.classList.remove('input-validation-error');
             });
         }
-        
+
         function displayServerErrors(errors) {
             clearErrors();
-            
+
             Object.keys(errors).forEach(fieldName => {
                 const field = document.getElementById(fieldName);
                 const errorElement = document.getElementById(fieldName + 'Error');
-                
+
                 if (field && errorElement) {
                     field.classList.add('input-validation-error');
                     errorElement.textContent = errors[fieldName].join(', ');
-                    
+
                     if (Object.keys(errors)[0] === fieldName) {
                         field.scrollIntoView({ behavior: 'smooth', block: 'center' });
                     }
                 }
             });
         }
-        
+
         function showAlert(message) {
             alert(message);
         }
-        
+
         // Real-time validation
         const inputs = form.querySelectorAll('.form-control');
         inputs.forEach(input => {
-            input.addEventListener('input', function() {
+            input.addEventListener('input', function () {
                 this.classList.remove('input-validation-error');
                 const errorElement = document.getElementById(this.id + 'Error');
                 if (errorElement) errorElement.textContent = '';
             });
         });
-        
+
         // Load existing data if this page was loaded with data
         loadExistingData();
-        
+
         async function loadExistingData() {
             try {
                 // This would be called if you have a GET endpoint to load data
@@ -556,5 +539,7 @@
 </script>
 
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
 }

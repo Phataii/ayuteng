@@ -12,7 +12,6 @@
     <p class="form-subtitle">Please provide your personal details to get started with your application.</p>
 
     <form id="step1Form" method="post">
-        @Html.AntiForgeryToken()
 
         <div class="form-grid">
             <!-- First Name -->
@@ -509,15 +508,11 @@
                 // Add marketing consent
                 data.MarketingConsent = document.getElementById('marketingConsent').checked;
 
-                // Get anti-forgery token
-                const token = document.querySelector('input[name="__RequestVerificationToken"]').value;
-
                 // Submit to API
                 const response = await fetch(API_ENDPOINT, {
                     method: 'POST',
                     headers: {
-                        'Content-Type': 'application/json',
-                        'RequestVerificationToken': token
+                        'Content-Type': 'application/json'
                     },
                     body: JSON.stringify(data)
                 });

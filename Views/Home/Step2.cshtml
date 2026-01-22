@@ -13,7 +13,6 @@
     <p class="form-subtitle">Tell us about your startup or company.</p>
 
     <form id="step2Form" method="post">
-        @Html.AntiForgeryToken()
 
         <div class="form-grid">
             <!-- Startup Name -->
@@ -726,15 +725,11 @@
                     }
                 };
 
-                // Get anti-forgery token
-                const token = document.querySelector('input[name="__RequestVerificationToken"]').value;
-
                 // Submit to API with application ID in route
                 const response = await fetch(API_ENDPOINT, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
-                        'RequestVerificationToken': token
                     },
                     credentials: 'include',
                     body: JSON.stringify(data)

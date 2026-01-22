@@ -1,16 +1,9 @@
 using ayuteng.Data;
 using ayuteng.Services;
 using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.DataProtection;
-using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.FileProviders;
-using Microsoft.AspNetCore.Http;
-using System.IO;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.Extensions.Hosting;
 
-// -------------------- Build Builder --------------------
 var builder = WebApplication.CreateBuilder(args);
 var configuration = builder.Configuration;
 
@@ -53,19 +46,7 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
 builder.Services.AddHttpClient();
 
-// -------------------- Data Protection --------------------
-// Persist keys to file system for CSRF & auth cookie stability
-builder.Services.AddDataProtection()
-    .PersistKeysToFileSystem(new DirectoryInfo("/var/www/ayuteng/dataprotection-keys"))
-    .SetApplicationName("Ayute");
-
-// -------------------- Forwarded Headers (for Apache reverse proxy) --------------------
-builder.Services.Configure<ForwardedHeadersOptions>(options =>
-{
-    options.ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
-});
-
-// -------------------- Build App --------------------
+// -------------------- Build Application --------------------
 var app = builder.Build();
 
 // -------------------- Middleware Pipeline --------------------
@@ -79,13 +60,8 @@ else
     app.UseHsts();
 }
 
-app.UseForwardedHeaders();
 app.UseHttpsRedirection();
-
-// Serve static files from wwwroot
-app.UseStaticFiles();
-
-// Serve static files from wwwroot/uploads under /uploads
+// Serve static files from wwwroot/uploads
 app.UseStaticFiles(new StaticFileOptions
 {
     FileProvider = new PhysicalFileProvider(
@@ -94,7 +70,6 @@ app.UseStaticFiles(new StaticFileOptions
 });
 
 app.UseRouting();
-
 app.UseAuthentication();
 app.UseAuthorization();
 app.UseSession();
@@ -109,5 +84,4 @@ app.MapRazorPages();
 // Health check endpoint
 app.MapGet("/health", () => Results.Ok(new { status = "Healthy", timestamp = DateTime.UtcNow }));
 
-// -------------------- Run App --------------------
 app.Run();

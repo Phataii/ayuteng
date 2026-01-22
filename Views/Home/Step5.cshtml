@@ -14,29 +14,22 @@
     </div>
 
     <form id="step5Form" method="post">
-        @Html.AntiForgeryToken()
-        
+
         <div class="section-card">
             <h3 class="section-title">
                 <span class="section-icon">👨‍🌾</span>
                 Farmer Impact
             </h3>
-            
+
             <div class="form-grid">
                 <div class="form-group">
                     <label for="FarmersServedPreviousYear" class="form-label required">
                         Farmers Served (Previous Year)
                         <span class="field-info">Number of farmers served in the last 12 months</span>
                     </label>
-                    <input name="FarmersServedPreviousYear"
-                           id="FarmersServedPreviousYear"
-                           type="number" 
-                           class="form-control" 
-                           min="0"
-                           max="10000000"
-                           placeholder="0"
-                           value="@Model?.FarmersServedPreviousYear"
-                           required>
+                    <input name="FarmersServedPreviousYear" id="FarmersServedPreviousYear" type="number"
+                        class="form-control" min="0" max="10000000" placeholder="0"
+                        value="@Model?.FarmersServedPreviousYear" required>
                     <span class="validation-error" id="FarmersServedPreviousYearError"></span>
                 </div>
 
@@ -45,15 +38,8 @@
                         Total Farmers Served
                         <span class="field-info">Cumulative number of farmers served since inception</span>
                     </label>
-                    <input name="FarmersServedTotal"
-                           id="FarmersServedTotal"
-                           type="number" 
-                           class="form-control" 
-                           min="0"
-                           max="10000000"
-                           placeholder="0"
-                           value="@Model?.FarmersServedTotal"
-                           required>
+                    <input name="FarmersServedTotal" id="FarmersServedTotal" type="number" class="form-control" min="0"
+                        max="10000000" placeholder="0" value="@Model?.FarmersServedTotal" required>
                     <span class="validation-error" id="FarmersServedTotalError"></span>
                 </div>
             </div>
@@ -61,15 +47,12 @@
             <div class="form-group">
                 <label for="ImpactOnFarmers" class="form-label required">
                     What measurable impact have you had on farmers?
-                    <span class="field-info">E.g., increased income, better yields, reduced costs, improved livelihoods</span>
+                    <span class="field-info">E.g., increased income, better yields, reduced costs, improved
+                        livelihoods</span>
                 </label>
-                <textarea name="ImpactOnFarmers"
-                          id="ImpactOnFarmers"
-                          class="form-control textarea" 
-                          rows="4"
-                          placeholder="Describe specific, measurable impacts on farmers' lives and livelihoods..."
-                          maxlength="1500"
-                          required>@Model?.ImpactOnFarmers</textarea>
+                <textarea name="ImpactOnFarmers" id="ImpactOnFarmers" class="form-control textarea" rows="4"
+                    placeholder="Describe specific, measurable impacts on farmers' lives and livelihoods..."
+                    maxlength="1500" required>@Model?.ImpactOnFarmers</textarea>
                 <div class="textarea-counter">
                     <span id="ImpactOnFarmersCounter">@(Model?.ImpactOnFarmers?.Length ?? 0)</span>/1500 characters
                 </div>
@@ -81,15 +64,12 @@
                     How does your solution promote sustainable agriculture?
                     <span class="field-info">Environmental sustainability aspects</span>
                 </label>
-                <textarea name="SustainabilityPromotion"
-                          id="SustainabilityPromotion"
-                          class="form-control textarea" 
-                          rows="4"
-                          placeholder="Describe how your solution promotes sustainable farming practices..."
-                          maxlength="1500"
-                          required>@Model?.SustainabilityPromotion</textarea>
+                <textarea name="SustainabilityPromotion" id="SustainabilityPromotion" class="form-control textarea"
+                    rows="4" placeholder="Describe how your solution promotes sustainable farming practices..."
+                    maxlength="1500" required>@Model?.SustainabilityPromotion</textarea>
                 <div class="textarea-counter">
-                    <span id="SustainabilityPromotionCounter">@(Model?.SustainabilityPromotion?.Length ?? 0)</span>/1500 characters
+                    <span id="SustainabilityPromotionCounter">@(Model?.SustainabilityPromotion?.Length ?? 0)</span>/1500
+                    characters
                 </div>
                 <span class="validation-error" id="SustainabilityPromotionError"></span>
             </div>
@@ -105,13 +85,9 @@
                     What evidence do you have of your impact?
                     <span class="field-info">E.g., case studies, testimonials, research data, metrics tracked</span>
                 </label>
-                <textarea name="ImpactEvidence"
-                          id="ImpactEvidence"
-                          class="form-control textarea" 
-                          rows="5"
-                          placeholder="Provide evidence of your impact through data, stories, or research findings..."
-                          maxlength="1000"
-                          required>@Model?.ImpactEvidence</textarea>
+                <textarea name="ImpactEvidence" id="ImpactEvidence" class="form-control textarea" rows="5"
+                    placeholder="Provide evidence of your impact through data, stories, or research findings..."
+                    maxlength="1000" required>@Model?.ImpactEvidence</textarea>
                 <div class="textarea-counter">
                     <span id="ImpactEvidenceCounter">@(Model?.ImpactEvidence?.Length ?? 0)</span>/1000 characters
                 </div>
@@ -159,7 +135,7 @@
         .form-grid {
             grid-template-columns: 1fr 1fr;
         }
-        
+
         .full-width {
             grid-column: 1 / -1;
         }
@@ -222,7 +198,7 @@
         padding: 25px;
         margin-bottom: 25px;
         border: 1px solid var(--input-border);
-        box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
     }
 
     .section-title {
@@ -297,16 +273,16 @@
         h2 {
             font-size: 24px;
         }
-        
+
         .form-subtitle {
             font-size: 15px;
         }
-        
+
         .form-control {
             padding: 14px 16px;
             font-size: 16px;
         }
-        
+
         .section-card {
             padding: 20px;
         }
@@ -333,93 +309,95 @@
     }
 
     @@keyframes spin {
-        to { transform: translate(-50%, -50%) rotate(360deg); }
+        to {
+            transform: translate(-50%, -50%) rotate(360deg);
+        }
     }
 </style>
 
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
+    document.addEventListener('DOMContentLoaded', function () {
         const form = document.getElementById('step5Form');
         const submitBtn = document.getElementById('submitBtn');
-        
+
         // Extract application ID from current URL
         const currentUrl = window.location.pathname;
         const urlSegments = currentUrl.split('/');
         const applicationId = urlSegments[urlSegments.length - 1];
-        
+
         // Validate it's a GUID
         const guidPattern = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
-        
+
         if (!guidPattern.test(applicationId)) {
             console.error('Invalid application ID in URL:', applicationId);
             showAlert('Invalid application. Please start from step 1.');
             return;
         }
-        
+
         // API endpoint with application ID
         const API_ENDPOINT = `/api/application/step-five/${applicationId}`;
-        
+
         // Character counters
         const textareas = document.querySelectorAll('.textarea');
         textareas.forEach(textarea => {
             const counterId = textarea.id + 'Counter';
             const counter = document.getElementById(counterId);
-            
+
             if (counter) {
                 // Initialize counter
                 counter.textContent = textarea.value.length;
                 updateCounterStyle(counter, textarea.value.length, textarea.maxLength);
-                
+
                 // Update on input
-                textarea.addEventListener('input', function() {
+                textarea.addEventListener('input', function () {
                     counter.textContent = this.value.length;
                     updateCounterStyle(counter, this.value.length, this.maxLength);
                 });
             }
         });
-        
+
         function updateCounterStyle(counter, length, maxLength) {
             const max = parseInt(maxLength) || 0;
             counter.classList.remove('warning', 'danger');
-            
+
             if (length > max * 0.9) {
                 counter.classList.add('danger');
             } else if (length > max * 0.75) {
                 counter.classList.add('warning');
             }
         }
-        
+
         // Form submission via API
-        form.addEventListener('submit', async function(e) {
+        form.addEventListener('submit', async function (e) {
             e.preventDefault();
-            
+
             // Clear previous errors
             clearErrors();
-            
+
             // Client-side validation
             let isValid = true;
-            
+
             // Validate number fields
             const numberFields = [
-                { 
-                    id: 'FarmersServedPreviousYear', 
-                    name: 'Farmers served (previous year)', 
+                {
+                    id: 'FarmersServedPreviousYear',
+                    name: 'Farmers served (previous year)',
                     min: 0,
-                    max: 10000000 
+                    max: 10000000
                 },
-                { 
-                    id: 'FarmersServedTotal', 
-                    name: 'Total farmers served', 
+                {
+                    id: 'FarmersServedTotal',
+                    name: 'Total farmers served',
                     min: 0,
-                    max: 10000000 
+                    max: 10000000
                 }
             ];
-            
+
             numberFields.forEach(field => {
                 const input = document.getElementById(field.id);
                 if (input && input.value) {
                     const value = parseInt(input.value);
-                    
+
                     if (isNaN(value)) {
                         showFieldError(field.id, `Please enter a valid number for ${field.name}`);
                         isValid = false;
@@ -435,14 +413,14 @@
                     isValid = false;
                 }
             });
-            
+
             // Validate text length limits
             const textareaIds = [
                 { id: 'ImpactOnFarmers', max: 1500 },
                 { id: 'SustainabilityPromotion', max: 1500 },
                 { id: 'ImpactEvidence', max: 1000 }
             ];
-            
+
             textareaIds.forEach(field => {
                 const textarea = document.getElementById(field.id);
                 if (textarea && textarea.value.length > field.max) {
@@ -450,30 +428,30 @@
                     isValid = false;
                 }
             });
-            
+
             // Validate that total farmers is >= previous year farmers
             const previousYear = document.getElementById('FarmersServedPreviousYear');
             const totalFarmers = document.getElementById('FarmersServedTotal');
-            
+
             if (previousYear.value && totalFarmers.value) {
                 const prevYearVal = parseInt(previousYear.value);
                 const totalVal = parseInt(totalFarmers.value);
-                
+
                 if (!isNaN(prevYearVal) && !isNaN(totalVal) && prevYearVal > totalVal) {
-                    showFieldError('FarmersServedPreviousYear', 
+                    showFieldError('FarmersServedPreviousYear',
                         'Farmers served in previous year cannot be greater than total farmers served');
                     isValid = false;
                 }
             }
-            
+
             if (!isValid) {
                 return;
             }
-            
+
             // Show loading state
             submitBtn.classList.add('loading');
             submitBtn.disabled = true;
-            
+
             try {
                 // Prepare form data
                 const data = {
@@ -483,23 +461,20 @@
                     SustainabilityPromotion: document.getElementById('SustainabilityPromotion').value,
                     ImpactEvidence: document.getElementById('ImpactEvidence').value
                 };
-                
-                // Get anti-forgery token
-                const token = document.querySelector('input[name="__RequestVerificationToken"]').value;
-                
+
+
                 // Submit to API with application ID in route
                 const response = await fetch(API_ENDPOINT, {
                     method: 'POST',
                     headers: {
-                        'Content-Type': 'application/json',
-                        'RequestVerificationToken': token
+                        'Content-Type': 'application/json'
                     },
                     credentials: 'include',
                     body: JSON.stringify(data)
                 });
-                
+
                 const result = await response.json();
-                
+
                 if (response.ok && result.success) {
                     // Success - redirect to next step or final step
                     if (result.redirectUrl) {
@@ -516,7 +491,7 @@
                         throw new Error(result.message || 'Submission failed');
                     }
                 }
-                
+
             } catch (error) {
                 console.error('Submission error:', error);
                 showAlert(error.message || 'An error occurred. Please try again.');
@@ -525,73 +500,73 @@
                 submitBtn.disabled = false;
             }
         });
-        
+
         function showFieldError(fieldId, message) {
             const field = document.getElementById(fieldId);
             const errorElement = document.getElementById(fieldId + 'Error');
-            
+
             if (field) {
                 field.classList.add('input-validation-error');
             }
-            
+
             if (errorElement) {
                 errorElement.textContent = message;
             }
         }
-        
+
         function clearErrors() {
             document.querySelectorAll('.validation-error').forEach(el => {
                 el.textContent = '';
             });
-            
+
             document.querySelectorAll('.form-control').forEach(el => {
                 el.classList.remove('input-validation-error');
             });
         }
-        
+
         function displayServerErrors(errors) {
             clearErrors();
-            
+
             Object.keys(errors).forEach(fieldName => {
                 const field = document.getElementById(fieldName);
                 const errorElement = document.getElementById(fieldName + 'Error');
-                
+
                 if (field && errorElement) {
                     field.classList.add('input-validation-error');
                     errorElement.textContent = errors[fieldName].join(', ');
-                    
+
                     if (Object.keys(errors)[0] === fieldName) {
                         field.scrollIntoView({ behavior: 'smooth', block: 'center' });
                     }
                 }
             });
         }
-        
+
         function showAlert(message) {
             alert(message);
         }
-        
+
         // Real-time validation
         const inputs = form.querySelectorAll('.form-control');
         inputs.forEach(input => {
-            input.addEventListener('input', function() {
+            input.addEventListener('input', function () {
                 this.classList.remove('input-validation-error');
                 const errorElement = document.getElementById(this.id + 'Error');
                 if (errorElement) errorElement.textContent = '';
             });
         });
-        
+
         // Additional validation for farmers comparison
         const previousYearInput = document.getElementById('FarmersServedPreviousYear');
         const totalFarmersInput = document.getElementById('FarmersServedTotal');
-        
+
         if (previousYearInput && totalFarmersInput) {
             const validateFarmersComparison = () => {
                 const prevYearVal = parseInt(previousYearInput.value);
                 const totalVal = parseInt(totalFarmersInput.value);
-                
+
                 if (!isNaN(prevYearVal) && !isNaN(totalVal) && prevYearVal > totalVal) {
-                    showFieldError('FarmersServedPreviousYear', 
+                    showFieldError('FarmersServedPreviousYear',
                         'Farmers served in previous year cannot be greater than total farmers served');
                 } else {
                     previousYearInput.classList.remove('input-validation-error');
@@ -599,14 +574,14 @@
                     if (errorElement) errorElement.textContent = '';
                 }
             };
-            
+
             previousYearInput.addEventListener('blur', validateFarmersComparison);
             totalFarmersInput.addEventListener('blur', validateFarmersComparison);
         }
-        
+
         // Load existing data if this page was loaded with data
         loadExistingData();
-        
+
         async function loadExistingData() {
             try {
                 // This would be called if you have a GET endpoint to load data
@@ -623,5 +598,7 @@
 </script>
 
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
 }

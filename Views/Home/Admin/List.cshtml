@@ -512,8 +512,7 @@
                 fetch(`/api/admin/${id}`, {
                     method: 'DELETE',
                     headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': getCsrfToken()
+                        'Content-Type': 'application/json'
                     }
                 })
                     .then(response => {
@@ -536,11 +535,7 @@
         }
 
         // Get CSRF Token
-        function getCsrfToken() {
-            return document.querySelector('input[name="__RequestVerificationToken"]')?.value ||
-                document.querySelector('meta[name="csrf-token"]')?.content ||
-                '';
-        }
+
 
         // Search functionality (optional)
         document.addEventListener('DOMContentLoaded', function () {

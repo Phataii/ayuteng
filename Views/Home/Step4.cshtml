@@ -14,8 +14,7 @@
     </div>
 
     <form id="step4Form" method="post">
-        @Html.AntiForgeryToken()
-        
+
         <div class="section-card">
             <h3 class="section-title">
                 <span class="section-icon">💰</span>
@@ -24,15 +23,12 @@
             <div class="form-group">
                 <label for="BusinessModel" class="form-label required">
                     Describe your business model
-                    <span class="field-info">How do you make money? (e.g., subscription, transaction fees, marketplace, licensing)</span>
+                    <span class="field-info">How do you make money? (e.g., subscription, transaction fees, marketplace,
+                        licensing)</span>
                 </label>
-                <textarea name="BusinessModel"
-                          id="BusinessModel"
-                          class="form-control textarea" 
-                          rows="4"
-                          placeholder="Explain your revenue streams, pricing strategy, and business model..."
-                          maxlength="1500"
-                          required>@Model?.BusinessModel</textarea>
+                <textarea name="BusinessModel" id="BusinessModel" class="form-control textarea" rows="4"
+                    placeholder="Explain your revenue streams, pricing strategy, and business model..." maxlength="1500"
+                    required>@Model?.BusinessModel</textarea>
                 <div class="textarea-counter">
                     <span id="BusinessModelCounter">@(Model?.BusinessModel?.Length ?? 0)</span>/1500 characters
                 </div>
@@ -43,11 +39,8 @@
                 <div class="toggle-group">
                     <label class="form-label">Are you currently generating revenue?</label>
                     <div class="toggle-switch">
-                        <input name="IsRevenueGeneration" 
-                               id="IsRevenueGeneration"
-                               type="checkbox" 
-                               class="toggle-checkbox" 
-                               @(Model?.IsRevenueGeneration == true ? "checked" : "")>
+                        <input name="IsRevenueGeneration" id="IsRevenueGeneration" type="checkbox"
+                            class="toggle-checkbox" @(Model?.IsRevenueGeneration == true ? "checked" : "")>
                         <label for="IsRevenueGeneration" class="toggle-label">
                             <span class="toggle-text">No</span>
                             <span class="toggle-slider"></span>
@@ -63,15 +56,12 @@
                     Go-to-Market Strategy
                     <span class="field-info">How do you acquire and retain customers?</span>
                 </label>
-                <textarea name="GoToMarketStrategy"
-                          id="GoToMarketStrategy"
-                          class="form-control textarea" 
-                          rows="4"
-                          placeholder="Describe your marketing, sales, and customer acquisition strategy..."
-                          maxlength="1500"
-                          required>@Model?.GoToMarketStrategy</textarea>
+                <textarea name="GoToMarketStrategy" id="GoToMarketStrategy" class="form-control textarea" rows="4"
+                    placeholder="Describe your marketing, sales, and customer acquisition strategy..." maxlength="1500"
+                    required>@Model?.GoToMarketStrategy</textarea>
                 <div class="textarea-counter">
-                    <span id="GoToMarketStrategyCounter">@(Model?.GoToMarketStrategy?.Length ?? 0)</span>/1500 characters
+                    <span id="GoToMarketStrategyCounter">@(Model?.GoToMarketStrategy?.Length ?? 0)</span>/1500
+                    characters
                 </div>
                 <span class="validation-error" id="GoToMarketStrategyError"></span>
             </div>
@@ -88,15 +78,8 @@
                         Number of Paying Customers
                         <span class="field-info">Total paying customers (if applicable)</span>
                     </label>
-                    <input name="NoOfCustomers"
-                           id="NoOfCustomers"
-                           type="number" 
-                           class="form-control" 
-                           min="0"
-                           max="10000000"
-                           placeholder="0"
-                           value="@Model?.NoOfCustomers"
-                           required>
+                    <input name="NoOfCustomers" id="NoOfCustomers" type="number" class="form-control" min="0"
+                        max="10000000" placeholder="0" value="@Model?.NoOfCustomers" required>
                     <span class="validation-error" id="NoOfCustomersError"></span>
                 </div>
 
@@ -107,15 +90,8 @@
                     </label>
                     <div class="input-with-prefix">
                         <span class="input-prefix">$</span>
-                        <input name="AverageCac"
-                               id="AverageCac"
-                               type="number" 
-                               class="form-control" 
-                               min="0"
-                               max="1000000"
-                               step="0.01"
-                               placeholder="0.00"
-                               value="@Model?.AverageCac">
+                        <input name="AverageCac" id="AverageCac" type="number" class="form-control" min="0"
+                            max="1000000" step="0.01" placeholder="0.00" value="@Model?.AverageCac">
                     </div>
                     <span class="validation-error" id="AverageCacError"></span>
                 </div>
@@ -132,12 +108,9 @@
                     Who are your main competitors?
                     <span class="field-info">And what makes you better/different?</span>
                 </label>
-                <textarea name="Competitors"
-                          id="Competitors"
-                          class="form-control textarea" 
-                          rows="4"
-                          placeholder="List your main competitors and explain your competitive advantage..."
-                          maxlength="1500">@Model?.Competitors</textarea>
+                <textarea name="Competitors" id="Competitors" class="form-control textarea" rows="4"
+                    placeholder="List your main competitors and explain your competitive advantage..."
+                    maxlength="1500">@Model?.Competitors</textarea>
                 <div class="textarea-counter">
                     <span id="CompetitorsCounter">@(Model?.Competitors?.Length ?? 0)</span>/1500 characters
                 </div>
@@ -185,7 +158,7 @@
         .form-grid {
             grid-template-columns: 1fr 1fr;
         }
-        
+
         .full-width {
             grid-column: 1 / -1;
         }
@@ -265,7 +238,7 @@
         padding: 25px;
         margin-bottom: 25px;
         border: 1px solid var(--input-border);
-        box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
     }
 
     .section-title {
@@ -348,11 +321,11 @@
         transition: all 0.3s ease;
     }
 
-    .toggle-checkbox:checked + .toggle-label .toggle-slider {
+    .toggle-checkbox:checked+.toggle-label .toggle-slider {
         background: var(--primary-green);
     }
 
-    .toggle-checkbox:checked + .toggle-label .toggle-slider::before {
+    .toggle-checkbox:checked+.toggle-label .toggle-slider::before {
         transform: translateX(30px);
     }
 
@@ -363,11 +336,11 @@
         min-width: 30px;
     }
 
-    .toggle-checkbox:not(:checked) + .toggle-label .toggle-text:first-child {
+    .toggle-checkbox:not(:checked)+.toggle-label .toggle-text:first-child {
         color: var(--primary-blue);
     }
 
-    .toggle-checkbox:checked + .toggle-label .toggle-text:last-child {
+    .toggle-checkbox:checked+.toggle-label .toggle-text:last-child {
         color: var(--primary-green);
     }
 
@@ -407,20 +380,20 @@
         h2 {
             font-size: 24px;
         }
-        
+
         .form-subtitle {
             font-size: 15px;
         }
-        
+
         .form-control {
             padding: 14px 16px;
             font-size: 16px;
         }
-        
+
         .section-card {
             padding: 20px;
         }
-        
+
         .toggle-switch {
             flex-direction: column;
             align-items: flex-start;
@@ -449,103 +422,104 @@
     }
 
     @@keyframes spin {
-        to { transform: translate(-50%, -50%) rotate(360deg); }
+        to {
+            transform: translate(-50%, -50%) rotate(360deg);
+        }
     }
-
 </style>
 
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
+    document.addEventListener('DOMContentLoaded', function () {
         const form = document.getElementById('step4Form');
         const submitBtn = document.getElementById('submitBtn');
-        
+
         // Extract application ID from current URL
         const currentUrl = window.location.pathname;
         const urlSegments = currentUrl.split('/');
         const applicationId = urlSegments[urlSegments.length - 1];
-        
+
         // Validate it's a GUID
         const guidPattern = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
-        
+
         if (!guidPattern.test(applicationId)) {
             console.error('Invalid application ID in URL:', applicationId);
             showAlert('Invalid application. Please start from step 1.');
             return;
         }
-        
+
         // API endpoint with application ID
         const API_ENDPOINT = `/api/application/step-four/${applicationId}`;
-        
+
         // Character counters
         const textareas = document.querySelectorAll('.textarea');
         textareas.forEach(textarea => {
             const counterId = textarea.id + 'Counter';
             const counter = document.getElementById(counterId);
-            
+
             if (counter) {
                 // Initialize counter
                 counter.textContent = textarea.value.length;
                 updateCounterStyle(counter, textarea.value.length, textarea.maxLength);
-                
+
                 // Update on input
-                textarea.addEventListener('input', function() {
+                textarea.addEventListener('input', function () {
                     counter.textContent = this.value.length;
                     updateCounterStyle(counter, this.value.length, this.maxLength);
                 });
             }
         });
-        
+
         function updateCounterStyle(counter, length, maxLength) {
             const max = parseInt(maxLength) || 0;
             counter.classList.remove('warning', 'danger');
-            
+
             if (length > max * 0.9) {
                 counter.classList.add('danger');
             } else if (length > max * 0.75) {
                 counter.classList.add('warning');
             }
         }
-        
+
         // Form submission via API
-        form.addEventListener('submit', async function(e) {
+        form.addEventListener('submit', async function (e) {
             e.preventDefault();
-            
+
             // Clear previous errors
             clearErrors();
-            
+
             // Client-side validation
             let isValid = true;
-            
+
             // Validate text length limits
             const textareaIds = [
                 'BusinessModel',
                 'GoToMarketStrategy',
                 'Competitors'
             ];
-            
+
             textareaIds.forEach(id => {
                 const textarea = document.getElementById(id);
                 if (textarea) {
                     const maxLength = parseInt(textarea.getAttribute('maxlength')) || 0;
-                    
+
                     if (textarea.value.length > maxLength) {
                         showFieldError(id, `Cannot exceed ${maxLength} characters`);
                         isValid = false;
                     }
                 }
             });
-            
+
             // Validate number fields
             const numberFields = [
                 { id: 'NoOfCustomers', name: 'Number of customers', min: 0 },
                 { id: 'AverageCac', name: 'Average CAC', min: 0, optional: true }
             ];
-            
+
             numberFields.forEach(field => {
                 const input = document.getElementById(field.id);
                 if (input && input.value) {
                     const value = parseFloat(input.value);
-                    
+
                     if (isNaN(value)) {
                         showFieldError(field.id, `Please enter a valid number for ${field.name}`);
                         isValid = false;
@@ -558,15 +532,15 @@
                     isValid = false;
                 }
             });
-            
+
             if (!isValid) {
                 return;
             }
-            
+
             // Show loading state
             submitBtn.classList.add('loading');
             submitBtn.disabled = true;
-            
+
             try {
                 // Prepare form data
                 const data = {
@@ -577,23 +551,19 @@
                     AverageCac: document.getElementById('AverageCac').value,
                     Competitors: document.getElementById('Competitors').value
                 };
-                
-                // Get anti-forgery token
-                const token = document.querySelector('input[name="__RequestVerificationToken"]').value;
-                
+
                 // Submit to API with application ID in route
                 const response = await fetch(API_ENDPOINT, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
-                        'RequestVerificationToken': token
                     },
                     credentials: 'include',
                     body: JSON.stringify(data)
                 });
-                
+
                 const result = await response.json();
-                
+
                 if (response.ok && result.success) {
                     // Success - redirect to next step
                     if (result.redirectUrl) {
@@ -610,7 +580,7 @@
                         throw new Error(result.message || 'Submission failed');
                     }
                 }
-                
+
             } catch (error) {
                 console.error('Submission error:', error);
                 showAlert(error.message || 'An error occurred. Please try again.');
@@ -619,66 +589,66 @@
                 submitBtn.disabled = false;
             }
         });
-        
+
         function showFieldError(fieldId, message) {
             const field = document.getElementById(fieldId);
             const errorElement = document.getElementById(fieldId + 'Error');
-            
+
             if (field) {
                 field.classList.add('input-validation-error');
             }
-            
+
             if (errorElement) {
                 errorElement.textContent = message;
             }
         }
-        
+
         function clearErrors() {
             document.querySelectorAll('.validation-error').forEach(el => {
                 el.textContent = '';
             });
-            
+
             document.querySelectorAll('.form-control').forEach(el => {
                 el.classList.remove('input-validation-error');
             });
         }
-        
+
         function displayServerErrors(errors) {
             clearErrors();
-            
+
             Object.keys(errors).forEach(fieldName => {
                 const field = document.getElementById(fieldName);
                 const errorElement = document.getElementById(fieldName + 'Error');
-                
+
                 if (field && errorElement) {
                     field.classList.add('input-validation-error');
                     errorElement.textContent = errors[fieldName].join(', ');
-                    
+
                     if (Object.keys(errors)[0] === fieldName) {
                         field.scrollIntoView({ behavior: 'smooth', block: 'center' });
                     }
                 }
             });
         }
-        
+
         function showAlert(message) {
             alert(message);
         }
-        
+
         // Real-time validation
         const inputs = form.querySelectorAll('.form-control');
         inputs.forEach(input => {
-            input.addEventListener('input', function() {
+            input.addEventListener('input', function () {
                 this.classList.remove('input-validation-error');
                 const errorElement = document.getElementById(this.id + 'Error');
                 if (errorElement) errorElement.textContent = '';
             });
         });
-        
+
         // Number input formatting for CAC
         const cacInput = document.getElementById('AverageCac');
         if (cacInput) {
-            cacInput.addEventListener('blur', function() {
+            cacInput.addEventListener('blur', function () {
                 if (this.value) {
                     const value = parseFloat(this.value);
                     if (!isNaN(value)) {
@@ -687,10 +657,10 @@
                 }
             });
         }
-        
+
         // Load existing data if this page was loaded with data
         loadExistingData();
-        
+
         async function loadExistingData() {
             try {
                 // This would be called if you have a GET endpoint to load data
@@ -707,5 +677,7 @@
 </script>
 
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
 }
