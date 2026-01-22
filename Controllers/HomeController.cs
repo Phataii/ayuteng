@@ -134,36 +134,40 @@ public class HomeController : Controller
         {
             return Redirect("/ayute/admin/login");
         }
+
+        var todayStart = DateTime.UtcNow.Date;
+        var tomorrowStart = todayStart.AddDays(1);
+
+        // Base query
+        var applications = _context.Applications.AsNoTracking();
+
         var model = new DashboardViewModel
         {
-            // Basic counts
-            TotalApplications = await _context.Applications.CountAsync(),
-            TodayApplications = await _context.Applications
-                    .Where(a => a.CreatedAt.Date == DateTime.UtcNow.Date)
-                    .CountAsync(),
-            ApprovedApplications = await _context.Applications.CountAsync(a => a.Status == "approved"),
-            PendingApplications = await _context.Applications.CountAsync(a => a.Status == "submitted"),
-            RejectedApplications = await _context.Applications.CountAsync(a => a.Status == "rejected"),
+            TotalApplications = await applications.CountAsync(),
 
-            // Detailed status counts
-            DraftApplications = await _context.Applications.CountAsync(a => a.Status == "draft"),
-            SubmittedApplications = await _context.Applications.CountAsync(a => a.Status == "submitted"),
-            ReviewingApplications = await _context.Applications.CountAsync(a => a.Status == "reviewing"),
+            TodayApplications = await applications
+                .CountAsync(a => a.CreatedAt >= todayStart && a.CreatedAt < tomorrowStart),
 
-            // Gender counts
-            MaleApplications = await _context.Applications.CountAsync(a => a.Gender == "male"),
-            FemaleApplications = await _context.Applications.CountAsync(a => a.Gender == "female"),
-            OtherApplications = await _context.Applications
-                    .Where(a => a.Gender == "other" || string.IsNullOrEmpty(a.Gender))
-                    .CountAsync(),
+            ApprovedApplications = await applications.CountAsync(a => a.Status == "approved"),
+            PendingApplications = await applications.CountAsync(a => a.Status == "submitted"),
+            RejectedApplications = await applications.CountAsync(a => a.Status == "rejected"),
 
-            // Calculations
-            AwaitingReview = await _context.Applications
-                    .Where(a => a.Status == "submitted" || a.Status == "reviewing")
-                    .CountAsync()
+            DraftApplications = await applications.CountAsync(a => a.Status == "draft"),
+            SubmittedApplications = await applications.CountAsync(a => a.Status == "submitted"),
+            ReviewingApplications = await applications.CountAsync(a => a.Status == "reviewing"),
+
+            MaleApplications = await applications.CountAsync(a => a.Gender == "male"),
+            FemaleApplications = await applications.CountAsync(a => a.Gender == "female"),
+            OtherApplications = await applications.CountAsync(
+                a => a.Gender == "other" || a.Gender == null || a.Gender == ""
+            ),
+
+            AwaitingReview = await applications.CountAsync(
+                a => a.Status == "submitted" || a.Status == "reviewing"
+            )
         };
 
-        // Calculate percentages
+        // Percentages
         if (model.TotalApplications > 0)
         {
             model.ApprovalRate = Math.Round((model.ApprovedApplications * 100.0) / model.TotalApplications, 1);
@@ -180,30 +184,22 @@ public class HomeController : Controller
             model.RejectedPercentage = Math.Round((model.RejectedApplications * 100.0) / model.TotalApplications, 1);
         }
 
+        // Average processing time (ONLY rows that matter)
+        // var processingDays = await applications
+        //     .Where(a =>
+        //         (a.Status == "approved" || a.Status == "rejected") &&
+        //         a.UpdatedAt != null &&
+        //         a.UpdatedAt > a.CreatedAt
+        //     )
+        //     .Select(a => (a.UpdatedAt.Value - a.CreatedAt).TotalDays)
+        //     .ToListAsync();
 
-
-        // Calculate average processing days (simplified)
-        var processedApplications = await _context.Applications
-            .Where(a => a.Status == "approved" || a.Status == "rejected")
-            .ToListAsync();
-
-        if (processedApplications.Any())
-        {
-            var totalDays = processedApplications
-                .Where(a => a.UpdatedAt > a.CreatedAt)
-                .Sum(a => (a.UpdatedAt - a.CreatedAt).TotalDays);
-
-            model.AverageProcessingDays = Math.Round(totalDays / processedApplications.Count, 1);
-        }
-        else
-        {
-            model.AverageProcessingDays = 0;
-        }
+        // model.AverageProcessingDays = processingDays.Any()
+        //     ? Math.Round(processingDays.Average(), 1)
+        //     : 0;
 
         return View("Admin/Dashboard", model);
-
     }
-
 
     [HttpGet("application/success/{id:guid}")]
     public async Task<IActionResult> Success(Guid id)
@@ -712,7 +708,7 @@ public class HomeController : Controller
 
         // Growth and performance
         public double WeeklyGrowth { get; set; }
-        public double AverageProcessingDays { get; set; }
+        // public double AverageProcessingDays { get; set; }
     }
     // DTOs
     public class ApplicationListItemDto

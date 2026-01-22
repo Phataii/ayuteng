@@ -91,7 +91,7 @@
                     <div class="mt-3">
                         <small class="text-muted">
                             <i class="bi bi-hourglass-split me-1"></i>
-                            Average: @Model.AverageProcessingDays days to process
+
                         </small>
                     </div>
                 </div>
@@ -413,10 +413,10 @@
                     labels: ['Submitted', 'Under Review', 'Approved', 'Rejected', 'Draft'],
                     datasets: [{
                         data: [
-                                    @Model.SubmittedApplications,
-                                    @Model.ReviewingApplications,
-                                    @Model.ApprovedApplications,
-                                    @Model.RejectedApplications,
+                                        @Model.SubmittedApplications,
+                                        @Model.ReviewingApplications,
+                                        @Model.ApprovedApplications,
+                                        @Model.RejectedApplications,
                             @Model.DraftApplications
                         ],
                         backgroundColor: ['#0dcaf0', '#ffc107', '#198754', '#dc3545', '#6c757d'],
@@ -520,13 +520,13 @@
             toast.className = `toast align-items-center text-white bg-${type} border-0 position-fixed bottom-0 end-0 m-3`;
             toast.style.zIndex = '1060';
             toast.innerHTML = `
-                        <div class="d-flex">
-                            <div class="toast-body">
-                                ${message}
+                            <div class="d-flex">
+                                <div class="toast-body">
+                                    ${message}
+                                </div>
+                                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
                             </div>
-                            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
-                        </div>
-                    `;
+                        `;
 
             document.body.appendChild(toast);
             const bsToast = new bootstrap.Toast(toast);
