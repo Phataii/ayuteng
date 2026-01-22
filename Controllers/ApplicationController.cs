@@ -83,136 +83,140 @@ namespace ayuteng.Controllers
         [HttpPost("step-one")]
         public async Task<IActionResult> StepOne([FromBody] StepOneRequest request)
         {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(new
+                {
+                    success = false,
+                    errors = ModelState.ToDictionary(
+                        kvp => kvp.Key,
+                        kvp => kvp.Value.Errors.Select(e => e.ErrorMessage).ToArray()
+                    )
+                });
+            }
+
+            // Age validation (18+)
+            if (DateTime.UtcNow.AddYears(-18) < request.Dob)
+            {
+                return BadRequest(new
+                {
+                    success = false,
+                    errors = new { Dob = new[] { "You must be 18 years or older to apply" } }
+                });
+            }
+
+            if (string.IsNullOrWhiteSpace(request.Password))
+            {
+                return BadRequest(new
+                {
+                    success = false,
+                    message = "Password is required"
+                });
+            }
+
+            var normalizedEmail = request.Email.Trim().ToLowerInvariant();
+
+            Application application;
+            bool isNew;
+
             try
             {
-                // Validate the request
-                if (!ModelState.IsValid)
+                application = await _context.Applications
+                    .FirstOrDefaultAsync(a => a.Email == normalizedEmail);
+
+                isNew = application == null;
+
+                if (isNew)
                 {
-                    return BadRequest(new
+                    application = new Application
                     {
-                        success = false,
-                        errors = ModelState.ToDictionary(
-                            kvp => kvp.Key,
-                            kvp => kvp.Value.Errors.Select(e => e.ErrorMessage).ToArray()
-                        )
-                    });
+                        Email = normalizedEmail,
+                        ReferenceNumber = $"AYT-{Guid.NewGuid().ToString("N")[..10].ToUpper()}",
+                        CreatedAt = DateTime.UtcNow
+                    };
+
+                    _context.Applications.Add(application);
+                }
+                else
+                {
+                    application.UpdatedAt = DateTime.UtcNow;
                 }
 
-                // Validate age requirement
-                if (DateTime.Now.AddYears(-18) < request.Dob)
-                {
-                    ModelState.AddModelError(nameof(request.Dob), "You must be 18 years or older to apply");
-                    return BadRequest(new
-                    {
-                        success = false,
-                        errors = new { Dob = new[] { "You must be 18 years or older to apply" } }
-                    });
-                }
-
-                // Check if email already exists
-                // var existingApplication = await _context.Applications
-                //     .FirstOrDefaultAsync(a => a.Email == request.Email);
-
-                // if (existingApplication != null)
-                // {
-                //     ModelState.AddModelError(nameof(request.Email), "Email address is already registered");
-                //     return BadRequest(new
-                //     {
-                //         success = false,
-                //         errors = new { Email = new[] { "Email address is already registered" } }
-                //     });
-                // }
-
-                // Create new application or update existing one from session
-                var application = new Application();
-
-                // Map request to application model
-                application.FirstName = request.FirstName;
-                application.LastName = request.LastName;
-                application.Email = request.Email;
-                application.Phone = request.Phone;
+                // Map ALL provided fields
+                application.FirstName = request.FirstName.Trim();
+                application.LastName = request.LastName.Trim();
+                application.Phone = request.Phone?.Trim();
                 application.Gender = request.Gender;
                 application.Dob = request.Dob;
                 application.Status = "Draft";
-                application.ApplicationStep = 2; // Move to next step
-                application.ReferenceNumber = $"AYT-{Guid.NewGuid().ToString("N")[..10].ToUpper()}";
-                // Hash password if provided
-                if (!string.IsNullOrEmpty(request.Password))
-                {
-                    var HashPassword = BCrypt.Net.BCrypt.HashPassword(request.Password);
-                    application.Password = HashPassword;
-                }
+                application.ApplicationStep = 2;
 
-                // Set timestamps
-                if (application.ApplicationStep == 2) // New application
-                {
-                    application.CreatedAt = DateTime.UtcNow;
-                    _context.Applications.Add(application);
-                }
-                else // Update existing
-                {
-                    application.UpdatedAt = DateTime.UtcNow;
-                    _context.Applications.Update(application);
-                }
+                // Hash password (NEVER store plain text)
+                application.Password = BCrypt.Net.BCrypt.HashPassword(request.Password);
 
-                // Save to database
                 await _context.SaveChangesAsync();
-                // Example token generation
-                // Generate verification token
-                var token = await _verificationService.GenerateAndSaveTokenAsync(application.Id.ToString());
-                var environment = HttpContext.Request; // Use HttpContext directly
-                var baseUrl = $"{environment.Scheme}://{environment.Host}";
-                // Build verification URL
-                var verificationUrl = $"{baseUrl}/verify-email?token={token}";
-
-                //Send email
-                await _emailService.SendEmailAsync(
-                   application.Email,
-                   "Applicant",
-                   "Application Received",
-                   $@"<h2>Thank you for applying for the AYuTe Africa Challenge Nigeria</h2>
-                    <p>Your application has been received.</p>
-                    <p>Please verify your email address by clicking the button below:</p>
-                    <div style='margin: 20px 0;'>
-                        <a href='{verificationUrl}' 
-                            style='
-                            background-color: #007bff;
-                            color: white;
-                            padding: 12px 24px;
-                            text-decoration: none;
-                            border-radius: 4px;
-                            font-weight: bold;
-                            display: inline-block;
-                            '>
-                        Verify Email Address
-                        </a>
-                    </div>
-                    <p>If the button doesn't work, you can also copy and paste this link:</p>
-                    <p>{verificationUrl}</p>
-                    <p><small>This verification link will expire in 24 hours.</small></p>"
-               );
-                // TempData["Success"] = "Signup successful. Please login to continue";
-                // Return success response
-                return Ok(new
+            }
+            catch (DbUpdateException ex) when (
+                ex.InnerException?.Message.Contains("Duplicate", StringComparison.OrdinalIgnoreCase) == true
+            )
+            {
+                return Conflict(new
                 {
-                    success = true,
-                    message = "Personal information saved successfully",
-                    applicationId = application.Id,
-                    redirectUrl = $"/verify?email={application.Email}",
+                    success = false,
+                    message = "Email address is already registered"
                 });
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error saving step one application data");
-
+                _logger.LogError(ex, "StepOne DB failure");
                 return StatusCode(500, new
                 {
                     success = false,
-                    message = "An error occurred while saving your information. Please try again."
+                    message = "An error occurred while saving your information"
                 });
             }
-        }
 
+            // Generate verification token AFTER successful save
+            var token = await _verificationService.GenerateAndSaveTokenAsync(application.Id.ToString());
+
+            var req = HttpContext.Request;
+            var baseUrl = $"{req.Scheme}://{req.Host}";
+            var verificationUrl = $"{baseUrl}/verify-email?token={token}";
+
+            // Send verification email (non-blocking)
+            try
+            {
+                await _emailService.SendEmailAsync(
+                    application.Email,
+                    "Applicant",
+                    "Application Received",
+                    $@"
+            <h2>Thank you for applying for the AYuTe Africa Challenge Nigeria</h2>
+            <p>Your application has been received.</p>
+            <p>Please verify your email address:</p>
+            <a href='{verificationUrl}'
+               style='background:#007bff;color:#fff;padding:12px 24px;
+               text-decoration:none;border-radius:4px;font-weight:bold;'>
+                Verify Email Address
+            </a>
+            <p>If the button doesn't work, copy this link:</p>
+            <p>{verificationUrl}</p>
+            <small>This link expires in 24 hours.</small>"
+                );
+            }
+            catch (Exception ex)
+            {
+                _logger.LogWarning(ex, "Verification email failed for {Email}", application.Email);
+            }
+
+            return Ok(new
+            {
+                success = true,
+                message = "Personal information saved successfully",
+                applicationId = application.Id,
+                redirectUrl = $"/verify?email={application.Email}"
+            });
+        }
 
         // [HttpPost("resend-verification")]
         // public async Task<IActionResult> ResendVerification([FromBody] ResendVerificationRequest request)
