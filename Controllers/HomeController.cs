@@ -135,7 +135,7 @@ public class HomeController : Controller
             return Redirect("/ayute/admin/login");
         }
 
-        var todayStart = DateTime.UtcNow.Date;
+        var todayStart = DateTime.UtcNow;
         var tomorrowStart = todayStart.AddDays(1);
 
         // Base query
