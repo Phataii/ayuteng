@@ -1306,8 +1306,6 @@ namespace ayuteng.Controllers
         {
             try
             {
-                // Get the web root path
-                var uploadsRoot = "/var/www/uploads";
 
                 // Create folder by field type (PitchDeckUrl, CacUrl, etc.)
                 var targetFolder = Path.Combine(_uploadsRoot, fieldName.ToLower());

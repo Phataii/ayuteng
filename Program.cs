@@ -61,13 +61,7 @@ else
 }
 
 app.UseHttpsRedirection();
-// Serve static files from wwwroot/uploads
-app.UseStaticFiles(new StaticFileOptions
-{
-    FileProvider = new PhysicalFileProvider(
-        Path.Combine(builder.Environment.ContentRootPath, "wwwroot", "uploads")),
-    RequestPath = "/uploads"
-});
+
 
 app.UseRouting();
 app.UseAuthentication();
