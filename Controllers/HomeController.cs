@@ -129,6 +129,8 @@ public class HomeController : Controller
     [HttpGet("dashboard")]
     public async Task<IActionResult> Dashboard()
     {
+
+
         var loggedInUser = await _userHelper.GetLoggedInAdmin(Request);
         if (loggedInUser == null)
         {
@@ -162,6 +164,19 @@ public class HomeController : Controller
                 a => a.Gender == "other" || a.Gender == null || a.Gender == ""
             ),
 
+            LocationApplications = await _context.Applications
+            .Where(a => !string.IsNullOrWhiteSpace(a.Locations))
+            .GroupBy(a => a.Locations.Trim())
+            .OrderByDescending(g => g.Count())
+            .Select(g => new DashboardViewModel.LocationApplicationDto
+            {
+                State = g.Key,
+                Total = g.Count()
+            })
+            .ToListAsync(),
+
+            // TotalApplications = await _context.Applications.CountAsync(),
+
             AwaitingReview = await applications.CountAsync(
                 a => a.Status == "submitted" || a.Status == "reviewing"
             )
@@ -176,7 +191,8 @@ public class HomeController : Controller
             model.MalePercentage = Math.Round((model.MaleApplications * 100.0) / model.TotalApplications, 1);
             model.FemalePercentage = Math.Round((model.FemaleApplications * 100.0) / model.TotalApplications, 1);
             model.OtherPercentage = Math.Round((model.OtherApplications * 100.0) / model.TotalApplications, 1);
-
+            // Fix 1: Remove unnecessary parentheses
+            model.LocationPercentage = Math.Round((model.LocationApplications.Count * 100.0) / model.TotalApplications, 1);
             model.DraftPercentage = Math.Round((model.DraftApplications * 100.0) / model.TotalApplications, 1);
             model.SubmittedPercentage = Math.Round((model.SubmittedApplications * 100.0) / model.TotalApplications, 1);
             model.ReviewingPercentage = Math.Round((model.ReviewingApplications * 100.0) / model.TotalApplications, 1);
@@ -241,6 +257,8 @@ public class HomeController : Controller
                string search = "",
                string status = "")
     {
+        ViewBag.Success = TempData["Success"];
+
         var loggedInUser = await _userHelper.GetLoggedInAdmin(Request);
         if (loggedInUser == null)
         {
@@ -693,6 +711,15 @@ public class HomeController : Controller
         public int MaleApplications { get; set; }
         public int FemaleApplications { get; set; }
         public int OtherApplications { get; set; }
+        public List<LocationApplicationDto> LocationApplications { get; set; } = new List<LocationApplicationDto>();
+        // public int TotalApplications { get; set; }
+
+        // DTO class
+        public class LocationApplicationDto
+        {
+            public string State { get; set; }
+            public int Total { get; set; }
+        }
 
         // Percentages
         public double ApprovalRate { get; set; }
@@ -705,6 +732,7 @@ public class HomeController : Controller
         public double ReviewingPercentage { get; set; }
         public double ApprovedPercentage { get; set; }
         public double RejectedPercentage { get; set; }
+        public double LocationPercentage { get; set; }
 
         // Growth and performance
         public double WeeklyGrowth { get; set; }

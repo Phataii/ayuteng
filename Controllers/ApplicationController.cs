@@ -25,6 +25,7 @@ namespace ayuteng.Controllers
         private readonly IWebHostEnvironment _hostingEnvironment;
         private readonly IEmailVerificationService _verificationService;
         private readonly IUserService _userService;
+        private readonly string _uploadsRoot;
         public ApplicationController(IUserService userService, IEmailVerificationService verificationService, IWebHostEnvironment hostingEnvironment, ILogger<ApplicationController> logger, ApplicationDbContext context, IConfiguration configuration, IBrevoEmailService emailService)
         {
             _context = context;
@@ -33,6 +34,8 @@ namespace ayuteng.Controllers
             _verificationService = verificationService;
             _hostingEnvironment = hostingEnvironment;
             _userService = userService;
+            _uploadsRoot = configuration["UploadSettings:RootPath"]
+        ?? throw new Exception("Upload root path not configured");
 
         }
         private IActionResult LoginFailed(string message)
@@ -191,17 +194,17 @@ namespace ayuteng.Controllers
                     "Applicant",
                     "Application Received",
                     $@"
-            <h2>Thank you for applying for the AYuTe Africa Challenge Nigeria</h2>
-            <p>Your application has been received.</p>
-            <p>Please verify your email address:</p>
-            <a href='{verificationUrl}'
-               style='background:#007bff;color:#fff;padding:12px 24px;
-               text-decoration:none;border-radius:4px;font-weight:bold;'>
-                Verify Email Address
-            </a>
-            <p>If the button doesn't work, copy this link:</p>
-            <p>{verificationUrl}</p>
-            <small>This link expires in 24 hours.</small>"
+                        <h2>Thank you for applying for the AYuTe Africa Challenge Nigeria</h2>
+                        <p>Your application has been received.</p>
+                        <p>Please verify your email address:</p>
+                        <a href='{verificationUrl}'
+                        style='background:#007bff;color:#fff;padding:12px 24px;
+                        text-decoration:none;border-radius:4px;font-weight:bold;'>
+                            Verify Email Address
+                        </a>
+                        <p>If the button doesn't work, copy this link:</p>
+                        <p>{verificationUrl}</p>
+                        <small>This link expires in 24 hours.</small>"
                 );
             }
             catch (Exception ex)
@@ -1304,21 +1307,16 @@ namespace ayuteng.Controllers
             try
             {
                 // Get the web root path
-                var webRootPath = _hostingEnvironment.WebRootPath;
-
-                // If web root doesn't exist, use content root
-                if (string.IsNullOrEmpty(webRootPath))
-                {
-                    webRootPath = _hostingEnvironment.ContentRootPath;
-                }
+                var uploadsRoot = "/var/www/uploads";
 
                 // Create folder by field type (PitchDeckUrl, CacUrl, etc.)
-                var uploadsFolder = Path.Combine(webRootPath, "uploads", fieldName.ToLower());
-                Directory.CreateDirectory(uploadsFolder);
+                var targetFolder = Path.Combine(_uploadsRoot, fieldName.ToLower());
+                // var targetFolder = Path.Combine(uploadsRoot, fieldName.ToLower());
+                Directory.CreateDirectory(targetFolder);
 
                 // Get unique filename in format: {applicationId}_{fieldName.ToLower()}.pdf
-                var finalFileName = GetUniqueFileName(uploadsFolder, file.FileName, applicationId, fieldName);
-                var filePath = Path.Combine(uploadsFolder, finalFileName);
+                var finalFileName = GetUniqueFileName(targetFolder, file.FileName, applicationId, fieldName);
+                var filePath = Path.Combine(targetFolder, finalFileName);
 
                 // Save file
                 using (var fileStream = new System.IO.FileStream(filePath, FileMode.Create))
@@ -1329,7 +1327,7 @@ namespace ayuteng.Controllers
                 // Generate ABSOLUTE URL
                 var request = HttpContext.Request; // Use HttpContext directly
                 var baseUrl = $"{request.Scheme}://{request.Host}";
-                var url = $"{baseUrl}/uploads/{fieldName.ToLower()}/{finalFileName}";
+                var url = $"{baseUrl}/files/{fieldName.ToLower()}/{finalFileName}";
 
                 return new LocalUploadResult
                 {
@@ -1599,7 +1597,68 @@ namespace ayuteng.Controllers
             }
         }
 
+        [Route("send-reminder")]
+        public async Task<IActionResult> SendReminder(
+        )
+        {
+            try
+            {
+                // Find existing application
+                var applications = await _context.Applications
+                    .Where(a => a.Status != "Submitted").ToListAsync();
 
+                if (applications == null)
+                {
+                    return NotFound(new
+                    {
+                        success = false,
+                        message = "Application not found"
+                    });
+                }
+
+                foreach (var application in applications)
+                {
+                    await _emailService.SendEmailAsync(
+                    application.Email,
+                    "Applicant",
+                    "Pending Application",
+                    $@"
+                        <h2>Reminder: Your AYuTe Africa Challenge Nigeria Application is Still Pending</h2>
+
+                        <p>Dear {application.FirstName} {application.LastName},</p>
+
+                        <p>We noticed that your application for the <strong>AYuTe Africa Challenge Nigeria</strong> is still pending. Ref: <strong>{application.ReferenceNumber}</strong></p>
+
+                        <p>Please complete any outstanding steps or verify your email address (if not done already) to ensure your application is processed on time.</p>
+
+                        <p>If you have already completed all steps, you can safely ignore this reminder.</p>
+
+                        <p>We will follow up with additional information regarding your application soon.</p>
+
+                        <p>Best regards,<br/>
+                        <strong>AYuTe Africa Challenge Nigeria Team</strong></p>
+                        "
+               );
+
+                }
+
+                // Return success response
+                TempData["Success"] = "Reminders sent successfully!";
+
+                return Redirect("/applications");
+
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error sendig emails");
+
+                return StatusCode(500, new
+                {
+                    success = false,
+                    message = "An error occurred while sending emails. Please try again."
+                });
+            }
+        }
         private static readonly IReadOnlyDictionary<int, string> StepRoutes =
             new Dictionary<int, string>
             {

@@ -6,6 +6,14 @@
 
 <div class="container-fluid">
     <!-- Page Header -->
+    @if (ViewBag.Success != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            @ViewBag.Success
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
     <div class="d-flex justify-content-between align-items-center mb-4">
         <div>
             <h1 class="h3 mb-0" style="color: var(--primary-blue);">
@@ -17,6 +25,11 @@
                     <li class="breadcrumb-item active" aria-current="page">Applications</li>
                 </ol>
             </nav>
+        </div>
+        <div>
+            <a href="/api/application/send-reminder" class="btn btn-warning">
+                <i class="bi bi-send me-2"></i> Send reminder to pending applications
+            </a>
         </div>
         <div>
             <button class="btn btn-primary" onclick="exportAllApplications()">
@@ -429,13 +442,13 @@
             toast.className = `toast align-items-center text-white bg-${type} border-0 position-fixed bottom-0 end-0 m-3`;
             toast.style.zIndex = '1060';
             toast.innerHTML = `
-                                    <div class="d-flex">
-                                        <div class="toast-body">
-                                            ${message}
-                                        </div>
-                                        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
-                                    </div>
-                                `;
+                                                                                    <div class="d-flex">
+                                                                                        <div class="toast-body">
+                                                                                            ${message}
+                                                                                        </div>
+                                                                                        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+                                                                                    </div>
+                                                                                `;
 
             document.body.appendChild(toast);
             const bsToast = new bootstrap.Toast(toast);
