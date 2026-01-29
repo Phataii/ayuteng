@@ -216,7 +216,17 @@ public class HomeController : Controller
 
         return View("Admin/Dashboard", model);
     }
+    [Route("forgot-password")]
+    public async Task<IActionResult> ForgotPassword()
+    {
 
+        return View();
+    }
+    [Route("reset-password")]
+    public async Task<IActionResult> ResetPassword()
+    {
+        return View();
+    }
     [HttpGet("application/success/{id:guid}")]
     public async Task<IActionResult> Success(Guid id)
     {

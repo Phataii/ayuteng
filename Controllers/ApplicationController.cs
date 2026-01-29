@@ -251,6 +251,110 @@ namespace ayuteng.Controllers
 
         // }
 
+        [HttpPost("forgot-password")]
+        public async Task<IActionResult> ForgotPassword([FromForm] string email)
+        {
+            Console.WriteLine(email);
+            var normalizedEmail = email.Trim().ToLowerInvariant();
+            var user = await _context.Applications
+                                .FirstOrDefaultAsync(a => a.Email == normalizedEmail);
+            // Generate verification token AFTER successful save
+            var token = await _verificationService.GenerateAndSaveTokenAsync(user.Id.ToString());
+
+            var req = HttpContext.Request;
+            var baseUrl = $"{req.Scheme}://{req.Host}";
+            var resetLink = $"{baseUrl}/reset-password?token={token}";
+
+            // Send verification email (non-blocking)
+            try
+            {
+                await _emailService.SendEmailAsync(
+                    email,
+                    "Applicant",
+                    "Password Reset",
+                    $@"
+                    <h2>Password Reset Request</h2>
+                    <p>You requested to reset your password.</p>
+                    <p>Click the link below to reset your password:</p>
+                    <a href='{resetLink}'
+                        style='background:#007bff;color:#fff;padding:12px 24px;
+                        text-decoration:none;border-radius:4px;font-weight:bold;'>
+                            Reset Password
+                        </a>
+                    <p>This link will expire in 24 hours.</p>
+                    <p>If you didn't request this, please ignore this email.</p>"
+                );
+            }
+            catch (Exception ex)
+            {
+                _logger.LogWarning(ex, "Verification email failed for {Email}", normalizedEmail);
+            }
+            TempData["Success"] = "Password reset instrustions has sent to your email";
+            return Redirect("/login");
+
+        }
+
+        [HttpPost("reset-password")]
+        public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordRequest model)
+        {
+            if (string.IsNullOrWhiteSpace(model.Token) || string.IsNullOrWhiteSpace(model.Password))
+            {
+                return BadRequest(new
+                {
+                    success = false,
+                    message = "Invalid request"
+                });
+            }
+
+            var isValid = await _verificationService.ValidateTokenAsync(model.Token);
+
+            if (!isValid)
+            {
+                return BadRequest(new
+                {
+                    success = false,
+                    message = "Invalid or expired verification token"
+                });
+            }
+
+            var verificationToken = await _verificationService.GetTokenAsync(model.Token);
+
+            if (verificationToken == null)
+            {
+                return BadRequest(new
+                {
+                    success = false,
+                    message = "Token not found"
+                });
+            }
+
+            var hashedPassword = BCrypt.Net.BCrypt.HashPassword(model.Password);
+
+            var resetPasswordResult = await _userService.ResetPasswordAsync(
+                verificationToken.UserId,
+                model.Token,
+                hashedPassword
+            );
+
+            if (!resetPasswordResult)
+            {
+                return StatusCode(500, new
+                {
+                    success = false,
+                    message = "Failed to reset password"
+                });
+            }
+
+            await _verificationService.UseTokenAsync(model.Token);
+
+            return Ok(new
+            {
+                success = true,
+                message = "Password reset successfully",
+                redirectUrl = "/login"
+            });
+        }
+
         [HttpPost("step-two/{applicationId}")] // Route parameter
         public async Task<IActionResult> StepTwo(
              Guid applicationId, // From route parameter
@@ -2245,4 +2349,10 @@ public class SocialMediaRequest
 public class ResendVerificationRequest
 {
     public string Email { get; set; }
+}
+
+public class ResetPasswordRequest
+{
+    public string Token { get; set; }
+    public string Password { get; set; }
 }

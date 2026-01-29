@@ -12,7 +12,7 @@ public interface IUserService
 {
     Task<Application> GetUserByIdAsync(string userId);
     Task<bool> VerifyUserEmailAsync(string userId, string token);
-    // Task<bool> ResendVerificationEmailAsync(string userId);
+    Task<bool> ResetPasswordAsync(string userId, string token, string password);
     Task<bool> IsEmailVerifiedAsync(string userId);
 }
 
@@ -99,7 +99,58 @@ public class UserService : IUserService
         }
     }
 
+    public async Task<bool> ResetPasswordAsync(string userId, string token, string password)
+    {
+        try
+        {
+            // Find the user
+            var user = await GetUserByIdAsync(userId);
+            if (user == null)
+            {
+                _logger.LogWarning($"User not found for passwod reset: {userId}");
+                return false;
+            }
 
+
+
+            // Find verification token
+            var verificationToken = await _context.EmailVerificationTokens
+                .FirstOrDefaultAsync(t => t.Token == token && t.UserId == userId);
+
+            if (verificationToken == null)
+            {
+                _logger.LogWarning($"Invalid or expired verification token for user: {userId}");
+                return false;
+            }
+
+            // Mark user as verified
+            user.Password = password;
+            user.UpdatedAt = DateTime.UtcNow;
+
+            // Remove used token
+            _context.EmailVerificationTokens.Remove(verificationToken);
+
+            // Save all changes in one transaction
+            var result = await _context.SaveChangesAsync();
+
+            if (result > 0)
+            {
+                _logger.LogInformation($"Successfully changed password and deleted token for user: {userId}");
+
+                // Optional: send confirmation email
+                // await SendEmailVerifiedConfirmationAsync(user);
+
+                return true;
+            }
+
+            return false;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, $"Error verifying email for user: {userId}");
+            return false;
+        }
+    }
     public async Task<bool> IsEmailVerifiedAsync(string userId)
     {
         var user = await GetUserByIdAsync(userId);
