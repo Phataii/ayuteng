@@ -14,6 +14,8 @@ public class ApplicationDbContext : IdentityDbContext
     public DbSet<Application> Applications { get; set; }
     public DbSet<Admin> Admins { get; set; }
     public DbSet<Attendance> Attendances { get; set; }
+    public DbSet<Meeting> Meetings { get; set; }
+    public DbSet<MeetingAttendee> MeetingAttendees { get; set; }
     public DbSet<EmailVerificationToken> EmailVerificationTokens { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)

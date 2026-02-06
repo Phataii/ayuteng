@@ -676,6 +676,43 @@ public class HomeController : Controller
             return Redirect("/login");
         }
     }
+    [HttpGet("meetings")]
+    public async Task<IActionResult> Meetings()
+    {
+        var meetings = await _context.Meetings
+            .OrderByDescending(m => m.StartTime)
+            .Select(m => new MeetingViewModel
+            {
+                Id = m.Id,
+                Name = m.Name,
+                MeetingCode = m.MeetingCode,
+                Type = m.Type,
+                Venue = m.Venue,
+                StartTime = m.StartTime,
+                EndTime = m.EndTime,
+                MaxAttendees = m.MaxAttendees,
+                AttendeeCount = m.Attendees.Count(a => a.Status != "cancelled"),
+                Status = GetMeetingStatus(m.StartTime, m.EndTime, m.Status)
+            })
+            .ToListAsync();
+
+        return View("admin/meetings", meetings);
+    }
+
+    private static string GetMeetingStatus(DateTime startTime, DateTime endTime, string currentStatus)
+    {
+        var now = DateTime.UtcNow;
+
+        if (currentStatus == "cancelled")
+            return "cancelled";
+
+        if (now < startTime)
+            return "upcoming";
+        else if (now >= startTime && now <= endTime)
+            return "ongoing";
+        else
+            return "completed";
+    }
 
     [HttpGet]
     [Route("admin/list")]
@@ -694,6 +731,28 @@ public class HomeController : Controller
             // Log error
             return StatusCode(500, "Error loading admin list");
         }
+    }
+
+    // GET: /Meeting/Register/{code} - Public registration page via QR code
+    [Route("Meeting/Register/{code}")]
+    public async Task<IActionResult> Register(string code)
+    {
+        var meeting = await _context.Meetings
+            .FirstOrDefaultAsync(m => m.MeetingCode == code);
+
+        if (meeting == null)
+        {
+            return NotFound();
+        }
+
+        ViewBag.MeetingCode = code;
+        return View(meeting);
+    }
+    [HttpGet("registrationSuccess")]
+    public IActionResult RegistrationSuccess(string code)
+    {
+        ViewBag.MeetingCode = code;
+        return View();
     }
 
     [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

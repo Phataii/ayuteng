@@ -334,8 +334,8 @@
                                     <div class="field-value">
                                         @if (!string.IsNullOrEmpty(Model.PitchDeckUrl))
                                         {
-                                            <a href="@Model.PitchDeckUrl" target="_blank"
-                                                class="btn btn-sm btn-outline-primary">
+                                            <a href="/api/application/download/pitchdeckurl/@Model.PitchDeckUrl"
+                                                target="_blank" class="btn btn-sm btn-outline-primary">
                                                 <i class="bi bi-download me-2"></i>Download Pitch Deck
                                             </a>
                                         }
@@ -350,7 +350,8 @@
                                     <div class="field-value">
                                         @if (!string.IsNullOrEmpty(Model.CacUrl))
                                         {
-                                            <a href="@Model.CacUrl" target="_blank" class="btn btn-sm btn-outline-primary">
+                                            <a href="/api/application/download/cacurl/@Model.CacUrl" target="_blank"
+                                                class="btn btn-sm btn-outline-primary">
                                                 <i class="bi bi-download me-2"></i>Download CAC
                                             </a>
                                         }
@@ -365,7 +366,8 @@
                                     <div class="field-value">
                                         @if (!string.IsNullOrEmpty(Model.TinUrl))
                                         {
-                                            <a href="@Model.TinUrl" target="_blank" class="btn btn-sm btn-outline-primary">
+                                            <a href="/api/application/download/tinurl/@Model.TinUrl" target="_blank"
+                                                class="btn btn-sm btn-outline-primary">
                                                 <i class="bi bi-download me-2"></i>Download TIN
                                             </a>
                                         }
@@ -380,7 +382,7 @@
                                     <div class="field-value">
                                         @if (!string.IsNullOrEmpty(Model.OthersUrl))
                                         {
-                                            <a href="@Model.OthersUrl" target="_blank"
+                                            <a href="/api/application/download/othersurl/@Model.OthersUrl" target="_blank"
                                                 class="btn btn-sm btn-outline-primary">
                                                 <i class="bi bi-download me-2"></i>Download Other Documents
                                             </a>
@@ -817,13 +819,13 @@
             toast.className = `toast align-items-center text-white bg-${type} border-0 position-fixed bottom-0 end-0 m-3`;
             toast.style.zIndex = '1060';
             toast.innerHTML = `
-                                                                <div class="d-flex">
-                                                                    <div class="toast-body">
-                                                                        ${message}
-                                                                    </div>
-                                                                    <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
-                                                                </div>
-                                                            `;
+                                                                                        <div class="d-flex">
+                                                                                            <div class="toast-body">
+                                                                                                ${message}
+                                                                                            </div>
+                                                                                            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+                                                                                        </div>
+                                                                                    `;
 
             document.body.appendChild(toast);
             const bsToast = new bootstrap.Toast(toast);

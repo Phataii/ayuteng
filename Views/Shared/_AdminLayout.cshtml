@@ -798,6 +798,14 @@
                     </li>
 
                     <li class="nav-item">
+                        <a href="/meetings"
+                            class="nav-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Meetings" ? "active" : "")">
+                            <i class="nav-icon bi bi-people"></i>
+                            <span class="nav-text">Meetings</span>
+                        </a>
+                    </li>
+
+                    <li class="nav-item">
                         <a href="/Admin/Settings"
                             class="nav-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Settings" ? "active" : "")">
                             <i class="nav-icon bi bi-gear"></i>

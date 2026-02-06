@@ -34,9 +34,12 @@ namespace ayuteng.Controllers
             _verificationService = verificationService;
             _hostingEnvironment = hostingEnvironment;
             _userService = userService;
-            _uploadsRoot = configuration["UploadSettings:RootPath"]
-        ?? throw new Exception("Upload root path not configured");
+            //     _uploadsRoot = configuration["UploadSettings:RootPath"]
+            // ?? throw new Exception("Upload root path not configured");
+            var pathFromConfig = configuration["UploadSettings:RootPath"] ?? "../uploads";
 
+            // Convert to absolute path
+            _uploadsRoot = Path.GetFullPath(pathFromConfig);
         }
         private IActionResult LoginFailed(string message)
         {
@@ -254,7 +257,6 @@ namespace ayuteng.Controllers
         [HttpPost("forgot-password")]
         public async Task<IActionResult> ForgotPassword([FromForm] string email)
         {
-            Console.WriteLine(email);
             var normalizedEmail = email.Trim().ToLowerInvariant();
             var user = await _context.Applications
                                 .FirstOrDefaultAsync(a => a.Email == normalizedEmail);
@@ -1429,7 +1431,7 @@ namespace ayuteng.Controllers
                 // Generate ABSOLUTE URL
                 var request = HttpContext.Request; // Use HttpContext directly
                 var baseUrl = $"{request.Scheme}://{request.Host}";
-                var url = $"{baseUrl}/files/{fieldName.ToLower()}/{finalFileName}";
+                var url = $"{finalFileName}";
 
                 return new LocalUploadResult
                 {
@@ -1552,7 +1554,6 @@ namespace ayuteng.Controllers
             Guid applicationId,
             [FromBody] StepNineRequest request)
         {
-            Console.WriteLine("ksdcdcsdc");
             try
             {
                 // Validate the request
@@ -1638,13 +1639,13 @@ namespace ayuteng.Controllers
                 { nameof(request.OthersUrl), request.OthersUrl }
             };
 
-                foreach (var field in urlFields)
-                {
-                    if (!string.IsNullOrEmpty(field.Value) && !Uri.TryCreate(field.Value, UriKind.Absolute, out _))
-                    {
-                        ModelState.AddModelError(field.Key, "Please provide a valid URL");
-                    }
-                }
+                // foreach (var field in urlFields)
+                // {
+                //     if (!string.IsNullOrEmpty(field.Value) && !Uri.TryCreate(field.Value, UriKind.Absolute, out _))
+                //     {
+                //         ModelState.AddModelError(field.Key, "Please provide a valid URL");
+                //     }
+                // }
 
                 if (!ModelState.IsValid)
                 {
@@ -2055,6 +2056,22 @@ namespace ayuteng.Controllers
                 return StatusCode(500, new { message = "Error updating status", error = ex.Message });
             }
         }
+
+        [HttpGet("download/{folder}/{fileName}")]
+        public IActionResult DownloadCac(string folder, string fileName)
+        {
+            var filePath = Path.Combine(_uploadsRoot, folder, fileName);
+
+            if (!System.IO.File.Exists(filePath))
+                return NotFound();
+
+            return PhysicalFile(
+                filePath,
+                "application/pdf",
+                fileName
+            );
+        }
+
 
         // GET: /api/applications/{id}/download
         [HttpGet("{id}/download")]

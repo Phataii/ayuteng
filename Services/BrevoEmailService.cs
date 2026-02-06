@@ -17,7 +17,6 @@ public class BrevoEmailService : IBrevoEmailService
 
     public async Task SendEmailAsync(string toEmail, string toName, string subject, string htmlContent)
     {
-        Console.WriteLine(">>>>>>>>>>>>>>>>>>" + htmlContent);
         if (string.IsNullOrWhiteSpace(toEmail))
             throw new ArgumentException("Recipient email cannot be null or empty");
 
@@ -42,7 +41,6 @@ public class BrevoEmailService : IBrevoEmailService
         request.Headers.Add("api-key", apiKey);
 
         var response = await _httpClient.SendAsync(request);
-        Console.WriteLine(">>>>>>>>>>>>>>>>>>" + response);
         response.EnsureSuccessStatusCode();
     }
 }
