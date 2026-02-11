@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ayuteng.Models;
 using ayuteng.Data;
+using System.Threading.Tasks;
 
 namespace ayuteng.Controllers;
 
@@ -118,19 +119,17 @@ public class HomeController : Controller
     public async Task<IActionResult> Create()
     {
         // Sw86Z6DmomTe
-        // var loggedInUser = await _userHelper.GetLoggedInAdmin(Request);
-        // if (loggedInUser == null)
-        // {
-        //     return Redirect("/ayute/admin/login");
-        // }
+    //    var loggedInUser = await _userHelper.GetLoggedInAdmin(Request);
+    //     if (loggedInUser == null)
+    //     {
+    //         return Redirect("/ayute/admin/login");
+    //     }
         return View("Admin/create");
     }
 
     [HttpGet("dashboard")]
     public async Task<IActionResult> Dashboard()
     {
-
-
         var loggedInUser = await _userHelper.GetLoggedInAdmin(Request);
         if (loggedInUser == null)
         {
@@ -679,6 +678,11 @@ public class HomeController : Controller
     [HttpGet("meetings")]
     public async Task<IActionResult> Meetings()
     {
+        var loggedInUser = await _userHelper.GetLoggedInAdmin(Request);
+        if (loggedInUser == null)
+        {
+            return Redirect("/ayute/admin/login");
+        }
         var meetings = await _context.Meetings
             .OrderByDescending(m => m.StartTime)
             .Select(m => new MeetingViewModel
@@ -718,6 +722,11 @@ public class HomeController : Controller
     [Route("admin/list")]
     public async Task<IActionResult> List()
     {
+        var loggedInUser = await _userHelper.GetLoggedInAdmin(Request);
+        if (loggedInUser == null)
+        {
+            return Redirect("/ayute/admin/login");
+        }
         try
         {
             var admins = await _context.Admins
@@ -743,16 +752,38 @@ public class HomeController : Controller
         if (meeting == null)
         {
             return NotFound();
+        }   
+        if (meeting.Status == "completed")
+        {
+            return Redirect($"/completed?code={code}");
         }
-
         ViewBag.MeetingCode = code;
         return View(meeting);
     }
-    [HttpGet("registrationSuccess")]
+    [HttpGet("success")]
     public IActionResult RegistrationSuccess(string code)
     {
         ViewBag.MeetingCode = code;
         return View();
+    }
+
+    [HttpGet("completed")]
+    public IActionResult MeetingCompleted(string code)
+    {
+        ViewBag.MeetingCode = code;
+        return View();
+    }
+
+    [HttpGet("visitors")]
+    public async Task<IActionResult> SiteVisitors()
+    {
+        var loggedInUser = await _userHelper.GetLoggedInAdmin(Request);
+        if (loggedInUser == null)
+        {
+            return Redirect("/ayute/admin/login");
+        }
+        var visitors = await _context.SiteVisitors.ToListAsync();
+        return View("admin/sitevisitors", visitors);
     }
 
     [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

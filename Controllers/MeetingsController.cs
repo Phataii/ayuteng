@@ -125,9 +125,10 @@ namespace ayuteng.Controllers
             // Send confirmation email (implement as needed)
             // await SendConfirmationEmail(attendee, meeting);
 
-            return Redirect($"/registrationSuccess?code={code}");
+            return Redirect($"/success?code={code}");
         }
 
+        
 
     }
 

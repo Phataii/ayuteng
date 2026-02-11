@@ -23,6 +23,26 @@ namespace ayuteng.Controllers
             _logger = logger;
         }
 
+        private static string DetermineMeetingStatus(
+            DateTime startTimeUtc,
+            DateTime endTimeUtc,
+            bool isCancelled = false)
+        {
+            if (isCancelled)
+                return "cancelled";
+
+            var now = DateTime.UtcNow;
+
+            if (now < startTimeUtc)
+                return "upcoming";
+
+            if (now >= startTimeUtc && now <= endTimeUtc)
+                return "ongoing";
+
+            return "completed";
+        }
+
+
         // POST: /api/meetings
         [HttpPost("meetings")]
         public async Task<IActionResult> CreateMeeting([FromBody] CreateMeetingRequest request)
@@ -31,7 +51,8 @@ namespace ayuteng.Controllers
             {
                 // Generate unique meeting code
                 var meetingCode = GenerateMeetingCode();
-
+                var startTimeUtc = request.StartTime.ToUniversalTime();
+var endTimeUtc = request.EndTime.ToUniversalTime();
                 var meeting = new Meeting
                 {
                     Id = Guid.NewGuid(),
@@ -43,7 +64,7 @@ namespace ayuteng.Controllers
                     MaxAttendees = request.MaxAttendees,
                     StartTime = request.StartTime.ToUniversalTime(),
                     EndTime = request.EndTime.ToUniversalTime(),
-                    Status = "upcoming",
+                    Status = DetermineMeetingStatus(startTimeUtc, endTimeUtc),
                     CreatedBy = User.Identity?.Name,
                     CreatedAt = DateTime.UtcNow,
                     UpdatedAt = DateTime.UtcNow
@@ -131,7 +152,7 @@ namespace ayuteng.Controllers
             }
         }
 
-        // DELETE: /api/meetings/{id}
+        // DELETE: /api/meetingsApi/{id}
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteMeeting(Guid id)
         {

@@ -800,8 +800,16 @@
                     <li class="nav-item">
                         <a href="/meetings"
                             class="nav-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Meetings" ? "active" : "")">
-                            <i class="nav-icon bi bi-people"></i>
+                            <i class="nav-icon bi bi-alarm"></i>
                             <span class="nav-text">Meetings</span>
+                        </a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a href="/visitors"
+                            class="nav-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Meetings" ? "active" : "")">
+                            <i class="nav-icon bi bi-person"></i>
+                            <span class="nav-text">Visitors Metrics</span>
                         </a>
                     </li>
 
@@ -843,7 +851,7 @@
                 </div>
 
                 <div class="header-right">
-                    <!-- Search Box -->
+                    @* <!-- Search Box -->
                     <div class="search-box">
                         <i class="search-icon bi bi-search"></i>
                         <input type="text" class="search-input" placeholder="Search...">
@@ -893,7 +901,7 @@
                                 <a href="/Admin/Notifications">View All Notifications</a>
                             </div>
                         </div>
-                    </div>
+                    </div> *@
 
                     <!-- User Profile -->
                     <div class="user-profile" id="userProfile">

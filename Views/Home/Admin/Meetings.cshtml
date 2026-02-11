@@ -1163,10 +1163,30 @@
 
         function deleteMeeting(meetingId) {
             if (confirm('Are you sure you want to delete this meeting? This action cannot be undone.')) {
-                // Implement delete meeting API call
-                showToast('Meeting deleted (demo)', 'success');
+                fetch(`/api/meetingsApi/${meetingId}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Failed to delete meeting');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                showToast('Meeting deleted successfully', 'success');
+                    // Optional: redirect or refresh
+                    // window.location.reload();
+                })
+                .catch(error => {
+                    console.error(error);
+                    showToast('Error deleting meeting', 'error');
+                });
             }
         }
+
 
         function showToast(message, type) {
             const toast = document.createElement('div');

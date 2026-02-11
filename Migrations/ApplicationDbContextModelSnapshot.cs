@@ -608,6 +608,35 @@ namespace ayuteng.Migrations
                     b.ToTable("MeetingAttendees");
                 });
 
+            modelBuilder.Entity("ayuteng.Models.SiteVisitor", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    b.Property<string>("IPAddress")
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("Path")
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("UserAgent")
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("UtmSource")
+                        .HasColumnType("longtext");
+
+                    b.Property<DateTime?>("VisitedAt")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<string>("VisitorId")
+                        .HasColumnType("longtext");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("SiteVisitors");
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)

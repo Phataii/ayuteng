@@ -7899,19 +7899,19 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\phata\\.nuget\\packages\\": {}
+    "/Users/joetech/.nuget/packages/": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\phata\\Documents\\archive\\work\\wennovation-hub\\ayute\\ayuteng\\ayuteng\\ayuteng.csproj",
+      "projectUniqueName": "/Users/joetech/Documents/works/ayuteng/ayuteng.csproj",
       "projectName": "ayuteng",
-      "projectPath": "C:\\Users\\phata\\Documents\\archive\\work\\wennovation-hub\\ayute\\ayuteng\\ayuteng\\ayuteng.csproj",
-      "packagesPath": "C:\\Users\\phata\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\phata\\Documents\\archive\\work\\wennovation-hub\\ayute\\ayuteng\\ayuteng\\obj\\",
+      "projectPath": "/Users/joetech/Documents/works/ayuteng/ayuteng.csproj",
+      "packagesPath": "/Users/joetech/.nuget/packages/",
+      "outputPath": "/Users/joetech/Documents/works/ayuteng/obj/",
       "projectStyle": "PackageReference",
       "configFilePaths": [
-        "C:\\Users\\phata\\AppData\\Roaming\\NuGet\\NuGet.Config"
+        "/Users/joetech/.nuget/NuGet/NuGet.Config"
       ],
       "originalTargetFrameworks": [
         "net8.0"
@@ -8006,7 +8006,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.416/PortableRuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "/usr/local/share/dotnet/sdk/8.0.417/PortableRuntimeIdentifierGraph.json"
       }
     }
   }

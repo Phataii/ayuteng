@@ -17,7 +17,7 @@ public class ApplicationDbContext : IdentityDbContext
     public DbSet<Meeting> Meetings { get; set; }
     public DbSet<MeetingAttendee> MeetingAttendees { get; set; }
     public DbSet<EmailVerificationToken> EmailVerificationTokens { get; set; }
-
+    public DbSet<SiteVisitor> SiteVisitors { get; set; }
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         // 🔴 REQUIRED for Identity tables (THIS FIXES YOUR ERROR)

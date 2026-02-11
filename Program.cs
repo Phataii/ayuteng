@@ -1,4 +1,6 @@
 using ayuteng.Data;
+using ayuteng.Migrations;
+using ayuteng.Models;
 using ayuteng.Services;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
@@ -60,6 +62,7 @@ else
     app.UseHsts();
 }
 
+
 app.UseHttpsRedirection();
 
 
@@ -67,6 +70,61 @@ app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
 app.UseSession();
+
+app.Use(async (context, next) =>
+{
+    const string visitorCookie = "visitor_id";
+
+    // 1️⃣ Get or create visitor id
+    if (!context.Request.Cookies.TryGetValue(visitorCookie, out var visitorId))
+    {
+        visitorId = Guid.NewGuid().ToString();
+        context.Response.Cookies.Append(visitorCookie, visitorId, new CookieOptions
+        {
+            HttpOnly = true,
+            IsEssential = true,
+            SameSite = SameSiteMode.Lax,
+            Expires = DateTimeOffset.UtcNow.AddYears(1)
+        });
+    }
+
+    await next();
+
+    // 2️⃣ Only track landing page
+    var path = context.Request.Path.Value?.ToLower();
+    if (path != "/") return;
+
+    using var scope = app.Services.CreateScope();
+    var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+
+    var todayStart = DateTime.UtcNow.Date;
+    var tomorrowStart = todayStart.AddDays(1);
+    // 3️⃣ Check if visitor already exists today
+    var alreadyLoggedToday = await db.SiteVisitors
+        .AnyAsync(v => v.VisitorId == visitorId 
+                    && v.Path == "/" 
+                        && v.VisitedAt >= todayStart
+                    && v.VisitedAt < tomorrowStart);
+
+    if (alreadyLoggedToday) return;
+
+    // 4️⃣ Capture UTM source
+    var utmSource = context.Request.Query["utm_source"].ToString();
+
+    // 5️⃣ Save unique landing visit
+    var visit = new SiteVisitor
+    {
+        VisitorId = visitorId,
+        Path = "/",
+        UtmSource = string.IsNullOrWhiteSpace(utmSource) ? null : utmSource,
+        IPAddress = context.Connection.RemoteIpAddress?.ToString(),
+        UserAgent = context.Request.Headers["User-Agent"].ToString(),
+        VisitedAt = DateTime.UtcNow
+    };
+
+    db.SiteVisitors.Add(visit);
+    await db.SaveChangesAsync();
+});
 
 // -------------------- Endpoint Mapping --------------------
 app.MapControllerRoute(
