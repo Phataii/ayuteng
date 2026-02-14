@@ -87,16 +87,6 @@ namespace ayuteng.Controllers
             {
                 return NotFound();
             }
-
-            // Check if meeting is full
-            // var currentAttendees = await _context.MeetingAttendees
-            //     .CountAsync(a => a.MeetingId == meeting.Id && a.Status != "cancelled");
-
-            // if (currentAttendees >= meeting.MaxAttendees)
-            // {
-            //     ModelState.AddModelError("", "This meeting is full. Registration closed.");
-            //     return View(meeting);
-            // }
             var hasRegistered = await _context.MeetingAttendees
                .FirstOrDefaultAsync(m => m.Email == model.Email);
 
@@ -114,6 +104,7 @@ namespace ayuteng.Controllers
                 Location = model.Location,
                 Status = "checked-in",
                 RegistrationMethod = "qr",
+                Gender = model.Gender,
                 RegisteredAt = DateTime.UtcNow,
                 CheckInTime = DateTime.UtcNow,
                 CreatedAt = DateTime.UtcNow
@@ -128,7 +119,7 @@ namespace ayuteng.Controllers
             return Redirect($"/success?code={code}");
         }
 
-        
+
 
     }
 

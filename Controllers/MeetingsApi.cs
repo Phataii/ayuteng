@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using System.Collections.Generic;
 using ayuteng.Data;
 using ayuteng.Models;
+using System.Text;
 
 namespace ayuteng.Controllers
 {
@@ -52,7 +53,7 @@ namespace ayuteng.Controllers
                 // Generate unique meeting code
                 var meetingCode = GenerateMeetingCode();
                 var startTimeUtc = request.StartTime.ToUniversalTime();
-var endTimeUtc = request.EndTime.ToUniversalTime();
+                var endTimeUtc = request.EndTime.ToUniversalTime();
                 var meeting = new Meeting
                 {
                     Id = Guid.NewGuid(),
@@ -196,6 +197,46 @@ var endTimeUtc = request.EndTime.ToUniversalTime();
             } while (_context.Meetings.Any(m => m.MeetingCode == code));
 
             return code;
+        }
+
+        [HttpGet("meetings/export/{meetingId}")]
+        public async Task<IActionResult> ExportAttendees(Guid meetingId)
+        {
+            var attendees = await _context.MeetingAttendees
+                .Where(a => a.MeetingId == meetingId)
+                .ToListAsync();
+
+            var builder = new StringBuilder();
+
+            // CSV Header
+            builder.AppendLine("Name,Email,Location,Status,CheckInTime,Gender");
+
+            foreach (var a in attendees)
+            {
+                builder.AppendLine(string.Join(",",
+                    Escape(a.Name),
+                    Escape(a.Email),
+                    Escape(a.Location),
+                    Escape(a.Status),
+                    Escape(a.CheckInTime.ToString("yyyy-MM-dd HH:mm:ss")),
+                    Escape(a.Gender)
+                ));
+            }
+
+            var bytes = Encoding.UTF8.GetBytes(builder.ToString());
+
+            return File(bytes, "text/csv", $"MeetingAttendees_{meetingId}.csv");
+        }
+
+        private string Escape(string? value)
+        {
+            if (string.IsNullOrEmpty(value))
+                return "";
+
+            if (value.Contains(",") || value.Contains("\""))
+                value = $"\"{value.Replace("\"", "\"\"")}\"";
+
+            return value;
         }
 
 

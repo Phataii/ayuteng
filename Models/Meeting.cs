@@ -72,8 +72,8 @@ namespace ayuteng.Models
 
         // QR Code scanning info
         public DateTime RegisteredAt { get; set; } = DateTime.UtcNow;
-        public string? RegistrationMethod { get; set; } // "qr", "manual", "import"
-        public string? RegistrationNotes { get; set; }
+        public string? RegistrationMethod { get; set; }
+        public string? Gender { get; set; }
 
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     }

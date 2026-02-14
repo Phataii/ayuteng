@@ -1,0 +1,9 @@
+{
+    "editor.formatOnSave": true,
+    "[razor]": {
+        "editor.defaultFormatter": "ms-dotnettools.csharp"
+    },
+    "[html]": {
+        "editor.defaultFormatter": "vscode.html-language-features"
+    }
+}

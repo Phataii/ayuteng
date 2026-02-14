@@ -27,4 +27,5 @@ public class RegistrationViewModel
     public string? Phone { get; set; }
 
     public string? Location { get; set; }
+    public string? Gender { get; set; }
 }

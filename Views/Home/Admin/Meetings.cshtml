@@ -9,7 +9,7 @@
     <div class="d-flex justify-content-between align-items-center mb-4">
         <div>
             <h1 class="h3 mb-0" style="color: var(--primary-blue);">
-                <i class="bi bi-calendar-check me-2"></i>Meetings Management
+                <i class="bi bi-calendar-check me-2"></i>Meetings/Events Management
             </h1>
             <nav aria-label="breadcrumb">
                 <ol class="breadcrumb">
@@ -171,7 +171,7 @@
                                     @if (meeting.Type == "virtual" || meeting.Type == "hybrid")
                                     {
                                         <a href="@meeting.Venue" target="_blank" class="text-truncate d-inline-block"
-                                            style="max-width: 200px;">
+                                               style="max-width: 200px;">
                                             <i class="bi bi-link-45deg me-1"></i>Join Meeting
                                         </a>
                                     }
@@ -186,425 +186,425 @@
                                     <div>@meeting.StartTime.ToString("MMM dd, yyyy")</div>
                                     <small class="text-muted">@meeting.StartTime.ToString("hh:mm tt") -
                                         @meeting.EndTime.ToString("hh:mm tt")</small>
-                                </td>
-                                <td>
-                                    <div class="d-flex align-items-center">
-                                        <div class="me-3">
-                                            <span class="fw-semibold">@meeting.AttendeeCount</span>
-                                            <small class="text-muted">/ @meeting.MaxAttendees</small>
+                                    </td>
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            <div class="me-3">
+                                                <span class="fw-semibold">@meeting.AttendeeCount</span>
+                                                <small class="text-muted">/ @meeting.MaxAttendees</small>
+                                            </div>
+                                            <div class="progress flex-grow-1" style="height: 8px;">
+                                                @{
+                                                    var percentage = meeting.MaxAttendees > 0 ? (meeting.AttendeeCount * 100) /
+                                                    meeting.MaxAttendees : 0;
+                                                    var progressClass = percentage >= 90 ? "bg-danger" : percentage >= 70 ?
+                                                    "bg-warning" : "bg-success";
+                                                }
+                                                <div class="progress-bar @progressClass" role="progressbar"
+                                                     style="width: @percentage%"></div>
+                                            </div>
                                         </div>
-                                        <div class="progress flex-grow-1" style="height: 8px;">
-                                            @{
-                                                var percentage = meeting.MaxAttendees > 0 ? (meeting.AttendeeCount * 100) /
-                                                meeting.MaxAttendees : 0;
-                                                var progressClass = percentage >= 90 ? "bg-danger" : percentage >= 70 ?
-                                                "bg-warning" : "bg-success";
-                                            }
-                                            <div class="progress-bar @progressClass" role="progressbar"
-                                                style="width: @percentage%"></div>
+                                    </td>
+                                    <td>
+                                        @{
+                                            var statusClass = meeting.Status switch
+                                            {
+                                                "upcoming" => "bg-info",
+                                                "ongoing" => "bg-warning",
+                                                "completed" => "bg-success",
+                                                "cancelled" => "bg-danger",
+                                                _ => "bg-secondary"
+                                            };
+                                        }
+                                        <span class="badge @statusClass">@meeting.Status.ToUpper()</span>
+                                    </td>
+                                    <td class="text-center">
+                                        <div class="btn-group btn-group-sm" role="group">
+                                            <button type="button" class="btn btn-outline-primary"
+                                                    onclick="viewMeetingDetails('@meeting.Id')">
+                                                <i class="bi bi-eye"></i>
+                                            </button>
+                                            <button type="button" class="btn btn-outline-success"
+                                                    onclick="generateQRCode('@meeting.Id')">
+                                                <i class="bi bi-qr-code"></i>
+                                            @* </button>
+                                            <button type="button" class="btn btn-outline-warning"
+                                                    onclick="editMeeting('@meeting.Id')">
+                                                <i class="bi bi-pencil"></i>
+                                            </button> *@
+                                            <button type="button" class="btn btn-outline-danger"
+                                                    onclick="deleteMeeting('@meeting.Id')">
+                                                <i class="bi bi-trash"></i>
+                                            </button>
                                         </div>
-                                    </div>
-                                </td>
-                                <td>
-                                    @{
-                                        var statusClass = meeting.Status switch
-                                        {
-                                            "upcoming" => "bg-info",
-                                            "ongoing" => "bg-warning",
-                                            "completed" => "bg-success",
-                                            "cancelled" => "bg-danger",
-                                            _ => "bg-secondary"
-                                        };
-                                    }
-                                    <span class="badge @statusClass">@meeting.Status.ToUpper()</span>
-                                </td>
-                                <td class="text-center">
-                                    <div class="btn-group btn-group-sm" role="group">
-                                        <button type="button" class="btn btn-outline-primary"
-                                            onclick="viewMeetingDetails('@meeting.Id')">
-                                            <i class="bi bi-eye"></i>
-                                        </button>
-                                        <button type="button" class="btn btn-outline-success"
-                                            onclick="generateQRCode('@meeting.Id')">
-                                            <i class="bi bi-qr-code"></i>
-                                        </button>
-                                        <button type="button" class="btn btn-outline-warning"
-                                            onclick="editMeeting('@meeting.Id')">
-                                            <i class="bi bi-pencil"></i>
-                                        </button>
-                                        <button type="button" class="btn btn-outline-danger"
-                                            onclick="deleteMeeting('@meeting.Id')">
-                                            <i class="bi bi-trash"></i>
-                                        </button>
-                                    </div>
-                                </td>
-                            </tr>
-                        }
-                        @if (Model.Count == 0)
-                        {
-                            <tr>
-                                <td colspan="8" class="text-center py-5 text-muted">
-                                    <i class="bi bi-calendar-x me-2"></i>
-                                    No meetings found. Create your first meeting!
-                                </td>
-                            </tr>
-                        }
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Create Meeting Modal -->
-<div class="modal fade" id="createMeetingModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <div class="modal-header" style="background-color: var(--light-green);">
-                <h5 class="modal-title" style="color: var(--primary-blue);">
-                    <i class="bi bi-plus-circle me-2"></i>Create New Meeting
-                </h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <form id="createMeetingForm">
-                <div class="modal-body">
-                    <div class="row g-3">
-                        <div class="col-md-12">
-                            <label class="form-label" style="color: var(--primary-blue);">Meeting Name *</label>
-                            <input type="text" class="form-control" id="meetingName" required
-                                placeholder="Enter meeting name">
-                        </div>
-                        <div class="col-md-12">
-                            <label class="form-label" style="color: var(--primary-blue);">Description</label>
-                            <textarea class="form-control" id="meetingDescription" rows="3"
-                                placeholder="Enter meeting description"></textarea>
-                        </div>
-                        <div class="col-md-6">
-                            <label class="form-label" style="color: var(--primary-blue);">Meeting Type *</label>
-                            <select class="form-select" id="meetingType" required>
-                                <option value="">Select Type</option>
-                                <option value="physical">Physical (In-person)</option>
-                                <option value="virtual">Virtual (Online)</option>
-                                <option value="hybrid">Hybrid (Both)</option>
-                            </select>
-                        </div>
-                        <div class="col-md-6">
-                            <label class="form-label" style="color: var(--primary-blue);">Max Attendees</label>
-                            <input type="number" class="form-control" id="maxAttendees" min="1" max="1000" value="50">
-                        </div>
-                        <div class="col-md-12" id="venueSection">
-                            <label class="form-label" style="color: var(--primary-blue);">Venue/Link *</label>
-                            <input type="text" class="form-control" id="meetingVenue"
-                                placeholder="Enter venue address or meeting link">
-                            <div class="form-text">For virtual meetings, enter the meeting link (Zoom, Teams, etc.)
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <label class="form-label" style="color: var(--primary-blue);">Start Date & Time *</label>
-                            <input type="datetime-local" class="form-control" id="startDateTime" required>
-                        </div>
-                        <div class="col-md-6">
-                            <label class="form-label" style="color: var(--primary-blue);">End Date & Time *</label>
-                            <input type="datetime-local" class="form-control" id="endDateTime" required>
-                        </div>
-
-                        <div class="col-md-12">
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" id="sendNotifications">
-                                <label class="form-check-label" for="sendNotifications">
-                                    Send email notifications to attendees
-                                </label>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <button type="submit" class="btn btn-primary">
-                        <i class="bi bi-save me-2"></i>Create Meeting
-                    </button>
-                </div>
-            </form>
-        </div>
-    </div>
-</div>
-
-<!-- QR Code Modal -->
-<div class="modal fade" id="qrCodeModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header" style="background-color: var(--light-green);">
-                <h5 class="modal-title" style="color: var(--primary-blue);">
-                    <i class="bi bi-qr-code me-2"></i>Meeting QR Code
-                </h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body text-center">
-                <div id="qrCodeContainer" class="mb-3"></div>
-                <div class="mb-3">
-                    <h5 id="qrMeetingName" class="mb-2"></h5>
-                    <p class="text-muted mb-1" id="qrMeetingCode"></p>
-                    <p class="text-muted mb-0" id="qrMeetingTime"></p>
-                </div>
-                <div class="input-group mb-3">
-                    <input type="text" class="form-control" id="qrCodeUrl" readonly>
-                    <button class="btn btn-outline-secondary" type="button" onclick="copyQRCodeUrl()">
-                        <i class="bi bi-copy"></i>
-                    </button>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-outline-secondary" onclick="downloadQRCode()">
-                    <i class="bi bi-download me-2"></i>Download QR
-                </button>
-                <button type="button" class="btn btn-primary" onclick="shareQRCode()">
-                    <i class="bi bi-share me-2"></i>Share
-                </button>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Meeting Details Modal -->
-<div class="modal fade" id="meetingDetailsModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <div class="modal-header" style="background-color: var(--light-green);">
-                <h5 class="modal-title" style="color: var(--primary-blue);">
-                    <i class="bi bi-info-circle me-2"></i>Meeting Details
-                </h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <div id="meetingDetailsContent">
-                    <!-- Content will be loaded here -->
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary" onclick="generateQRCodeForCurrentMeeting()">
-                    <i class="bi bi-qr-code me-2"></i>Generate QR Code
-                </button>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Attendees List Modal -->
-<div class="modal fade" id="attendeesModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-xl">
-        <div class="modal-content">
-            <div class="modal-header" style="background-color: var(--light-green);">
-                <h5 class="modal-title" style="color: var(--primary-blue);">
-                    <i class="bi bi-people me-2"></i>Meeting Attendees
-                </h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <div class="row mb-4">
-                    <div class="col-md-6">
-                        <h6 id="attendeesMeetingTitle" class="mb-0"></h6>
-                        <small class="text-muted" id="attendeesMeetingInfo"></small>
-                    </div>
-                    <div class="col-md-6 text-end">
-                        <button class="btn btn-outline-primary" onclick="exportAttendees()">
-                            <i class="bi bi-download me-2"></i>Export List
-                        </button>
-                        <button class="btn btn-outline-success" onclick="addAttendee()">
-                            <i class="bi bi-person-plus me-2"></i>Add Attendee
-                        </button>
-                    </div>
-                </div>
-                <div class="table-responsive">
-                    <table class="table table-hover">
-                        <thead>
-                            <tr>
-                                <th>#</th>
-                                <th>Name</th>
-                                <th>Email</th>
-                                <th>Check-in Time</th>
-                                <th>Status</th>
-                                <th>Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody id="attendeesListBody">
-                            <!-- Attendees will be loaded here -->
+                                    </td>
+                                </tr>
+                            }
+                            @if (Model.Count == 0)
+                            {
+                                <tr>
+                                    <td colspan="8" class="text-center py-5 text-muted">
+                                        <i class="bi bi-calendar-x me-2"></i>
+                                        No meetings found. Create your first meeting!
+                                    </td>
+                                </tr>
+                            }
                         </tbody>
                     </table>
                 </div>
             </div>
         </div>
     </div>
-</div>
 
-@section Styles {
-    <style>
-        .stats-card {
-            border: 1px solid var(--light-green);
-            border-radius: 12px;
-            transition: transform 0.2s;
-        }
+    <!-- Create Meeting Modal -->
+    <div class="modal fade" id="createMeetingModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header" style="background-color: var(--light-green);">
+                    <h5 class="modal-title" style="color: var(--primary-blue);">
+                        <i class="bi bi-plus-circle me-2"></i>Create New Meeting
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form id="createMeetingForm">
+                    <div class="modal-body">
+                        <div class="row g-3">
+                            <div class="col-md-12">
+                                <label class="form-label" style="color: var(--primary-blue);">Meeting Name *</label>
+                                <input type="text" class="form-control" id="meetingName" required
+                                       placeholder="Enter meeting name">
+                            </div>
+                            <div class="col-md-12">
+                                <label class="form-label" style="color: var(--primary-blue);">Description</label>
+                                <textarea class="form-control" id="meetingDescription" rows="3"
+                                          placeholder="Enter meeting description"></textarea>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label" style="color: var(--primary-blue);">Meeting Type *</label>
+                                <select class="form-select" id="meetingType" required>
+                                    <option value="">Select Type</option>
+                                    <option value="physical">Physical (In-person)</option>
+                                    <option value="virtual">Virtual (Online)</option>
+                                    <option value="hybrid">Hybrid (Both)</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label" style="color: var(--primary-blue);">Max Attendees</label>
+                                <input type="number" class="form-control" id="maxAttendees" min="1" max="1000" value="50">
+                            </div>
+                            <div class="col-md-12" id="venueSection">
+                                <label class="form-label" style="color: var(--primary-blue);">Venue/Link *</label>
+                                <input type="text" class="form-control" id="meetingVenue"
+                                       placeholder="Enter venue address or meeting link">
+                                <div class="form-text">For virtual meetings, enter the meeting link (Zoom, Teams, etc.)
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label" style="color: var(--primary-blue);">Start Date & Time *</label>
+                                <input type="datetime-local" class="form-control" id="startDateTime" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label" style="color: var(--primary-blue);">End Date & Time *</label>
+                                <input type="datetime-local" class="form-control" id="endDateTime" required>
+                            </div>
 
-        .stats-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
-        }
+                            @* <div class="col-md-12">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="sendNotifications">
+                                    <label class="form-check-label" for="sendNotifications">
+                                        Send email notifications to attendees
+                                    </label>
+                                </div>
+                            </div> *@
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-save me-2"></i>Create Meeting
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
 
-        .stats-icon {
-            width: 60px;
-            height: 60px;
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 24px;
-        }
+    <!-- QR Code Modal -->
+    <div class="modal fade" id="qrCodeModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header" style="background-color: var(--light-green);">
+                    <h5 class="modal-title" style="color: var(--primary-blue);">
+                        <i class="bi bi-qr-code me-2"></i>Meeting QR Code
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body text-center">
+                    <div id="qrCodeContainer" class="mb-3"></div>
+                    <div class="mb-3">
+                        <h5 id="qrMeetingName" class="mb-2"></h5>
+                        <p class="text-muted mb-1" id="qrMeetingCode"></p>
+                        <p class="text-muted mb-0" id="qrMeetingTime"></p>
+                    </div>
+                    <div class="input-group mb-3">
+                        <input type="text" class="form-control" id="qrCodeUrl" readonly>
+                        <button class="btn btn-outline-secondary" type="button" onclick="copyQRCodeUrl()">
+                            <i class="bi bi-clipboard"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-secondary" onclick="downloadQRCode()">
+                        <i class="bi bi-download me-2"></i>Download QR
+                    </button>
+                    <button type="button" class="btn btn-primary" onclick="shareQRCode()">
+                        <i class="bi bi-share me-2"></i>Share
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
 
-        .stats-icon.users {
-            background-color: rgba(57, 179, 74, 0.1);
-            color: var(--primary-green);
-        }
+    <!-- Meeting Details Modal -->
+    <div class="modal fade" id="meetingDetailsModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header" style="background-color: var(--light-green);">
+                    <h5 class="modal-title" style="color: var(--primary-blue);">
+                        <i class="bi bi-info-circle me-2"></i>Meeting Details
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div id="meetingDetailsContent">
+                        <!-- Content will be loaded here -->
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" onclick="generateQRCodeForCurrentMeeting()">
+                        <i class="bi bi-qr-code me-2"></i>Generate QR Code
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
 
-        .stats-icon.success {
-            background-color: rgba(25, 135, 84, 0.1);
-            color: #198754;
-        }
+    <!-- Attendees List Modal -->
+    <div class="modal fade" id="attendeesModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <div class="modal-header" style="background-color: var(--light-green);">
+                    <h5 class="modal-title" style="color: var(--primary-blue);">
+                        <i class="bi bi-people me-2"></i>Meeting Attendees
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <h6 id="attendeesMeetingTitle" class="mb-0"></h6>
+                            <small class="text-muted" id="attendeesMeetingInfo"></small>
+                        </div>
+                        <div class="col-md-6 text-end">
+                            <a href="api/meetingsapi/meetings/export/bd4006b7-efae-452e-a610-08c916392497" class="btn btn-outline-primary">
+                                <i class="bi bi-download me-2"></i>Export List
+                            </a>
+                            @* <button class="btn btn-outline-success" onclick="addAttendee()">
+                                <i class="bi bi-person-plus me-2"></i>Add Attendee
+                            </button> *@
+                        </div>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Name</th>
+                                    <th>Email</th>
+                                    <th>Check-in Time</th>
+                                    <th>Status</th>
+                                    @* <th>Actions</th> *@
+                                </tr>
+                            </thead>
+                            <tbody id="attendeesListBody">
+                                <!-- Attendees will be loaded here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
-        .stats-icon.warning {
-            background-color: rgba(255, 193, 7, 0.1);
-            color: #ffc107;
-        }
+    @section Styles {
+        <style>
+                .stats-card {
+                    border: 1px solid var(--light-green);
+                    border-radius: 12px;
+                    transition: transform 0.2s;
+                }
 
-        .stats-icon.info {
-            background-color: rgba(13, 202, 240, 0.1);
-            color: #0dcaf0;
-        }
+                .stats-card:hover {
+                    transform: translateY(-5px);
+                    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+                }
 
-        .stats-value {
-            font-size: 32px;
-            font-weight: 700;
-            color: var(--primary-blue);
-            margin-top: 10px;
-        }
+                .stats-icon {
+                    width: 60px;
+                    height: 60px;
+                    border-radius: 12px;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    font-size: 24px;
+                }
 
-        .stats-label {
-            color: var(--gray);
-            font-size: 14px;
-            font-weight: 500;
-            text-transform: uppercase;
-        }
+                .stats-icon.users {
+                    background-color: rgba(57, 179, 74, 0.1);
+                    color: var(--primary-green);
+                }
 
-        .table th {
-            background-color: var(--light-green);
-            color: var(--primary-blue);
-            border-bottom: 2px solid var(--primary-green);
-            font-weight: 600;
-            padding: 12px 16px;
-        }
+                .stats-icon.success {
+                    background-color: rgba(25, 135, 84, 0.1);
+                    color: #198754;
+                }
 
-        .table td {
-            padding: 12px 16px;
-            vertical-align: middle;
-        }
+                .stats-icon.warning {
+                    background-color: rgba(255, 193, 7, 0.1);
+                    color: #ffc107;
+                }
 
-        .table-hover tbody tr:hover {
-            background-color: rgba(57, 179, 74, 0.05);
-            cursor: pointer;
-        }
+                .stats-icon.info {
+                    background-color: rgba(13, 202, 240, 0.1);
+                    color: #0dcaf0;
+                }
 
-        .badge {
-            padding: 6px 12px;
-            font-size: 12px;
-            font-weight: 600;
-            border-radius: 20px;
-        }
+                .stats-value {
+                    font-size: 32px;
+                    font-weight: 700;
+                    color: var(--primary-blue);
+                    margin-top: 10px;
+                }
 
-        .btn-group .btn {
-            border-radius: 6px;
-            padding: 4px 8px;
-        }
+                .stats-label {
+                    color: var(--gray);
+                    font-size: 14px;
+                    font-weight: 500;
+                    text-transform: uppercase;
+                }
 
-        .progress {
-            background-color: var(--light-gray);
-            border-radius: 4px;
-        }
+                .table th {
+                    background-color: var(--light-green);
+                    color: var(--primary-blue);
+                    border-bottom: 2px solid var(--primary-green);
+                    font-weight: 600;
+                    padding: 12px 16px;
+                }
 
-        .progress-bar {
-            border-radius: 4px;
-        }
+                .table td {
+                    padding: 12px 16px;
+                    vertical-align: middle;
+                }
 
-        #qrCodeContainer {
-            padding: 20px;
-            background: white;
-            border-radius: 12px;
-            display: inline-block;
-            border: 2px solid var(--light-green);
-        }
+                .table-hover tbody tr:hover {
+                    background-color: rgba(57, 179, 74, 0.05);
+                    cursor: pointer;
+                }
 
-        .qr-code {
-            width: 200px;
-            height: 200px;
-        }
+                .badge {
+                    padding: 6px 12px;
+                    font-size: 12px;
+                    font-weight: 600;
+                    border-radius: 20px;
+                }
 
-        .meeting-card {
-            border: 1px solid var(--light-green);
-            border-radius: 12px;
-            padding: 20px;
-            margin-bottom: 20px;
-            transition: all 0.3s;
-        }
+                .btn-group .btn {
+                    border-radius: 6px;
+                    padding: 4px 8px;
+                }
 
-        .meeting-card:hover {
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-            transform: translateY(-2px);
-        }
+                .progress {
+                    background-color: var(--light-gray);
+                    border-radius: 4px;
+                }
 
-        .meeting-type-icon {
-            width: 50px;
-            height: 50px;
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 24px;
-            margin-right: 15px;
-        }
+                .progress-bar {
+                    border-radius: 4px;
+                }
 
-        .meeting-type-icon.physical {
-            background-color: rgba(13, 110, 253, 0.1);
-            color: #0d6efd;
-        }
+                #qrCodeContainer {
+                    padding: 20px;
+                    background: white;
+                    border-radius: 12px;
+                    display: inline-block;
+                    border: 2px solid var(--light-green);
+                }
 
-        .meeting-type-icon.virtual {
-            background-color: rgba(13, 202, 240, 0.1);
-            color: #0dcaf0;
-        }
+                .qr-code {
+                    width: 200px;
+                    height: 200px;
+                }
 
-        .meeting-type-icon.hybrid {
-            background-color: rgba(255, 193, 7, 0.1);
-            color: #ffc107;
-        }
-    </style>
-}
+                .meeting-card {
+                    border: 1px solid var(--light-green);
+                    border-radius: 12px;
+                    padding: 20px;
+                    margin-bottom: 20px;
+                    transition: all 0.3s;
+                }
 
-@section Scripts {
-    <!-- QR Code Library -->
-    <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
-    <!-- HTML2Canvas for QR Code download -->
-    <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+                .meeting-card:hover {
+                    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+                    transform: translateY(-2px);
+                }
 
-    <script>
-        let currentMeetingId = null;
-        let qrCode = null;
+                .meeting-type-icon {
+                    width: 50px;
+                    height: 50px;
+                    border-radius: 12px;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    font-size: 24px;
+                    margin-right: 15px;
+                }
 
-        document.addEventListener('DOMContentLoaded', function () {
+                .meeting-type-icon.physical {
+                    background-color: rgba(13, 110, 253, 0.1);
+                    color: #0d6efd;
+                }
+
+                .meeting-type-icon.virtual {
+                    background-color: rgba(13, 202, 240, 0.1);
+                    color: #0dcaf0;
+                }
+
+                .meeting-type-icon.hybrid {
+                    background-color: rgba(255, 193, 7, 0.1);
+                    color: #ffc107;
+                }
+        </style>
+    }
+
+    @section Scripts {
+        <!-- QR Code Library -->
+        <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
+        <!-- HTML2Canvas for QR Code download -->
+        <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+
+        <script>
+            let currentMeetingId = null;
+            let qrCode = null;
+
+            document.addEventListener('DOMContentLoaded', function () {
             initializePage();
             setupEventListeners();
             updateStats();
 
-        });
+            });
 
-        function initializePage() {
+            function initializePage() {
             // Set default datetime values
             const now = new Date();
             const tomorrow = new Date(now);
@@ -612,13 +612,13 @@
 
             // Format for datetime-local input
             const formatDateTime = (date) => {
-                const year = date.getFullYear();
-                const month = String(date.getMonth() + 1).padStart(2, '0');
-                const day = String(date.getDate()).padStart(2, '0');
-                const hours = String(date.getHours()).padStart(2, '0');
-                const minutes = String(date.getMinutes()).padStart(2, '0');
+            const year = date.getFullYear();
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const day = String(date.getDate()).padStart(2, '0');
+            const hours = String(date.getHours()).padStart(2, '0');
+            const minutes = String(date.getMinutes()).padStart(2, '0');
 
-                return `${year}-${month}-${day}T${hours}:${minutes}`;
+            return `${year}-${month}-${day}T${hours}:${minutes}`;
             };
 
             // Only set values if the modal has been shown at least once
@@ -626,99 +626,99 @@
             const endDateTimeInput = document.getElementById('endDateTime');
 
             if (startDateTimeInput) {
-                startDateTimeInput.value = formatDateTime(tomorrow);
+            startDateTimeInput.value = formatDateTime(tomorrow);
             }
 
             if (endDateTimeInput) {
-                const endTime = new Date(tomorrow.getTime() + 2 * 60 * 60 * 1000); // +2 hours
-                endDateTimeInput.value = formatDateTime(endTime);
+            const endTime = new Date(tomorrow.getTime() + 2 * 60 * 60 * 1000); // +2 hours
+            endDateTimeInput.value = formatDateTime(endTime);
             }
 
             // Initialize modals properly
             const createMeetingModal = document.getElementById('createMeetingModal');
             if (createMeetingModal) {
-                createMeetingModal.addEventListener('show.bs.modal', function () {
-                    // Reset form when modal opens
-                    const form = document.getElementById('createMeetingForm');
-                    if (form) {
-                        form.reset();
-                        // Set default values
-                        const startInput = document.getElementById('startDateTime');
-                        const endInput = document.getElementById('endDateTime');
-                        if (startInput && !startInput.value) {
-                            startInput.value = formatDateTime(tomorrow);
-                        }
-                        if (endInput && !endInput.value) {
-                            const endTime = new Date(tomorrow.getTime() + 2 * 60 * 60 * 1000);
-                            endInput.value = formatDateTime(endTime);
-                        }
-                    }
-                });
+            createMeetingModal.addEventListener('show.bs.modal', function () {
+            // Reset form when modal opens
+            const form = document.getElementById('createMeetingForm');
+            if (form) {
+            form.reset();
+            // Set default values
+            const startInput = document.getElementById('startDateTime');
+            const endInput = document.getElementById('endDateTime');
+            if (startInput && !startInput.value) {
+            startInput.value = formatDateTime(tomorrow);
             }
-        }
-        // Replace the problematic createMeeting function with this corrected version:
+            if (endInput && !endInput.value) {
+            const endTime = new Date(tomorrow.getTime() + 2 * 60 * 60 * 1000);
+            endInput.value = formatDateTime(endTime);
+            }
+            }
+            });
+            }
+            }
+            // Replace the problematic createMeeting function with this corrected version:
 
-        async function createMeeting(e) {
+            async function createMeeting(e) {
             e.preventDefault();
 
             try {
-                // Get form values from the modal
-                const meetingName = document.getElementById('meetingName').value;
-                const meetingDescription = document.getElementById('meetingDescription').value;
-                const meetingType = document.getElementById('meetingType').value;
-                const meetingVenue = document.getElementById('meetingVenue').value;
-                const maxAttendees = parseInt(document.getElementById('maxAttendees').value) || 50;
-                const startDateTime = document.getElementById('startDateTime').value;
-                const endDateTime = document.getElementById('endDateTime').value;
-                const sendNotifications = document.getElementById('sendNotifications').checked;
+            // Get form values from the modal
+            const meetingName = document.getElementById('meetingName').value;
+            const meetingDescription = document.getElementById('meetingDescription').value;
+            const meetingType = document.getElementById('meetingType').value;
+            const meetingVenue = document.getElementById('meetingVenue').value;
+            const maxAttendees = parseInt(document.getElementById('maxAttendees').value) || 50;
+            const startDateTime = document.getElementById('startDateTime').value;
+            const endDateTime = document.getElementById('endDateTime').value;
+            const sendNotifications = document.getElementById('sendNotifications').checked;
 
-                // Validate required fields
-                if (!meetingName || !meetingType || !meetingVenue || !startDateTime || !endDateTime) {
-                    showToast('Please fill in all required fields', 'danger');
-                    return;
-                }
+            // Validate required fields
+            if (!meetingName || !meetingType || !meetingVenue || !startDateTime || !endDateTime) {
+            showToast('Please fill in all required fields', 'danger');
+            return;
+            }
 
-                // Validate date range
-                const startDate = new Date(startDateTime);
-                const endDate = new Date(endDateTime);
-                if (endDate <= startDate) {
-                    showToast('End time must be after start time', 'danger');
-                    return;
-                }
+            // Validate date range
+            const startDate = new Date(startDateTime);
+            const endDate = new Date(endDateTime);
+            if (endDate <= startDate) {
+            showToast('End time must be after start time', 'danger');
+            return;
+            }
 
-                // Show loading state
-                const submitBtn = document.querySelector('#createMeetingForm button[type="submit"]');
-                const originalText = submitBtn.innerHTML; // Store original text
-                submitBtn.innerHTML = '<i class="bi bi-hourglass-split me-2"></i>Creating...';
-                submitBtn.disabled = true;
+            // Show loading state
+            const submitBtn = document.querySelector('#createMeetingForm button[type="submit"]');
+            const originalText = submitBtn.innerHTML; // Store original text
+            submitBtn.innerHTML = '<i class="bi bi-hourglass-split me-2"></i>Creating...';
+            submitBtn.disabled = true;
 
-                // Generate meeting code
-                const meetingCode = generateMeetingCode();
+            // Generate meeting code
+            const meetingCode = generateMeetingCode();
 
-                // Prepare meeting data
-                const meetingData = {
-                    name: meetingName,
-                    description: meetingDescription,
-                    type: meetingType,
-                    venue: meetingVenue,
-                    maxAttendees: maxAttendees,
-                    startTime: startDateTime,
-                    endTime: endDateTime,
-                    meetingCode: meetingCode,
-                    sendNotifications: sendNotifications
-                };
-                console.log(JSON.stringify(meetingData))
-                // Send to API
-                const response = await fetch('/api/meetingsapi/meetings', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                                                                    @* 'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]').value *@
-                                                                },
+            // Prepare meeting data
+            const meetingData = {
+            name: meetingName,
+            description: meetingDescription,
+            type: meetingType,
+            venue: meetingVenue,
+            maxAttendees: maxAttendees,
+            startTime: startDateTime,
+            endTime: endDateTime,
+            meetingCode: meetingCode,
+            sendNotifications: sendNotifications
+            };
+            console.log(JSON.stringify(meetingData))
+            // Send to API
+            const response = await fetch('/api/meetingsapi/meetings', {
+            method: 'POST',
+            headers: {
+            'Content-Type': 'application/json',
+            @* 'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]').value *@
+            },
             body: JSON.stringify(meetingData)
-        });
+            });
 
-        if (response.ok) {
+            if (response.ok) {
             const data = await response.json();
 
             // Close modal
@@ -733,84 +733,84 @@
 
             // Reload page to show new meeting
             setTimeout(() => {
-                window.location.reload();
+            window.location.reload();
             }, 1500);
-        } else {
+            } else {
             const error = await response.json();
             throw new Error(error.message || 'Failed to create meeting');
-        }
+            }
 
-                                                        } catch (error) {
+            } catch (error) {
             console.error('Error creating meeting:', error);
             showToast(error.message || 'Failed to create meeting', 'danger');
-        } finally {
+            } finally {
             // Reset button (safely)
             const submitBtn = document.querySelector('#createMeetingForm button[type="submit"]');
             if (submitBtn) {
-                submitBtn.innerHTML = '<i class="bi bi-save me-2"></i>Create Meeting';
-                submitBtn.disabled = false;
+            submitBtn.innerHTML = '<i class="bi bi-save me-2"></i>Create Meeting';
+            submitBtn.disabled = false;
             }
-        }
-                                                    }
+            }
+            }
 
-        // Also update the form submission event listener to use the correct reference:
+            // Also update the form submission event listener to use the correct reference:
 
-        function setupEventListeners() {
+            function setupEventListeners() {
             // Meeting type change - use event delegation
             document.addEventListener('change', function (e) {
-                if (e.target && e.target.id === 'meetingType') {
-                    const venueLabel = document.querySelector('#venueSection label');
-                    const venueInput = document.getElementById('meetingVenue');
-                    const venueHelp = document.querySelector('#venueSection .form-text');
+            if (e.target && e.target.id === 'meetingType') {
+            const venueLabel = document.querySelector('#venueSection label');
+            const venueInput = document.getElementById('meetingVenue');
+            const venueHelp = document.querySelector('#venueSection .form-text');
 
-                    if (e.target.value === 'virtual' || e.target.value === 'hybrid') {
-                        venueLabel.textContent = 'Meeting Link *';
-                        venueInput.placeholder = 'Enter meeting link (Zoom, Teams, Google Meet, etc.)';
-                        venueHelp.textContent = 'Enter the full meeting URL for virtual participation';
-                    } else {
-                        venueLabel.textContent = 'Venue *';
-                        venueInput.placeholder = 'Enter venue address';
-                        venueHelp.textContent = 'For physical meetings, enter the complete venue address';
-                    }
-                }
+            if (e.target.value === 'virtual' || e.target.value === 'hybrid') {
+            venueLabel.textContent = 'Meeting Link *';
+            venueInput.placeholder = 'Enter meeting link (Zoom, Teams, Google Meet, etc.)';
+            venueHelp.textContent = 'Enter the full meeting URL for virtual participation';
+            } else {
+            venueLabel.textContent = 'Venue *';
+            venueInput.placeholder = 'Enter venue address';
+            venueHelp.textContent = 'For physical meetings, enter the complete venue address';
+            }
+            }
             });
 
             // Create meeting form submission - use event delegation
             document.addEventListener('submit', function (e) {
-                if (e.target && e.target.id === 'createMeetingForm') {
-                    e.preventDefault();
-                    createMeeting(e);
-                }
+            if (e.target && e.target.id === 'createMeetingForm') {
+            e.preventDefault();
+            createMeeting(e);
+            }
             });
 
             // Filter listeners
             document.getElementById('statusFilter')?.addEventListener('change', filterMeetings);
             document.getElementById('typeFilter')?.addEventListener('change', filterMeetings);
             document.getElementById('searchInput')?.addEventListener('keyup', function (e) {
-                if (e.key === 'Enter') filterMeetings();
+            if (e.key === 'Enter') filterMeetings();
             });
             document.getElementById('searchBtn')?.addEventListener('click', filterMeetings);
 
             // Row click for viewing details - use event delegation
             document.addEventListener('click', function (e) {
-                const row = e.target.closest('tbody tr[data-meeting-id]');
-                if (row && !e.target.closest('.btn-group') && !e.target.closest('button')) {
-                    const meetingId = row.getAttribute('data-meeting-id');
-                    viewMeetingAttendees(meetingId);
-                }
+            const row = e.target.closest('tbody tr[data-meeting-id]');
+            if (row && !e.target.closest('.btn-group') && !e.target.closest('button')) {
+            const meetingId = row.getAttribute('data-meeting-id');
+            viewMeetingAttendees(meetingId);
+            }
             });
-        }
-        function generateMeetingCode() {
+            }
+            function generateMeetingCode() {
             // Generate a random meeting code like "MTG-ABC123"
             const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
             let code = 'MTG-';
             for (let i = 0; i < 6; i++) {
-                code += chars.charAt(Math.floor(Math.random() * chars.length));
+            code += chars.charAt(Math.floor(Math.random() * chars.length));
             }
             return code;
-        }
+            }
 
-        function filterMeetings() {
+            function filterMeetings() {
             const status = document.getElementById('statusFilter').value;
             const type = document.getElementById('typeFilter').value;
             const search = document.getElementById('searchInput').value.toLowerCase();
@@ -819,23 +819,23 @@
             let visibleCount = 0;
 
             rows.forEach(row => {
-                const statusCell = row.querySelector('td:nth-child(7) .badge').textContent.toLowerCase();
-                const typeCell = row.querySelector('td:nth-child(3) .badge').textContent.toLowerCase();
-                const nameCell = row.querySelector('td:nth-child(2) .fw-semibold').textContent.toLowerCase();
-                const codeCell = row.querySelector('td:nth-child(2) small').textContent.toLowerCase();
+            const statusCell = row.querySelector('td:nth-child(7) .badge').textContent.toLowerCase();
+            const typeCell = row.querySelector('td:nth-child(3) .badge').textContent.toLowerCase();
+            const nameCell = row.querySelector('td:nth-child(2) .fw-semibold').textContent.toLowerCase();
+            const codeCell = row.querySelector('td:nth-child(2) small').textContent.toLowerCase();
 
-                let shouldShow = true;
+            let shouldShow = true;
 
-                if (status && !statusCell.includes(status)) shouldShow = false;
-                if (type && !typeCell.includes(type)) shouldShow = false;
-                if (search && !nameCell.includes(search) && !codeCell.includes(search)) shouldShow = false;
+            if (status && !statusCell.includes(status)) shouldShow = false;
+            if (type && !typeCell.includes(type)) shouldShow = false;
+            if (search && !nameCell.includes(search) && !codeCell.includes(search)) shouldShow = false;
 
-                if (shouldShow) {
-                    row.style.display = '';
-                    visibleCount++;
-                } else {
-                    row.style.display = 'none';
-                }
+            if (shouldShow) {
+            row.style.display = '';
+            visibleCount++;
+            } else {
+            row.style.display = 'none';
+            }
             });
 
             document.getElementById('meetingsCount').textContent = visibleCount;
@@ -843,20 +843,20 @@
             // Show no results message
             const noResultsRow = document.querySelector('tbody tr:last-child');
             if (visibleCount === 0 && !noResultsRow.getAttribute('data-meeting-id')) {
-                noResultsRow.style.display = '';
+            noResultsRow.style.display = '';
             } else if (visibleCount > 0 && !noResultsRow.getAttribute('data-meeting-id')) {
-                noResultsRow.style.display = 'none';
+            noResultsRow.style.display = 'none';
             }
-        }
+            }
 
-        function clearFilters() {
+            function clearFilters() {
             document.getElementById('statusFilter').value = '';
             document.getElementById('typeFilter').value = '';
             document.getElementById('searchInput').value = '';
             filterMeetings();
-        }
+            }
 
-        function updateStats() {
+            function updateStats() {
             // Count upcoming meetings (start time in future)
             const now = new Date();
             let upcoming = 0;
@@ -864,352 +864,353 @@
             let totalAttendees = 0;
 
             document.querySelectorAll('tbody tr[data-meeting-id]').forEach(row => {
-                const dateText = row.querySelector('td:nth-child(5) div').textContent;
-                const attendees = parseInt(row.querySelector('td:nth-child(6) .fw-semibold').textContent);
-                totalAttendees += attendees || 0;
+            const dateText = row.querySelector('td:nth-child(5) div').textContent;
+            const attendees = parseInt(row.querySelector('td:nth-child(6) .fw-semibold').textContent);
+            totalAttendees += attendees || 0;
 
-                // Simple check - in real app, parse date properly
-                const status = row.querySelector('td:nth-child(7) .badge').textContent.toLowerCase();
-                if (status.includes('upcoming')) upcoming++;
-                if (status.includes('completed')) completed++;
+            // Simple check - in real app, parse date properly
+            const status = row.querySelector('td:nth-child(7) .badge').textContent.toLowerCase();
+            if (status.includes('upcoming')) upcoming++;
+            if (status.includes('completed')) completed++;
             });
 
             document.getElementById('upcomingMeetings').textContent = upcoming;
             document.getElementById('completedMeetings').textContent = completed;
             document.getElementById('totalAttendees').textContent = totalAttendees;
-        }
+            }
 
-        function viewMeetingDetails(meetingId) {
+            function viewMeetingDetails(meetingId) {
             currentMeetingId = meetingId;
             const row = document.querySelector(`tr[data-meeting-id="${meetingId}"]`);
 
             if (row) {
-                const meetingData = {
-                    name: row.querySelector('td:nth-child(2) .fw-semibold').textContent,
-                    code: row.querySelector('td:nth-child(2) small').textContent.replace('Code: ', ''),
-                    type: row.querySelector('td:nth-child(3) .badge').textContent,
-                    venue: row.querySelector('td:nth-child(4)').textContent.trim(),
-                    date: row.querySelector('td:nth-child(5) div').textContent,
-                    time: row.querySelector('td:nth-child(5) small').textContent,
-                    attendees: row.querySelector('td:nth-child(6) .fw-semibold').textContent,
-                    maxAttendees: row.querySelector('td:nth-child(6) small').textContent.replace('/', ''),
-                    status: row.querySelector('td:nth-child(7) .badge').textContent
-                };
+            const meetingData = {
+            name: row.querySelector('td:nth-child(2) .fw-semibold').textContent,
+            code: row.querySelector('td:nth-child(2) small').textContent.replace('Code: ', ''),
+            type: row.querySelector('td:nth-child(3) .badge').textContent,
+            venue: row.querySelector('td:nth-child(4)').textContent.trim(),
+            date: row.querySelector('td:nth-child(5) div').textContent,
+            time: row.querySelector('td:nth-child(5) small').textContent,
+            attendees: row.querySelector('td:nth-child(6) .fw-semibold').textContent,
+            maxAttendees: row.querySelector('td:nth-child(6) small').textContent.replace('/', ''),
+            status: row.querySelector('td:nth-child(7) .badge').textContent
+            };
 
-                const content = `
-                                                                                            <div class="row">
-                                                                                                <div class="col-md-8">
-                                                                                                    <h4 class="mb-3" style="color: var(--primary-blue);">${meetingData.name}</h4>
-                                                                                                    <div class="row g-3 mb-4">
-                                                                                                        <div class="col-md-6">
-                                                                                                            <label class="form-label field-label">Meeting Code</label>
-                                                                                                            <div class="field-value">${meetingData.code}</div>
-                                                                                                        </div>
-                                                                                                        <div class="col-md-6">
-                                                                                                            <label class="form-label field-label">Type</label>
-                                                                                                            <div class="field-value">${meetingData.type}</div>
-                                                                                                        </div>
-                                                                                                        <div class="col-12">
-                                                                                                            <label class="form-label field-label">Venue/Link</label>
-                                                                                                            <div class="field-value">${meetingData.venue}</div>
-                                                                                                        </div>
-                                                                                                        <div class="col-md-6">
-                                                                                                            <label class="form-label field-label">Date</label>
-                                                                                                            <div class="field-value">${meetingData.date}</div>
-                                                                                                        </div>
-                                                                                                        <div class="col-md-6">
-                                                                                                            <label class="form-label field-label">Time</label>
-                                                                                                            <div class="field-value">${meetingData.time}</div>
-                                                                                                        </div>
-                                                                                                        <div class="col-md-6">
-                                                                                                            <label class="form-label field-label">Attendees</label>
-                                                                                                            <div class="field-value">
-                                                                                                                ${meetingData.attendees} / ${meetingData.maxAttendees}
-                                                                                                                <div class="progress mt-2" style="height: 6px;">
-                                                                                                                    <div class="progress-bar bg-success" role="progressbar" 
-                                                                                                                         style="width: ${(parseInt(meetingData.attendees) / parseInt(meetingData.maxAttendees)) * 100}%"></div>
-                                                                                                                </div>
-                                                                                                            </div>
-                                                                                                        </div>
-                                                                                                        <div class="col-md-6">
-                                                                                                            <label class="form-label field-label">Status</label>
-                                                                                                            <div class="field-value">
-                                                                                                                <span class="badge ${meetingData.status === 'UPCOMING' ? 'bg-info' :
-                        meetingData.status === 'ONGOING' ? 'bg-warning' :
-                            meetingData.status === 'COMPLETED' ? 'bg-success' : 'bg-danger'}">
-                                                                                                                    ${meetingData.status}
-                                                                                                                </span>
-                                                                                                            </div>
-                                                                                                        </div>
-                                                                                                    </div>
-                                                                                                </div>
-                                                                                                <div class="col-md-4">
-                                                                                                    <div class="card">
-                                                                                                        <div class="card-body text-center">
-                                                                                                            <div id="detailsQRCode" style="margin-bottom: 15px;"></div>
-                                                                                                            <small class="text-muted">Scan to register attendance</small>
-                                                                                                        </div>
-                                                                                                    </div>
-                                                                                                </div>
-                                                                                            </div>
-                                                                                        `;
+            const content = `
+            <div class="row">
+            <div class="col-md-8">
+            <h4 class="mb-3" style="color: var(--primary-blue);">${meetingData.name}</h4>
+            <div class="row g-3 mb-4">
+            <div class="col-md-6">
+            <label class="form-label field-label">Meeting Code</label>
+            <div class="field-value">${meetingData.code}</div>
+            </div>
+            <div class="col-md-6">
+            <label class="form-label field-label">Type</label>
+            <div class="field-value">${meetingData.type}</div>
+            </div>
+            <div class="col-12">
+            <label class="form-label field-label">Venue/Link</label>
+            <div class="field-value">${meetingData.venue}</div>
+            </div>
+            <div class="col-md-6">
+            <label class="form-label field-label">Date</label>
+            <div class="field-value">${meetingData.date}</div>
+            </div>
+            <div class="col-md-6">
+            <label class="form-label field-label">Time</label>
+            <div class="field-value">${meetingData.time}</div>
+            </div>
+            <div class="col-md-6">
+            <label class="form-label field-label">Attendees</label>
+            <div class="field-value">
+            ${meetingData.attendees} / ${meetingData.maxAttendees}
+            <div class="progress mt-2" style="height: 6px;">
+            <div class="progress-bar bg-success" role="progressbar" 
+            style="width: ${(parseInt(meetingData.attendees) / parseInt(meetingData.maxAttendees)) * 100}%"></div>
+            </div>
+            </div>
+            </div>
+            <div class="col-md-6">
+            <label class="form-label field-label">Status</label>
+            <div class="field-value">
+            <span class="badge ${meetingData.status === 'UPCOMING' ? 'bg-info' :
+            meetingData.status === 'ONGOING' ? 'bg-warning' :
+            meetingData.status === 'COMPLETED' ? 'bg-success' : 'bg-danger'}">
+            ${meetingData.status}
+            </span>
+            </div>
+            </div>
+            </div>
+            </div>
+            <div class="col-md-4">
+            <div class="card">
+            <div class="card-body text-center">
+            <div id="detailsQRCode" style="margin-bottom: 15px;"></div>
+            <small class="text-muted">Scan to register attendance</small>
+            </div>
+            </div>
+            </div>
+            </div>
+            `;
 
-                document.getElementById('meetingDetailsContent').innerHTML = content;
+            document.getElementById('meetingDetailsContent').innerHTML = content;
 
-                // Generate QR code for details modal
-                const qrUrl = `${window.location.origin}/meeting/register/${meetingData.code}`;
-                new QRCode(document.getElementById("detailsQRCode"), {
-                    text: qrUrl,
-                    width: 150,
-                    height: 150,
-                    colorDark: "#073150",
-                    colorLight: "#ffffff",
-                    correctLevel: QRCode.CorrectLevel.H
-                });
+            // Generate QR code for details modal
+            const qrUrl = `${window.location.origin}/meeting/register/${meetingData.code}`;
+            new QRCode(document.getElementById("detailsQRCode"), {
+            text: qrUrl,
+            width: 150,
+            height: 150,
+            colorDark: "#073150",
+            colorLight: "#ffffff",
+            correctLevel: QRCode.CorrectLevel.H
+            });
 
-                const modal = new bootstrap.Modal(document.getElementById('meetingDetailsModal'));
-                modal.show();
+            const modal = new bootstrap.Modal(document.getElementById('meetingDetailsModal'));
+            modal.show();
             }
-        }
+            }
 
-        function generateQRCode(meetingId) {
+            function generateQRCode(meetingId) {
             currentMeetingId = meetingId;
             const row = document.querySelector(`tr[data-meeting-id="${meetingId}"]`);
 
             if (row) {
-                const meetingName = row.querySelector('td:nth-child(2) .fw-semibold').textContent;
-                const meetingCode = row.querySelector('td:nth-child(2) small').textContent.replace('Code: ', '');
-                const meetingTime = row.querySelector('td:nth-child(5) div').textContent + ' ' +
-                    row.querySelector('td:nth-child(5) small').textContent;
+            const meetingName = row.querySelector('td:nth-child(2) .fw-semibold').textContent;
+            const meetingCode = row.querySelector('td:nth-child(2) small').textContent.replace('Code: ', '');
+            const meetingTime = row.querySelector('td:nth-child(5) div').textContent + ' ' +
+            row.querySelector('td:nth-child(5) small').textContent;
 
-                // Generate registration URL
-                const qrUrl = `${window.location.origin}/meeting/register/${meetingCode}`;
+            // Generate registration URL
+            const qrUrl = `${window.location.origin}/meeting/register/${meetingCode}`;
 
-                // Update modal content
-                document.getElementById('qrMeetingName').textContent = meetingName;
-                document.getElementById('qrMeetingCode').textContent = `Code: ${meetingCode}`;
-                document.getElementById('qrMeetingTime').textContent = meetingTime;
-                document.getElementById('qrCodeUrl').value = qrUrl;
+            // Update modal content
+            document.getElementById('qrMeetingName').textContent = meetingName;
+            document.getElementById('qrMeetingCode').textContent = `Code: ${meetingCode}`;
+            document.getElementById('qrMeetingTime').textContent = meetingTime;
+            document.getElementById('qrCodeUrl').value = qrUrl;
 
-                // Clear previous QR code
-                const container = document.getElementById('qrCodeContainer');
-                container.innerHTML = '';
+            // Clear previous QR code
+            const container = document.getElementById('qrCodeContainer');
+            container.innerHTML = '';
 
-                // Generate new QR code
-                qrCode = new QRCode(container, {
-                    text: qrUrl,
-                    width: 200,
-                    height: 200,
-                    colorDark: "#073150",
-                    colorLight: "#ffffff",
-                    correctLevel: QRCode.CorrectLevel.H
-                });
+            // Generate new QR code
+            qrCode = new QRCode(container, {
+            text: qrUrl,
+            width: 200,
+            height: 200,
+            colorDark: "#073150",
+            colorLight: "#ffffff",
+            correctLevel: QRCode.CorrectLevel.H
+            });
 
-                const modal = new bootstrap.Modal(document.getElementById('qrCodeModal'));
-                modal.show();
+            const modal = new bootstrap.Modal(document.getElementById('qrCodeModal'));
+            modal.show();
             }
-        }
+            }
 
-        function generateQRCodeForCurrentMeeting() {
+            function generateQRCodeForCurrentMeeting() {
             if (currentMeetingId) {
-                const detailsModal = bootstrap.Modal.getInstance(document.getElementById('meetingDetailsModal'));
-                detailsModal.hide();
+            const detailsModal = bootstrap.Modal.getInstance(document.getElementById('meetingDetailsModal'));
+            detailsModal.hide();
 
-                setTimeout(() => {
-                    generateQRCode(currentMeetingId);
-                }, 300);
+            setTimeout(() => {
+            generateQRCode(currentMeetingId);
+            }, 300);
             }
-        }
+            }
 
-        function copyQRCodeUrl() {
+            function copyQRCodeUrl() {
             const urlInput = document.getElementById('qrCodeUrl');
             urlInput.select();
             urlInput.setSelectionRange(0, 99999); // For mobile devices
             navigator.clipboard.writeText(urlInput.value)
-                .then(() => {
-                    showToast('URL copied to clipboard!', 'success');
-                })
-                .catch(err => {
-                    console.error('Failed to copy: ', err);
-                    showToast('Failed to copy URL', 'danger');
-                });
-        }
+            .then(() => {
+            showToast('URL copied to clipboard!', 'success');
+            })
+            .catch(err => {
+            console.error('Failed to copy: ', err);
+            showToast('Failed to copy URL', 'danger');
+            });
+            }
 
-        function downloadQRCode() {
+            function downloadQRCode() {
             const qrContainer = document.getElementById('qrCodeContainer');
             const meetingName = document.getElementById('qrMeetingName').textContent;
 
             html2canvas(qrContainer).then(canvas => {
-                const link = document.createElement('a');
-                link.download = `QR_${meetingName.replace(/\s+/g, '_')}.png`;
-                link.href = canvas.toDataURL('image/png');
-                link.click();
-                showToast('QR code downloaded!', 'success');
+            const link = document.createElement('a');
+            link.download = `QR_${meetingName.replace(/\s+/g, '_')}.png`;
+            link.href = canvas.toDataURL('image/png');
+            link.click();
+            showToast('QR code downloaded!', 'success');
             });
-        }
-
-        function shareQRCode() {
-            if (navigator.share) {
-                navigator.share({
-                    title: document.getElementById('qrMeetingName').textContent,
-                    text: 'Scan this QR code to register for the meeting',
-                    url: document.getElementById('qrCodeUrl').value
-                })
-                    .then(() => showToast('Shared successfully!', 'success'))
-                    .catch(error => console.log('Error sharing:', error));
-            } else {
-                copyQRCodeUrl();
-                showToast('URL copied to clipboard. Share it manually.', 'info');
             }
-        }
 
-        async function viewMeetingAttendees(meetingId) {
+            function shareQRCode() {
+            if (navigator.share) {
+            navigator.share({
+            title: document.getElementById('qrMeetingName').textContent,
+            text: 'Scan this QR code to register for the meeting',
+            url: document.getElementById('qrCodeUrl').value
+            })
+            .then(() => showToast('Shared successfully!', 'success'))
+            .catch(error => console.log('Error sharing:', error));
+            } else {
+            copyQRCodeUrl();
+            showToast('URL copied to clipboard. Share it manually.', 'info');
+            }
+            }
+
+            async function viewMeetingAttendees(meetingId) {
             currentMeetingId = meetingId;
             const row = document.querySelector(`tr[data-meeting-id="${meetingId}"]`);
 
             if (row) {
-                const meetingName = row.querySelector('td:nth-child(2) .fw-semibold').textContent;
-                const meetingCode = row.querySelector('td:nth-child(2) small').textContent.replace('Code: ', '');
-                const meetingTime = row.querySelector('td:nth-child(5) div').textContent;
-                const attendeesCount = row.querySelector('td:nth-child(6) .fw-semibold').textContent;
+            const meetingName = row.querySelector('td:nth-child(2) .fw-semibold').textContent;
+            const meetingCode = row.querySelector('td:nth-child(2) small').textContent.replace('Code: ', '');
+            const meetingTime = row.querySelector('td:nth-child(5) div').textContent;
+            const attendeesCount = row.querySelector('td:nth-child(6) .fw-semibold').textContent;
 
-                document.getElementById('attendeesMeetingTitle').textContent = meetingName;
-                document.getElementById('attendeesMeetingInfo').textContent =
-                    `${meetingCode} • ${meetingTime} • ${attendeesCount} attendees`;
+            document.getElementById('attendeesMeetingTitle').textContent = meetingName;
+            document.getElementById('attendeesMeetingInfo').textContent =
+            `${meetingCode} • ${meetingTime} • ${attendeesCount} attendees`;
 
-                // Load attendees from API
-                try {
-                    const response = await fetch(`/api/meetingsapi/${meetingId}/attendees`);
-                    const data = await response.json();
-                    console.log(data)
-                    const attendeesBody = document.getElementById('attendeesListBody');
-                    if (data.attendees && data.attendees.length > 0) {
-                        let html = '';
-                        data.attendees.forEach((attendee, index) => {
-                            html += `
-                                                                                                        <tr>
-                                                                                                            <td>${index + 1}</td>
-                                                                                                            <td>
-                                                                                                                <div class="fw-semibold">${attendee.name}</div>
-                                                                                                                <small class="text-muted">${attendee.location || 'N/A'}</small>
-                                                                                                            </td>
-                                                                                                            <td>${attendee.email || 'N/A'}</td>
-                                                                                                            <td>
-                                                                                                                <div>${new Date(attendee.checkInTime).toLocaleDateString()}</div>
-                                                                                                                <small class="text-muted">${new Date(attendee.checkInTime).toLocaleTimeString()}</small>
-                                                                                                            </td>
-                                                                                                            <td>
-                                                                                                                <span class="badge ${attendee.status === 'checked-in' ? 'bg-success' : 'bg-warning'}">
-                                                                                                                    ${attendee.status}
-                                                                                                                </span>
-                                                                                                            </td>
-                                                                                                            <td>
-                                                                                                                <button class="btn btn-sm btn-outline-danger" onclick="removeAttendee('${attendee.id}')">
-                                                                                                                    <i class="bi bi-trash"></i>
-                                                                                                                </button>
-                                                                                                            </td>
-                                                                                                        </tr>
-                                                                                                    `;
-                        });
-                        attendeesBody.innerHTML = html;
-                    } else {
-                        attendeesBody.innerHTML = `
-                                                                                                    <tr>
-                                                                                                        <td colspan="6" class="text-center py-4 text-muted">
-                                                                                                            <i class="bi bi-people me-2"></i>
-                                                                                                            No attendees yet. Share the QR code to get registrations.
-                                                                                                        </td>
-                                                                                                    </tr>
-                                                                                                `;
-                    }
-                } catch (error) {
-                    console.error('Error loading attendees:', error);
-                    document.getElementById('attendeesListBody').innerHTML = `
-                                                                                                <tr>
-                                                                                                    <td colspan="6" class="text-center py-4 text-danger">
-                                                                                                        <i class="bi bi-exclamation-triangle me-2"></i>
-                                                                                                        Failed to load attendees
-                                                                                                    </td>
-                                                                                                </tr>
-                                                                                            `;
-                }
-
-                const modal = new bootstrap.Modal(document.getElementById('attendeesModal'));
-                modal.show();
+            // Load attendees from API
+            try {
+            const response = await fetch(`/api/meetingsapi/${meetingId}/attendees`);
+            const data = await response.json();
+            console.log(data)
+            const attendeesBody = document.getElementById('attendeesListBody');
+            if (data.attendees && data.attendees.length > 0) {
+            let html = '';
+            data.attendees.forEach((attendee, index) => {
+            html += `
+            <tr>
+            <td>${index + 1}</td>
+            <td>
+            <div class="fw-semibold">${attendee.name}</div>
+            <small class="text-muted">${attendee.location || 'N/A'}</small>
+            </td>
+            <td>${attendee.email || 'N/A'}</td>
+            <td>
+            <div>${new Date(attendee.checkInTime).toLocaleDateString()}</div>
+            <small class="text-muted">${new Date(attendee.checkInTime).toLocaleTimeString()}</small>
+            </td>
+            <td>
+            <span class="badge ${attendee.status === 'checked-in' ? 'bg-success' : 'bg-warning'}">
+            ${attendee.status}
+            </span>
+            </td>
+            @* <td>
+            <button class="btn btn-sm btn-outline-danger" onclick="removeAttendee('${attendee.id}')">
+            <i class="bi bi-trash"></i>
+            </button>
+            </td> *@
+            </tr>
+            `;
+            });
+            attendeesBody.innerHTML = html;
+            } else {
+            attendeesBody.innerHTML = `
+            <tr>
+            <td colspan="6" class="text-center py-4 text-muted">
+            <i class="bi bi-people me-2"></i>
+            No attendees yet. Share the QR code to get registrations.
+            </td>
+            </tr>
+            `;
             }
-        }
+            } catch (error) {
+            console.error('Error loading attendees:', error);
+            document.getElementById('attendeesListBody').innerHTML = `
+            <tr>
+            <td colspan="6" class="text-center py-4 text-danger">
+            <i class="bi bi-exclamation-triangle me-2"></i>
+            Failed to load attendees
+            </td>
+            </tr>
+            `;
+            }
 
-        function exportAttendees() {
+            const modal = new bootstrap.Modal(document.getElementById('attendeesModal'));
+            modal.show();
+            }
+            }
+
+            function exportAttendees() {
             // Implement export functionality
-            showToast('Export feature coming soon!', 'info');
-        }
+            window.location.href = `/meetings/export/${meetingCode}`;
+                showToast('Attendees exported!', 'info');
+            }
 
-        function addAttendee() {
+            function addAttendee() {
             // Implement add attendee functionality
             showToast('Add attendee feature coming soon!', 'info');
-        }
-
-        function removeAttendee(attendeeId) {
-            if (confirm('Are you sure you want to remove this attendee?')) {
-                // Implement remove attendee API call
-                showToast('Attendee removed (demo)', 'success');
             }
-        }
 
-        function editMeeting(meetingId) {
+            function removeAttendee(attendeeId) {
+            if (confirm('Are you sure you want to remove this attendee?')) {
+            // Implement remove attendee API call
+            showToast('Attendee removed (demo)', 'success');
+            }
+            }
+
+            function editMeeting(meetingId) {
             // Implement edit meeting functionality
             showToast('Edit meeting feature coming soon!', 'info');
-        }
-
-        function deleteMeeting(meetingId) {
-            if (confirm('Are you sure you want to delete this meeting? This action cannot be undone.')) {
-                fetch(`/api/meetingsApi/${meetingId}`, {
-                    method: 'DELETE',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    }
-                })
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error('Failed to delete meeting');
-                    }
-                    return response.json();
-                })
-                .then(data => {
-                showToast('Meeting deleted successfully', 'success');
-                    // Optional: redirect or refresh
-                    // window.location.reload();
-                })
-                .catch(error => {
-                    console.error(error);
-                    showToast('Error deleting meeting', 'error');
-                });
             }
-        }
+
+            function deleteMeeting(meetingId) {
+            if (confirm('Are you sure you want to delete this meeting? This action cannot be undone.')) {
+            fetch(`/api/meetingsApi/${meetingId}`, {
+            method: 'DELETE',
+            headers: {
+            'Content-Type': 'application/json'
+            }
+            })
+            .then(response => {
+            if (!response.ok) {
+            throw new Error('Failed to delete meeting');
+            }
+            return response.json();
+            })
+            .then(data => {
+            showToast('Meeting deleted successfully', 'success');
+            // Optional: redirect or refresh
+            // window.location.reload();
+            })
+            .catch(error => {
+            console.error(error);
+            showToast('Error deleting meeting', 'error');
+            });
+            }
+            }
 
 
-        function showToast(message, type) {
+            function showToast(message, type) {
             const toast = document.createElement('div');
             toast.className = `toast align-items-center text-white bg-${type} border-0 position-fixed bottom-0 end-0 m-3`;
             toast.style.zIndex = '1060';
             toast.innerHTML = `
-                                                                                        <div class="d-flex">
-                                                                                            <div class="toast-body">
-                                                                                                ${message}
-                                                                                            </div>
-                                                                                            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
-                                                                                        </div>
-                                                                                    `;
+            <div class="d-flex">
+            <div class="toast-body">
+            ${message}
+            </div>
+            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+            </div>
+            `;
 
             document.body.appendChild(toast);
             const bsToast = new bootstrap.Toast(toast);
             bsToast.show();
 
             setTimeout(() => {
-                if (toast.parentNode) {
-                    toast.parentNode.removeChild(toast);
-                }
+            if (toast.parentNode) {
+            toast.parentNode.removeChild(toast);
+            }
             }, 3000);
-        }
-    </script>
-}
+            }
+        </script>
+    }

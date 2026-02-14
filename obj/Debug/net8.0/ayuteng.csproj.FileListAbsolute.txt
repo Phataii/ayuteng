@@ -130,6 +130,7 @@ C:/Users/phata/Documents/archive/work/wennovation-hub/ayute/ayuteng/ayuteng/obj/
 C:/Users/phata/Documents/archive/work/wennovation-hub/ayute/ayuteng/ayuteng/obj/Debug/net8.0/ref/ayuteng.dll
 /Users/joetech/Documents/works/ayuteng/bin/Debug/net8.0/appsettings.Development.json
 /Users/joetech/Documents/works/ayuteng/bin/Debug/net8.0/appsettings.json
+/Users/joetech/Documents/works/ayuteng/bin/Debug/net8.0/settings.json
 /Users/joetech/Documents/works/ayuteng/bin/Debug/net8.0/ayuteng.staticwebassets.runtime.json
 /Users/joetech/Documents/works/ayuteng/bin/Debug/net8.0/ayuteng
 /Users/joetech/Documents/works/ayuteng/bin/Debug/net8.0/ayuteng.deps.json
