@@ -227,11 +227,11 @@
                                             <button type="button" class="btn btn-outline-success"
                                                     onclick="generateQRCode('@meeting.Id')">
                                                 <i class="bi bi-qr-code"></i>
-                                            @* </button>
-                                            <button type="button" class="btn btn-outline-warning"
-                                                    onclick="editMeeting('@meeting.Id')">
-                                                <i class="bi bi-pencil"></i>
-                                            </button> *@
+                                            </button>
+                                            <a href="api/meetingsapi/meetings/export/@meeting.Id" class="btn btn-outline-secondary">
+                                                <i class="bi bi-download"></i>
+                                            </a>
+                                            
                                             <button type="button" class="btn btn-outline-danger"
                                                     onclick="deleteMeeting('@meeting.Id')">
                                                 <i class="bi bi-trash"></i>
@@ -406,14 +406,7 @@
                             <h6 id="attendeesMeetingTitle" class="mb-0"></h6>
                             <small class="text-muted" id="attendeesMeetingInfo"></small>
                         </div>
-                        <div class="col-md-6 text-end">
-                            <a href="api/meetingsapi/meetings/export/bd4006b7-efae-452e-a610-08c916392497" class="btn btn-outline-primary">
-                                <i class="bi bi-download me-2"></i>Export List
-                            </a>
-                            @* <button class="btn btn-outline-success" onclick="addAttendee()">
-                                <i class="bi bi-person-plus me-2"></i>Add Attendee
-                            </button> *@
-                        </div>
+
                     </div>
                     <div class="table-responsive">
                         <table class="table table-hover">
@@ -422,9 +415,10 @@
                                     <th>#</th>
                                     <th>Name</th>
                                     <th>Email</th>
+                                    <th>Gender</th>
                                     <th>Check-in Time</th>
                                     <th>Status</th>
-                                    @* <th>Actions</th> *@
+                                    
                                 </tr>
                             </thead>
                             <tbody id="attendeesListBody">
@@ -1076,12 +1070,12 @@
             document.getElementById('attendeesMeetingTitle').textContent = meetingName;
             document.getElementById('attendeesMeetingInfo').textContent =
             `${meetingCode} • ${meetingTime} • ${attendeesCount} attendees`;
-
+            
             // Load attendees from API
             try {
             const response = await fetch(`/api/meetingsapi/${meetingId}/attendees`);
             const data = await response.json();
-            console.log(data)
+           
             const attendeesBody = document.getElementById('attendeesListBody');
             if (data.attendees && data.attendees.length > 0) {
             let html = '';
@@ -1094,6 +1088,7 @@
             <small class="text-muted">${attendee.location || 'N/A'}</small>
             </td>
             <td>${attendee.email || 'N/A'}</td>
+            <td>${attendee.gender || 'N/A'}</td>
             <td>
             <div>${new Date(attendee.checkInTime).toLocaleDateString()}</div>
             <small class="text-muted">${new Date(attendee.checkInTime).toLocaleTimeString()}</small>
@@ -1103,11 +1098,6 @@
             ${attendee.status}
             </span>
             </td>
-            @* <td>
-            <button class="btn btn-sm btn-outline-danger" onclick="removeAttendee('${attendee.id}')">
-            <i class="bi bi-trash"></i>
-            </button>
-            </td> *@
             </tr>
             `;
             });

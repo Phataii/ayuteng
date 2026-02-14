@@ -94,7 +94,7 @@ namespace ayuteng.Controllers
             }
         }
 
-        // GET: /api/meetings/{id}/attendees
+        // GET: /api/meetingsapi/{id}/attendees
         [HttpGet("{id}/attendees")]
         public async Task<IActionResult> GetMeetingAttendees(Guid id)
         {
@@ -111,7 +111,7 @@ namespace ayuteng.Controllers
                         location = a.Location,
                         status = a.Status,
                         checkInTime = a.CheckInTime,
-                        registeredAt = a.RegisteredAt
+                        gender = a.Gender
                     })
                     .ToListAsync();
 
