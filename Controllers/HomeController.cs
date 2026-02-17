@@ -119,11 +119,11 @@ public class HomeController : Controller
     public async Task<IActionResult> Create()
     {
         // Sw86Z6DmomTe
-    //    var loggedInUser = await _userHelper.GetLoggedInAdmin(Request);
-    //     if (loggedInUser == null)
-    //     {
-    //         return Redirect("/ayute/admin/login");
-    //     }
+        //    var loggedInUser = await _userHelper.GetLoggedInAdmin(Request);
+        //     if (loggedInUser == null)
+        //     {
+        //         return Redirect("/ayute/admin/login");
+        //     }
         return View("Admin/create");
     }
 
@@ -750,16 +750,18 @@ public class HomeController : Controller
             .FirstOrDefaultAsync(m => m.MeetingCode == code);
 
         if (meeting == null)
-        {
             return NotFound();
-        }   
+
         if (meeting.Status == "completed")
-        {
-            return Redirect($"/completed?code={code}");
-        }
+            return RedirectToAction("MeetingStatus", new { code, status = "Completed" });
+
+        if (meeting.Status == "upcoming")
+            return RedirectToAction("MeetingStatus", new { code, status = "Upcoming" });
+
         ViewBag.MeetingCode = code;
         return View(meeting);
     }
+
     [HttpGet("success")]
     public IActionResult RegistrationSuccess(string code)
     {
@@ -767,10 +769,11 @@ public class HomeController : Controller
         return View();
     }
 
-    [HttpGet("completed")]
-    public IActionResult MeetingCompleted(string code)
+    [HttpGet("meeting-status")]
+    public IActionResult MeetingStatus(string code, string status)
     {
         ViewBag.MeetingCode = code;
+        ViewBag.Status = status;
         return View();
     }
 

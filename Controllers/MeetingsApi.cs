@@ -153,6 +153,31 @@ namespace ayuteng.Controllers
             }
         }
 
+        [HttpPut("{id}/conclude-meeting")]
+        public async Task<IActionResult> ConcludeMeeting(Guid id)
+        {
+            try
+            {
+                var meeting = await _context.Meetings.FindAsync(id);
+                if (meeting == null)
+                {
+                    return NotFound(new { message = "Meeting not found" });
+                }
+
+
+                meeting.Status = "completed";
+
+                await _context.SaveChangesAsync();
+
+                return Ok(new { message = "Event Concluded successfully" });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error concluding event");
+                return StatusCode(500, new { message = "Error concluding event" });
+            }
+        }
+
         // DELETE: /api/meetingsApi/{id}
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteMeeting(Guid id)
