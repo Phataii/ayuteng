@@ -308,14 +308,7 @@
                                 <input type="datetime-local" class="form-control" id="endDateTime" required>
                             </div>
 
-                            @* <div class="col-md-12">
-                                <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" id="sendNotifications">
-                                    <label class="form-check-label" for="sendNotifications">
-                                        Send email notifications to attendees
-                                    </label>
-                                </div>
-                            </div> *@
+                         
                         </div>
                     </div>
                     <div class="modal-footer">
@@ -664,7 +657,6 @@
             const maxAttendees = parseInt(document.getElementById('maxAttendees').value) || 50;
             const startDateTime = document.getElementById('startDateTime').value;
             const endDateTime = document.getElementById('endDateTime').value;
-            const sendNotifications = document.getElementById('sendNotifications').checked;
 
             // Validate required fields
             if (!meetingName || !meetingType || !meetingVenue || !startDateTime || !endDateTime) {
@@ -698,8 +690,7 @@
             maxAttendees: maxAttendees,
             startTime: startDateTime,
             endTime: endDateTime,
-            meetingCode: meetingCode,
-            sendNotifications: sendNotifications
+            meetingCode: meetingCode
             };
             console.log(JSON.stringify(meetingData))
             // Send to API
