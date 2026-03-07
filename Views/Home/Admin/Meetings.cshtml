@@ -231,10 +231,10 @@
                                             <a href="api/meetingsapi/meetings/export/@meeting.Id" class="btn btn-outline-secondary">
                                                 <i class="bi bi-download"></i>
                                             </a>
-                                            @* <button type="button" class="btn btn-outline-secondary"
-                                                    onclick="concludeMeeting('@meeting.Id')">
-                                                <i class="bi bi-circle"></i>
-                                            </button> *@
+                                            <button type="button" class="btn btn-outline-danger"
+                                                    onclick="startMeeting('@meeting.Id')">
+                                                <i class="bi bi-check"></i>
+                                            </button>
                                             <button type="button" class="btn btn-outline-danger"
                                                     onclick="deleteMeeting('@meeting.Id')">
                                                 <i class="bi bi-trash"></i>
@@ -1157,6 +1157,32 @@
                     })
                     .then(data => {
                         showToast('Meeting concluded successfully', 'success');
+                        // Optional: redirect or refresh
+                        // window.location.reload();
+                    })
+                    .catch(error => {
+                        console.error(error);
+                        showToast('Error updating meeting', 'error');
+                    });
+                }
+            }
+
+            function startMeeting(meetingId) {
+                if (confirm('Are you sure you want to start this event? Attendees will be able to check in.')) {
+                    fetch(`/api/meetingsApi/${meetingId}/start-meeting`, {
+                        method: 'PUT',
+                        headers: {
+                        'Content-Type': 'application/json'
+                        }
+                    })
+                    .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Failed to update meeting');
+                    }
+                    return response.json();
+                    })
+                    .then(data => {
+                        showToast('Meeting started successfully', 'success');
                         // Optional: redirect or refresh
                         // window.location.reload();
                     })

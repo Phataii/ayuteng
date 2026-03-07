@@ -208,6 +208,30 @@ namespace ayuteng.Controllers
             }
         }
 
+        [HttpPut("{id}/start-meeting")]
+        public async Task<IActionResult> StartMeeting(Guid id)
+        {
+            try
+            {
+                var meeting = await _context.Meetings.FindAsync(id);
+                if (meeting == null)
+                {
+                    return NotFound(new { message = "Meeting not found" });
+                }
+
+
+                meeting.Status = "ongoing";
+
+                await _context.SaveChangesAsync();
+
+                return Ok(new { message = "Event started officially" });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error starting event");
+                return StatusCode(500, new { message = "Error starting event" });
+            }
+        }
         private string GenerateMeetingCode()
         {
             const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";

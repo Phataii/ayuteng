@@ -9,139 +9,139 @@ build_property.EnforceExtendedAnalyzerRules =
 build_property._SupportedPlatformList = Linux,macOS,Windows
 build_property.RootNamespace = ayuteng
 build_property.RootNamespace = ayuteng
-build_property.ProjectDir = /Users/joetech/Documents/works/ayuteng/
+build_property.ProjectDir = /Users/phataii/Documents/work/ayuteng/
 build_property.EnableComHosting = 
 build_property.EnableGeneratedComInterfaceComImportInterop = 
 build_property.RazorLangVersion = 8.0
 build_property.SupportLocalizedComponentNames = 
 build_property.GenerateRazorMetadataSourceChecksumAttributes = 
-build_property.MSBuildProjectDirectory = /Users/joetech/Documents/works/ayuteng
+build_property.MSBuildProjectDirectory = /Users/phataii/Documents/work/ayuteng
 build_property._RazorSourceGeneratorDebug = 
 
-[/Users/joetech/Documents/works/ayuteng/Views/Home/Admin/AdminLogin.cshtml]
+[/Users/phataii/Documents/work/ayuteng/Views/Home/Admin/AdminLogin.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3MvSG9tZS9BZG1pbi9BZG1pbkxvZ2luLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[/Users/joetech/Documents/works/ayuteng/Views/Home/Admin/Applications.cshtml]
+[/Users/phataii/Documents/work/ayuteng/Views/Home/Admin/Applications.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3MvSG9tZS9BZG1pbi9BcHBsaWNhdGlvbnMuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[/Users/joetech/Documents/works/ayuteng/Views/Home/Admin/Create.cshtml]
+[/Users/phataii/Documents/work/ayuteng/Views/Home/Admin/Create.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3MvSG9tZS9BZG1pbi9DcmVhdGUuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[/Users/joetech/Documents/works/ayuteng/Views/Home/Admin/Dashboard.cshtml]
+[/Users/phataii/Documents/work/ayuteng/Views/Home/Admin/Dashboard.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3MvSG9tZS9BZG1pbi9EYXNoYm9hcmQuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[/Users/joetech/Documents/works/ayuteng/Views/Home/Admin/Details.cshtml]
+[/Users/phataii/Documents/work/ayuteng/Views/Home/Admin/Details.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3MvSG9tZS9BZG1pbi9EZXRhaWxzLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[/Users/joetech/Documents/works/ayuteng/Views/Home/Admin/List.cshtml]
+[/Users/phataii/Documents/work/ayuteng/Views/Home/Admin/List.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3MvSG9tZS9BZG1pbi9MaXN0LmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[/Users/joetech/Documents/works/ayuteng/Views/Home/Admin/Meetings.cshtml]
+[/Users/phataii/Documents/work/ayuteng/Views/Home/Admin/Meetings.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3MvSG9tZS9BZG1pbi9NZWV0aW5ncy5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[/Users/joetech/Documents/works/ayuteng/Views/Home/Admin/SiteVisitors.cshtml]
+[/Users/phataii/Documents/work/ayuteng/Views/Home/Admin/SiteVisitors.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3MvSG9tZS9BZG1pbi9TaXRlVmlzaXRvcnMuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[/Users/joetech/Documents/works/ayuteng/Views/Home/ForgotPassword.cshtml]
+[/Users/phataii/Documents/work/ayuteng/Views/Home/ForgotPassword.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3MvSG9tZS9Gb3Jnb3RQYXNzd29yZC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[/Users/joetech/Documents/works/ayuteng/Views/Home/Index.cshtml]
+[/Users/phataii/Documents/work/ayuteng/Views/Home/Index.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3MvSG9tZS9JbmRleC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[/Users/joetech/Documents/works/ayuteng/Views/Home/Login.cshtml]
+[/Users/phataii/Documents/work/ayuteng/Views/Home/Login.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3MvSG9tZS9Mb2dpbi5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[/Users/joetech/Documents/works/ayuteng/Views/Home/MeetingStatus.cshtml]
+[/Users/phataii/Documents/work/ayuteng/Views/Home/MeetingStatus.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3MvSG9tZS9NZWV0aW5nU3RhdHVzLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[/Users/joetech/Documents/works/ayuteng/Views/Home/Register.cshtml]
+[/Users/phataii/Documents/work/ayuteng/Views/Home/Register.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3MvSG9tZS9SZWdpc3Rlci5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[/Users/joetech/Documents/works/ayuteng/Views/Home/RegistrationSuccess.cshtml]
+[/Users/phataii/Documents/work/ayuteng/Views/Home/RegistrationSuccess.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3MvSG9tZS9SZWdpc3RyYXRpb25TdWNjZXNzLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[/Users/joetech/Documents/works/ayuteng/Views/Home/ResetPassword.cshtml]
+[/Users/phataii/Documents/work/ayuteng/Views/Home/ResetPassword.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3MvSG9tZS9SZXNldFBhc3N3b3JkLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[/Users/joetech/Documents/works/ayuteng/Views/Home/Step1.cshtml]
+[/Users/phataii/Documents/work/ayuteng/Views/Home/Step1.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3MvSG9tZS9TdGVwMS5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[/Users/joetech/Documents/works/ayuteng/Views/Home/Step2.cshtml]
+[/Users/phataii/Documents/work/ayuteng/Views/Home/Step2.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3MvSG9tZS9TdGVwMi5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[/Users/joetech/Documents/works/ayuteng/Views/Home/Step3.cshtml]
+[/Users/phataii/Documents/work/ayuteng/Views/Home/Step3.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3MvSG9tZS9TdGVwMy5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[/Users/joetech/Documents/works/ayuteng/Views/Home/Step4.cshtml]
+[/Users/phataii/Documents/work/ayuteng/Views/Home/Step4.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3MvSG9tZS9TdGVwNC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[/Users/joetech/Documents/works/ayuteng/Views/Home/Step5.cshtml]
+[/Users/phataii/Documents/work/ayuteng/Views/Home/Step5.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3MvSG9tZS9TdGVwNS5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[/Users/joetech/Documents/works/ayuteng/Views/Home/Step6.cshtml]
+[/Users/phataii/Documents/work/ayuteng/Views/Home/Step6.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3MvSG9tZS9TdGVwNi5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[/Users/joetech/Documents/works/ayuteng/Views/Home/Step7.cshtml]
+[/Users/phataii/Documents/work/ayuteng/Views/Home/Step7.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3MvSG9tZS9TdGVwNy5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[/Users/joetech/Documents/works/ayuteng/Views/Home/Step8.cshtml]
+[/Users/phataii/Documents/work/ayuteng/Views/Home/Step8.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3MvSG9tZS9TdGVwOC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[/Users/joetech/Documents/works/ayuteng/Views/Home/Step9.cshtml]
+[/Users/phataii/Documents/work/ayuteng/Views/Home/Step9.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3MvSG9tZS9TdGVwOS5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[/Users/joetech/Documents/works/ayuteng/Views/Home/Success.cshtml]
+[/Users/phataii/Documents/work/ayuteng/Views/Home/Success.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3MvSG9tZS9TdWNjZXNzLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[/Users/joetech/Documents/works/ayuteng/Views/Home/Verification.cshtml]
+[/Users/phataii/Documents/work/ayuteng/Views/Home/Verification.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3MvSG9tZS9WZXJpZmljYXRpb24uY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[/Users/joetech/Documents/works/ayuteng/Views/Shared/Error.cshtml]
+[/Users/phataii/Documents/work/ayuteng/Views/Shared/Error.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3MvU2hhcmVkL0Vycm9yLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[/Users/joetech/Documents/works/ayuteng/Views/Shared/_AdminLayout.cshtml]
+[/Users/phataii/Documents/work/ayuteng/Views/Shared/_AdminLayout.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3MvU2hhcmVkL19BZG1pbkxheW91dC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[/Users/joetech/Documents/works/ayuteng/Views/Shared/_ValidationScriptsPartial.cshtml]
+[/Users/phataii/Documents/work/ayuteng/Views/Shared/_ValidationScriptsPartial.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3MvU2hhcmVkL19WYWxpZGF0aW9uU2NyaXB0c1BhcnRpYWwuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[/Users/joetech/Documents/works/ayuteng/Views/_ViewImports.cshtml]
+[/Users/phataii/Documents/work/ayuteng/Views/_ViewImports.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3MvX1ZpZXdJbXBvcnRzLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[/Users/joetech/Documents/works/ayuteng/Views/_ViewStart.cshtml]
+[/Users/phataii/Documents/work/ayuteng/Views/_ViewStart.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3MvX1ZpZXdTdGFydC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[/Users/joetech/Documents/works/ayuteng/Views/Shared/_Layout.cshtml]
+[/Users/phataii/Documents/work/ayuteng/Views/Shared/_Layout.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3MvU2hhcmVkL19MYXlvdXQuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = b-e4cl8y011s

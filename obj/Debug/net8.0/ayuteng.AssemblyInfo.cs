@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("ayuteng")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+dbbe34cf5faf6af012329ad5ab5f7c2f0f8859a7")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+253f6ab5bc31b998c2a37d6330e3ed8abb740be5")]
 [assembly: System.Reflection.AssemblyProductAttribute("ayuteng")]
 [assembly: System.Reflection.AssemblyTitleAttribute("ayuteng")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
