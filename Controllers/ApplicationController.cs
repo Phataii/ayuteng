@@ -623,13 +623,6 @@ namespace ayuteng.Controllers
                         "Primary users description cannot exceed 1000 characters");
                 }
 
-                // Validate URL if provided
-                if (!string.IsNullOrEmpty(request.ProductLink) && !Uri.TryCreate(request.ProductLink, UriKind.Absolute, out _))
-                {
-                    ModelState.AddModelError(nameof(request.ProductLink),
-                        "Please enter a valid URL");
-                }
-
                 // Validate number of active users
                 if (application.NoOfActiveUsers < 0)
                 {
@@ -2193,7 +2186,7 @@ public class StepThreeRequest
     [Required(ErrorMessage = "Product stage is required")]
     public string ProductStage { get; set; }
 
-    [Url(ErrorMessage = "Please enter a valid URL")]
+    // [Url(ErrorMessage = "Please enter a valid URL")]
     public string ProductLink { get; set; }
 
     [Required(ErrorMessage = "Innovation highlight is required")]
