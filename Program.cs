@@ -101,8 +101,8 @@ app.Use(async (context, next) =>
     var tomorrowStart = todayStart.AddDays(1);
     // 3️⃣ Check if visitor already exists today
     var alreadyLoggedToday = await db.SiteVisitors
-        .AnyAsync(v => v.VisitorId == visitorId 
-                    && v.Path == "/" 
+        .AnyAsync(v => v.VisitorId == visitorId
+                    && v.Path == "/"
                         && v.VisitedAt >= todayStart
                     && v.VisitedAt < tomorrowStart);
 
@@ -125,7 +125,13 @@ app.Use(async (context, next) =>
     db.SiteVisitors.Add(visit);
     await db.SaveChangesAsync();
 });
+app.UseStaticFiles(); // for wwwroot (keep this)
 
+app.UseStaticFiles(new StaticFileOptions
+{
+    FileProvider = new PhysicalFileProvider("/var/www/uploads"),
+    RequestPath = "/uploads"
+});
 // -------------------- Endpoint Mapping --------------------
 app.MapControllerRoute(
     name: "default",
