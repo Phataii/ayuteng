@@ -127,11 +127,11 @@ app.Use(async (context, next) =>
 });
 app.UseStaticFiles(); // for wwwroot (keep this)
 
-// app.UseStaticFiles(new StaticFileOptions
-// {
-//     FileProvider = new PhysicalFileProvider("/var/www/uploads"),
-//     RequestPath = "/uploads"
-// });
+app.UseStaticFiles(new StaticFileOptions
+{
+    FileProvider = new PhysicalFileProvider("/var/www/uploads"),
+    RequestPath = "/uploads"
+});
 // -------------------- Endpoint Mapping --------------------
 app.MapControllerRoute(
     name: "default",
