@@ -26,12 +26,22 @@ public class HomeController : Controller
 
     public IActionResult Index()
     {
+        var deadline = new DateTime(2026, 4, 11, 0, 0, 0);
+
+        if (DateTime.Now > deadline)
+            return RedirectToAction("Closed");
+
         return View();
     }
 
     [HttpGet("/verify")]
     public IActionResult Verification(string email)
     {
+        var deadline = new DateTime(2026, 4, 11, 0, 0, 0);
+
+        if (DateTime.Now > deadline)
+            return RedirectToAction("Closed");
+
         if (string.IsNullOrEmpty(email))
         {
             return RedirectToAction("Signup");
@@ -51,6 +61,11 @@ public class HomeController : Controller
     [HttpGet("verify-email")]
     public async Task<IActionResult> VerifyEmail([FromQuery] string token)
     {
+        var deadline = new DateTime(2026, 4, 11, 0, 0, 0);
+
+        if (DateTime.Now > deadline)
+            return RedirectToAction("Closed");
+
         try
         {
             // Validate token
@@ -108,6 +123,11 @@ public class HomeController : Controller
         }
     }
 
+    [HttpGet("/application-closed")]
+    public IActionResult Closed()
+    {
+        return View();
+    }
 
     [HttpGet("/ayute/admin/login")]
     public IActionResult AdminLogin()
@@ -118,12 +138,10 @@ public class HomeController : Controller
     [HttpGet("/ayute/admin/create")]
     public async Task<IActionResult> Create()
     {
-        // Sw86Z6DmomTe
-        //    var loggedInUser = await _userHelper.GetLoggedInAdmin(Request);
-        //     if (loggedInUser == null)
-        //     {
-        //         return Redirect("/ayute/admin/login");
-        //     }
+        var deadline = new DateTime(2026, 4, 11, 0, 0, 0);
+
+        if (DateTime.Now > deadline)
+            return RedirectToAction("Closed");
         return View("Admin/create");
     }
 
@@ -218,17 +236,28 @@ public class HomeController : Controller
     [Route("forgot-password")]
     public async Task<IActionResult> ForgotPassword()
     {
+        var deadline = new DateTime(2026, 4, 11, 0, 0, 0);
 
+        if (DateTime.Now > deadline)
+            return RedirectToAction("Closed");
         return View();
     }
     [Route("reset-password")]
     public async Task<IActionResult> ResetPassword()
     {
+        var deadline = new DateTime(2026, 4, 11, 0, 0, 0);
+
+        if (DateTime.Now > deadline)
+            return RedirectToAction("Closed");
         return View();
     }
     [HttpGet("application/success/{id:guid}")]
     public async Task<IActionResult> Success(Guid id)
     {
+        var deadline = new DateTime(2026, 4, 11, 0, 0, 0);
+
+        if (DateTime.Now > deadline)
+            return RedirectToAction("Closed");
         var loggedInUser = await _userHelper.GetLoggedInUser(Request);
         if (loggedInUser == null)
         {
@@ -266,6 +295,10 @@ public class HomeController : Controller
                string search = "",
                string status = "")
     {
+        var deadline = new DateTime(2026, 4, 11, 0, 0, 0);
+
+        if (DateTime.Now > deadline)
+            return RedirectToAction("Closed");
         ViewBag.Success = TempData["Success"];
 
         var loggedInUser = await _userHelper.GetLoggedInAdmin(Request);
@@ -341,6 +374,10 @@ public class HomeController : Controller
     [HttpGet("applications/details/{id}")]
     public async Task<IActionResult> Details(Guid id)
     {
+        var deadline = new DateTime(2026, 4, 11, 0, 0, 0);
+
+        if (DateTime.Now > deadline)
+            return RedirectToAction("Closed");
         var application = await _context.Applications
             .FirstOrDefaultAsync(a => a.Id == id);
 
@@ -354,6 +391,11 @@ public class HomeController : Controller
     [Route("login")]
     public IActionResult Login()
     {
+        var deadline = new DateTime(2026, 4, 11, 0, 0, 0);
+
+        if (DateTime.Now > deadline)
+            return RedirectToAction("Closed");
+
         ViewBag.Success = TempData["Success"];
         ViewBag.Error = TempData["Error"];
         return View();
@@ -369,12 +411,21 @@ public class HomeController : Controller
     [Route("application/step-one")]
     public IActionResult Step1()
     {
+        var deadline = new DateTime(2026, 4, 11, 0, 0, 0);
+
+        if (DateTime.Now > deadline)
+            return RedirectToAction("Closed");
         return View();
     }
 
     [HttpGet("application/step-two/{id:guid}")]
     public async Task<IActionResult> Step2(Guid id)
     {
+        var deadline = new DateTime(2026, 4, 11, 0, 0, 0);
+
+        if (DateTime.Now > deadline)
+            return RedirectToAction("Closed");
+
         ViewBag.Next = $"step-three/{id}";
         var loggedInUser = await _userHelper.GetLoggedInUser(Request);
         if (loggedInUser == null)
@@ -414,6 +465,11 @@ public class HomeController : Controller
     [Route("application/step-three/{id:guid}")]
     public async Task<IActionResult> Step3(Guid id)
     {
+        var deadline = new DateTime(2026, 4, 11, 0, 0, 0);
+
+        if (DateTime.Now > deadline)
+            return RedirectToAction("Closed");
+
         ViewBag.Previous = $"step-two/{id}";
         ViewBag.Next = $"step-four/{id}";
         var loggedInUser = await _userHelper.GetLoggedInUser(Request);
@@ -452,6 +508,11 @@ public class HomeController : Controller
     [Route("application/step-four/{id:guid}")]
     public async Task<IActionResult> Step4(Guid id)
     {
+        var deadline = new DateTime(2026, 4, 11, 0, 0, 0);
+
+        if (DateTime.Now > deadline)
+            return RedirectToAction("Closed");
+
         ViewBag.Previous = $"step-three/{id}";
         ViewBag.Next = $"step-five/{id}";
         var loggedInUser = await _userHelper.GetLoggedInUser(Request);
@@ -490,6 +551,11 @@ public class HomeController : Controller
     [HttpGet("application/step-five/{id:guid}")]
     public async Task<IActionResult> Step5(Guid id)
     {
+        var deadline = new DateTime(2026, 4, 11, 0, 0, 0);
+
+        if (DateTime.Now > deadline)
+            return RedirectToAction("Closed");
+
         ViewBag.Previous = $"step-four/{id}";
         ViewBag.Next = $"step-six/{id}";
         var loggedInUser = await _userHelper.GetLoggedInUser(Request);
@@ -528,6 +594,11 @@ public class HomeController : Controller
     [Route("application/step-six/{id:guid}")]
     public async Task<IActionResult> Step6(Guid id)
     {
+        var deadline = new DateTime(2026, 4, 11, 0, 0, 0);
+
+        if (DateTime.Now > deadline)
+            return RedirectToAction("Closed");
+
         ViewBag.Previous = $"step-five/{id}";
         ViewBag.Next = $"step-seven/{id}";
         var loggedInUser = await _userHelper.GetLoggedInUser(Request);
@@ -566,6 +637,11 @@ public class HomeController : Controller
     [Route("application/step-seven/{id:guid}")]
     public async Task<IActionResult> Step7(Guid id)
     {
+        var deadline = new DateTime(2026, 4, 11, 0, 0, 0);
+
+        if (DateTime.Now > deadline)
+            return RedirectToAction("Closed");
+
         ViewBag.Previous = $"step-six/{id}";
         ViewBag.Next = $"step-eight/{id}";
         var loggedInUser = await _userHelper.GetLoggedInUser(Request);
@@ -604,6 +680,11 @@ public class HomeController : Controller
     [Route("application/step-eight/{id:guid}")]
     public async Task<IActionResult> Step8(Guid id)
     {
+        var deadline = new DateTime(2026, 4, 11, 0, 0, 0);
+
+        if (DateTime.Now > deadline)
+            return RedirectToAction("Closed");
+
         ViewBag.Previous = $"step-seven/{id}";
         ViewBag.Next = $"step-nine/{id}";
         var loggedInUser = await _userHelper.GetLoggedInUser(Request);
@@ -642,6 +723,11 @@ public class HomeController : Controller
     [Route("application/step-nine/{id:guid}")]
     public async Task<IActionResult> Step9(Guid id)
     {
+        var deadline = new DateTime(2026, 4, 11, 0, 0, 0);
+
+        if (DateTime.Now > deadline)
+            return RedirectToAction("Closed");
+
         ViewBag.Previous = $"step-eight/{id}";
         var loggedInUser = await _userHelper.GetLoggedInUser(Request);
         if (loggedInUser == null)
@@ -678,6 +764,11 @@ public class HomeController : Controller
     [HttpGet("meetings")]
     public async Task<IActionResult> Meetings()
     {
+        var deadline = new DateTime(2026, 4, 11, 0, 0, 0);
+
+        if (DateTime.Now > deadline)
+            return RedirectToAction("Closed");
+
         var loggedInUser = await _userHelper.GetLoggedInAdmin(Request);
         if (loggedInUser == null)
         {

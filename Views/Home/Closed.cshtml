@@ -1,0 +1,270 @@
+@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>AYuTe Africa Challenge Nigeria — Closed</title>
+  <style>
+    :root {
+      --primary-green: #39B34A;
+      --primary-yellow: #DEE33B;
+      --primary-blue: #073150;
+      --light-green: #E9F7EC;
+      --light-yellow: #FDFDE8;
+      --light-blue: #F0F7FB;
+      --white: #FFFFFF;
+      --gray: #5D6D7E;
+      --light-gray: #F5F5F5;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: var(--light-gray);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem 1.5rem;
+    }
+
+    @@keyframes fadeUp {
+      from { opacity: 0; transform: translateY(24px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    @@keyframes pulse {
+      0%, 100% { transform: scale(1); opacity: 1; }
+      50%       { transform: scale(1.06); opacity: 0.85; }
+    }
+
+    .fade1 { animation: fadeUp 0.6s 0.0s ease both; }
+    .fade2 { animation: fadeUp 0.6s 0.2s ease both; }
+    .fade3 { animation: fadeUp 0.6s 0.4s ease both; }
+    .fade4 { animation: fadeUp 0.6s 0.6s ease both; }
+
+    .card {
+      width: 100%;
+      max-width: 620px;
+      background: var(--white);
+      border-radius: 20px;
+      overflow: hidden;
+      box-shadow: 0 4px 32px rgba(7, 49, 80, 0.10);
+    }
+
+    .top-bar {
+      height: 6px;
+      background: linear-gradient(90deg, var(--primary-green) 0%, var(--primary-yellow) 50%, var(--primary-blue) 100%);
+    }
+
+    .body {
+      padding: 2.5rem 2rem 2rem;
+      text-align: center;
+    }
+
+    .brand-row {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      margin-bottom: 2rem;
+    }
+
+    .dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    .brand-label {
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--gray);
+    }
+
+    .status-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 6px 18px;
+      border-radius: 999px;
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      background: #FEF0F0;
+      color: #A32D2D;
+      border: 1px solid #F7C1C1;
+      margin-bottom: 1.75rem;
+      animation: pulse 2.8s ease-in-out infinite;
+    }
+
+    .status-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: #E24B4A;
+      flex-shrink: 0;
+    }
+
+    .icon-closed {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      background: #FEF0F0;
+      border: 1px solid #F7C1C1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 1.5rem;
+    }
+
+    .headline {
+      font-size: 30px;
+      font-weight: 700;
+      color: #111;
+      line-height: 1.25;
+      margin: 0 0 0.5rem;
+    }
+
+    .headline .green  { color: var(--primary-green); }
+    .headline .blue   { color: var(--primary-blue); }
+    .headline .closed { color: #E24B4A; }
+    .headline .light  { color: var(--gray); font-weight: 400; }
+
+    .subheadline {
+      font-size: 16px;
+      font-weight: 500;
+      color: var(--gray);
+      margin: 0 0 1.5rem;
+    }
+
+    .divider {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin: 1.5rem 0;
+      color: var(--gray);
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+
+    .divider-line {
+      flex: 1;
+      height: 1px;
+      background: #E0E0E0;
+    }
+
+    .message {
+      font-size: 15px;
+      color: var(--gray);
+      line-height: 1.75;
+      max-width: 440px;
+      margin: 0 auto 2rem;
+    }
+
+    .footer-strip {
+      background: var(--primary-blue);
+      padding: 1rem 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    .footer-strip span {
+      font-size: 12px;
+      color: rgba(255, 255, 255, 0.55);
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      font-weight: 500;
+    }
+
+    .footer-strip .sep {
+      width: 4px;
+      height: 4px;
+      border-radius: 50%;
+      background: var(--primary-yellow);
+      opacity: 0.8;
+    }
+
+    .footer-strip .highlight {
+      color: var(--primary-yellow);
+      opacity: 1;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="card">
+    <div class="top-bar"></div>
+
+    <div class="body">
+
+      <div class="brand-row fade1">
+        <div class="dot" style="background: var(--primary-green);"></div>
+        <div class="dot" style="background: var(--primary-yellow);"></div>
+        <div class="dot" style="background: var(--primary-blue);"></div>
+        <span class="brand-label">AYuTe Africa Challenge</span>
+        <div class="dot" style="background: var(--primary-blue);"></div>
+        <div class="dot" style="background: var(--primary-yellow);"></div>
+        <div class="dot" style="background: var(--primary-green);"></div>
+      </div>
+
+      <div class="fade2">
+        <div class="status-badge">
+          <div class="status-dot"></div>
+          Applications Closed
+        </div>
+      </div>
+
+      <div class="icon-closed fade2">
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none"
+             stroke="#E24B4A" stroke-width="2"
+             stroke-linecap="round" stroke-linejoin="round">
+          <rect x="3" y="11" width="18" height="11" rx="2"/>
+          <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+        </svg>
+      </div>
+
+      <h1 class="headline fade3">
+        <span class="green">AYuTe</span> Africa Challenge<br>
+        <span class="blue">Nigeria</span>
+        <span class="light"> has </span>
+        <span class="closed">closed</span>
+      </h1>
+
+      <p class="subheadline fade3">Thank you for your interest and participation</p>
+
+      <div class="divider fade4">
+        <div class="divider-line"></div>
+        <span>Notice</span>
+        <div class="divider-line"></div>
+      </div>
+
+      <p class="message fade4">
+        The application window for the AYuTe Africa Challenge — Nigeria has officially closed.
+        We are grateful to all innovators and youth entrepreneurs who applied.
+        Shortlisted candidates will be contacted directly.
+      </p>
+
+    </div>
+
+    <div class="footer-strip">
+      <span>AYuTe Africa</span>
+      <div class="sep"></div>
+      <span>Nigeria</span>
+      <div class="sep"></div>
+      <span class="highlight">Closed</span>
+    </div>
+  </div>
+
+</body>
+</html>
