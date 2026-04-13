@@ -138,10 +138,6 @@ public class HomeController : Controller
     [HttpGet("/ayute/admin/create")]
     public async Task<IActionResult> Create()
     {
-        var deadline = new DateTime(2026, 4, 11, 0, 0, 0);
-
-        if (DateTime.Now > deadline)
-            return RedirectToAction("Closed");
         return View("Admin/create");
     }
 
@@ -295,10 +291,6 @@ public class HomeController : Controller
                string search = "",
                string status = "")
     {
-        var deadline = new DateTime(2026, 4, 11, 0, 0, 0);
-
-        if (DateTime.Now > deadline)
-            return RedirectToAction("Closed");
         ViewBag.Success = TempData["Success"];
 
         var loggedInUser = await _userHelper.GetLoggedInAdmin(Request);
@@ -374,10 +366,7 @@ public class HomeController : Controller
     [HttpGet("applications/details/{id}")]
     public async Task<IActionResult> Details(Guid id)
     {
-        var deadline = new DateTime(2026, 4, 11, 0, 0, 0);
 
-        if (DateTime.Now > deadline)
-            return RedirectToAction("Closed");
         var application = await _context.Applications
             .FirstOrDefaultAsync(a => a.Id == id);
 
@@ -764,10 +753,6 @@ public class HomeController : Controller
     [HttpGet("meetings")]
     public async Task<IActionResult> Meetings()
     {
-        var deadline = new DateTime(2026, 4, 11, 0, 0, 0);
-
-        if (DateTime.Now > deadline)
-            return RedirectToAction("Closed");
 
         var loggedInUser = await _userHelper.GetLoggedInAdmin(Request);
         if (loggedInUser == null)

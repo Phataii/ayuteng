@@ -125,7 +125,7 @@ app.Use(async (context, next) =>
     db.SiteVisitors.Add(visit);
     await db.SaveChangesAsync();
 });
-app.UseStaticFiles(); // for wwwroot (keep this)
+// app.UseStaticFiles(); // for wwwroot (keep this)
 
 app.UseStaticFiles(new StaticFileOptions
 {
